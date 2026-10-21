@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { AI_STORAGE_KEY, createAISettingsStore, defaultAISettings, isConfigured, loadAISettings, type AISettings } from "@/lib/ai/config";
-import { AIError, createProvider, describeAIError, type CompleteRequest, type Provider } from "@/lib/ai/provider";
+import { AI_STORAGE_KEY, MODEL_SUGGESTIONS, PRESETS, createAISettingsStore, defaultAISettings, isConfigured, loadAISettings, type AISettings } from "@/lib/ai/config";
+import { AIError, createProvider, describeAIError, listModels, type CompleteRequest, type Provider } from "@/lib/ai/provider";
 import {
   askFollowUp,
   gradeAnswer,
@@ -297,5 +297,54 @@ describe("tutor and interviewer", () => {
     expect(await askFollowUp(p, { question: "Q", keyPoints: [], answer: "A", previous })).toBeNull();
     expect(requests).toHaveLength(0);
     expect(await askFollowUp(p, { question: "Q", keyPoints: [], answer: "A", previous: [] })).toBe("Another?");
+  });
+});
+
+describe("choosing a model", () => {
+  it("keeps any model id the learner types, and uses it in requests", async () => {
+    const s = loadAISettings(JSON.stringify({ provider: "gemini", apiKey: "k", model: "gemini-2.5-flash-lite" }));
+    expect(s.model).toBe("gemini-2.5-flash-lite");
+    const { fn, calls } = mockFetch(200, geminiReply("ok"));
+    await createProvider(s, fn).complete({ system: "", messages: [] });
+    expect(calls[0].url).toContain("/models/gemini-2.5-flash-lite:generateContent");
+  });
+
+  it("falls back to the provider default when the model is blank", () => {
+    expect(loadAISettings(JSON.stringify({ provider: "ollama", model: "  " })).model).toBe(PRESETS.ollama.model);
+  });
+
+  it("suggests the default model first for each preset that has one", () => {
+    expect(MODEL_SUGGESTIONS.gemini[0].id).toBe(PRESETS.gemini.model);
+    expect(MODEL_SUGGESTIONS.ollama[0].id).toBe(PRESETS.ollama.model);
+  });
+
+  it("lists Gemini chat models for the key, Flash first, skipping embedding models", async () => {
+    const { fn, calls } = mockFetch(200, {
+      models: [
+        { name: "models/gemini-2.5-pro", displayName: "Gemini 2.5 Pro", supportedGenerationMethods: ["generateContent", "countTokens"] },
+        { name: "models/text-embedding-004", supportedGenerationMethods: ["embedContent"] },
+        { name: "models/gemini-flash-latest", displayName: "Gemini Flash Latest", supportedGenerationMethods: ["generateContent"] },
+      ],
+    });
+    const list = await listModels(gemini, fn);
+    expect(list.map((m) => m.id)).toEqual(["gemini-flash-latest", "gemini-2.5-pro"]);
+    expect(list[1].label).toBe("gemini-2.5-pro · Gemini 2.5 Pro");
+    expect(calls[0].init.method).toBe("GET");
+    expect(calls[0].url).toBe("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000");
+    expect((calls[0].init.headers as Record<string, string>)["x-goog-api-key"]).toBe("test-key");
+  });
+
+  it("lists OpenAI-compatible and Ollama models from /models", async () => {
+    const { fn, calls } = mockFetch(200, { object: "list", data: [{ id: "qwen2.5:7b" }, { id: "llama3.2" }, { id: "" }] });
+    expect((await listModels(compat, fn)).map((m) => m.id)).toEqual(["llama3.2", "qwen2.5:7b"]);
+    expect(calls[0].url).toBe("https://api.example.com/v1/models");
+    expect((calls[0].init.headers as Record<string, string>).authorization).toBe("Bearer sk-test");
+  });
+
+  it("explains an unknown model clearly", async () => {
+    const { fn } = mockFetch(404, { error: { code: 404, message: "models/gemini-9 is not found for API version v1beta", status: "NOT_FOUND" } });
+    const err = await createProvider({ ...gemini, model: "gemini-9" }, fn).complete({ system: "", messages: [] }).catch((e) => e);
+    expect(err.kind).toBe("model");
+    expect(describeAIError(err)).toMatch(/Pick another model in Settings/);
   });
 });

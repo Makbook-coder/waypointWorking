@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { reviewCode, type CodeReviewInput, type Grade } from "@/lib/ai/tasks";
-import { useAIRequest } from "@/lib/ai/use-ai";
+import { useAIRequest, useAISettings } from "@/lib/ai/use-ai";
 import { SCORE_LABELS } from "@/lib/interview";
 import { buttonClass, ghostButtonClass } from "./ui";
 
@@ -18,6 +18,16 @@ export function AISetupHint({ children = "Get AI feedback here" }: { children?: 
       </Link>
       .
     </p>
+  );
+}
+
+/** Which model answers, with a link to change it. */
+export function AIModelTag() {
+  const { model } = useAISettings();
+  return (
+    <Link href="/settings#ai" title="Change the AI model in Settings" className="font-mono text-[11px] text-muted underline-offset-2 hover:text-ink hover:underline">
+      {model}
+    </Link>
   );
 }
 
@@ -51,6 +61,9 @@ export function AIGradeResult({ grade, onSave, saved }: { grade: Grade; onSave?:
         <p className="font-semibold">
           AI score <span className="num">{grade.score}/5</span> · {SCORE_LABELS[grade.score]}
         </p>
+        <span className="ml-auto">
+          <AIModelTag />
+        </span>
       </div>
       {grade.verdict && <p className="mt-1">{grade.verdict}</p>}
       <div className="mt-2 grid gap-3 sm:grid-cols-2">
@@ -116,6 +129,9 @@ export function AICodeHints({ input }: { input: CodeReviewInput }) {
           <div className="mb-1 flex items-center gap-2">
             <AIBadge />
             <span className="text-xs font-semibold uppercase tracking-wider text-muted">Hints, not answers</span>
+            <span className="ml-auto">
+              <AIModelTag />
+            </span>
           </div>
           <AIMarkdown text={hints} />
         </div>

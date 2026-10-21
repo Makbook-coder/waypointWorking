@@ -6,7 +6,7 @@ import { useAIRequest } from "@/lib/ai/use-ai";
 import { store } from "@/lib/store";
 import type { Module, QuizItem, ScenarioItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
-import { AIErrorNote, AISetupHint } from "./AIKit";
+import { AIErrorNote, AIModelTag, AISetupHint } from "./AIKit";
 import { QuizRunner } from "./QuizRunner";
 import { ScenarioCard } from "./ScenarioCard";
 import { SectionTitle, ghostButtonClass } from "./ui";
@@ -53,7 +53,7 @@ export function GeneratedPractice({ mod, existing }: { mod: Module; existing: st
               {busy === "scenario" ? "Writing scenarios…" : `Generate ${COUNT.scenario} interview scenarios`}
             </button>
           </div>
-          <p className="mt-2 text-xs text-muted">New items are saved in this browser and included in your export. AI-written questions can contain mistakes.</p>
+          <p className="mt-2 text-xs text-muted">Written by <AIModelTag />. New items are saved in this browser and included in your export. AI-written questions can contain mistakes.</p>
           <AIErrorNote error={ai.error} />
         </div>
       ) : (

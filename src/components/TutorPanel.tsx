@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import type { ChatMessage } from "@/lib/ai/provider";
 import { askTutor, type TutorContext } from "@/lib/ai/tasks";
 import { useAIRequest } from "@/lib/ai/use-ai";
-import { AIErrorNote, AIMarkdown, AISetupHint } from "./AIKit";
+import { AIErrorNote, AIMarkdown, AIModelTag, AISetupHint } from "./AIKit";
 import { buttonClass, ghostButtonClass } from "./ui";
 
 const STARTERS = ["Explain this like I'm new to it", "Give me a real-world example", "Why does this matter in a job?", "Ask me one question to check I understand"];
@@ -86,7 +86,9 @@ export function TutorPanel({ context, compact = false }: { context: TutorContext
           )}
         </div>
       </form>
-      <p className="text-[11px] text-muted">The tutor can make mistakes. Check important details against the notes and resources.</p>
+      <p className="text-[11px] text-muted">
+        Answering with <AIModelTag />. The tutor can make mistakes, so check important details against the notes and resources.
+      </p>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { askFollowUp, MAX_FOLLOW_UPS } from "@/lib/ai/tasks";
 import { useAIRequest } from "@/lib/ai/use-ai";
 import { MAX_ANSWER_LENGTH } from "@/lib/store";
 import type { InterviewItem } from "@/lib/types";
-import { AIBadge, AIErrorNote } from "./AIKit";
+import { AIBadge, AIErrorNote, AIModelTag } from "./AIKit";
 import { buttonClass, ghostButtonClass } from "./ui";
 
 export interface FollowUp {
@@ -63,6 +63,9 @@ export function AIFollowUps({ item, answer, followUps, onChange }: { item: Inter
       <div className="flex items-center gap-2">
         <AIBadge />
         <p className="text-xs font-semibold uppercase tracking-wider text-muted">AI interviewer</p>
+        <span className="ml-auto">
+          <AIModelTag />
+        </span>
       </div>
       {followUps.length > 0 && (
         <ol className="mt-2 space-y-2 text-sm">

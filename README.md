@@ -172,7 +172,14 @@ The AI features are **off until you add a provider** in Settings → AI tutor. T
 2. Click **Create API key**. The free tier needs no credit card.
 3. In Waypoint, open **Settings → AI tutor**, keep **Google Gemini** selected, paste the key, press **Save**, then **Test connection**.
 
-The default model is `gemini-flash-latest`, an alias Google keeps pointed at its newest Flash model, which is what the free tier covers. You can type another model name, such as `gemini-2.5-flash-lite`, in the Model field.
+### Choosing a model
+
+The default model is `gemini-flash-latest`, an alias Google keeps pointed at its newest Flash model, which is what the free tier covers. To use a different one, go to Settings → AI tutor:
+
+- type any model id into the **Model** field, or click one of the suggestions (for example `gemini-flash-lite-latest`, which is faster and has higher free limits, or `gemini-2.5-pro`, which is stronger but usually needs billing);
+- or press **Fetch my models** to list exactly the chat models your key or local server can use (Gemini's `models` endpoint, or `/models` for Ollama and OpenAI-compatible APIs), then pick one.
+
+**Test connection** uses the model in the field, so you can try a model before you save it. Every AI panel shows which model is answering, and the model name links back to Settings. If a model doesn't exist or your key can't use it, the app tells you to pick another one.
 
 ### Other providers
 
