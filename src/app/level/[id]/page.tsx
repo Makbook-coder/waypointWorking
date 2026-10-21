@@ -13,6 +13,8 @@ import { getLevel, getPhase, levelHref, levels, moduleHref } from "@/lib/data";
 import { PHASE_STYLE } from "@/lib/phase";
 import { levelTopicIds, moduleTopicIds } from "@/lib/progress";
 import { getTopicNote } from "@/lib/topic-notes";
+import { EXAM_LEVELS } from "@/lib/exam";
+import { labsForLevel } from "@/lib/labs";
 import type { ProjectItem } from "@/lib/types";
 
 type Props = { params: Promise<{ id: string }> };
@@ -131,6 +133,28 @@ export default async function LevelPage({ params }: Props) {
         </div>
 
         <aside className="space-y-4">
+          {(labsForLevel(level.id).length > 0 || EXAM_LEVELS.includes(level.id)) && (
+            <Card>
+              <SectionTitle>Prove it</SectionTitle>
+              <ul className="space-y-2 text-sm">
+                {labsForLevel(level.id).map((l) => (
+                  <li key={l.id}>
+                    <Link href={`${moduleHref(l.moduleId)}#practice`} className="underline underline-offset-2">
+                      Guided lab: {l.title}
+                    </Link>
+                  </li>
+                ))}
+                {EXAM_LEVELS.includes(level.id) && (
+                  <li>
+                    <Link href={`/exam/${level.id}`} className="underline underline-offset-2">
+                      Take the L{level.id} level exam
+                    </Link>
+                    <span className="text-muted"> · 30 minutes, pass mark 70%</span>
+                  </li>
+                )}
+              </ul>
+            </Card>
+          )}
           <Card>
             <SectionTitle>Level outcome</SectionTitle>
             <p className="text-sm leading-relaxed">{level.outcome}</p>
