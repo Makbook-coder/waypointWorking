@@ -4,18 +4,20 @@ import { useState } from "react";
 import { store, type Confidence } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
 import type { Topic } from "@/lib/types";
+import { topicVideo } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
 import { NoteEditor } from "./NoteEditor";
 
 const CONF_LABEL: Record<Confidence, string> = { 1: "Shaky", 2: "Okay", 3: "Solid" };
 
-export function TopicRow({ topic, showDescription = true }: { topic: Topic; showDescription?: boolean }) {
+export function TopicRow({ topic, moduleTitle, showDescription = true }: { topic: Topic; moduleTitle: string; showDescription?: boolean }) {
   const s = useUserState();
   const p = s.topics[topic.id];
   const done = Boolean(p?.done);
   const hasNote = Boolean(s.notes[`topic:${topic.id}`]);
   const [noteOpen, setNoteOpen] = useState(false);
   const checkId = `t-${topic.id}`;
+  const video = topicVideo(topic, { title: moduleTitle });
 
   return (
     <li className="group border-b border-line py-3 last:border-b-0">
@@ -60,6 +62,17 @@ export function TopicRow({ topic, showDescription = true }: { topic: Topic; show
             >
               {hasNote ? "Note ✎" : "Add note"}
             </button>
+            <a
+              href={video.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Opens a YouTube search for this topic"
+              className="inline-flex items-center gap-1 rounded border border-line px-1.5 py-0.5 text-[11px] text-muted hover:border-[#ff0033] hover:text-ink"
+            >
+              <YouTubeIcon />
+              YouTube
+              <span className="sr-only">: search videos on {topic.title} (opens in a new tab)</span>
+            </a>
             <BookmarkButton itemKey={`topic:${topic.id}`} label={topic.title} compact />
           </div>
           {noteOpen && (
@@ -70,5 +83,14 @@ export function TopicRow({ topic, showDescription = true }: { topic: Topic; show
         </div>
       </div>
     </li>
+  );
+}
+
+function YouTubeIcon() {
+  return (
+    <svg width="14" height="10" viewBox="0 0 28 20" aria-hidden="true">
+      <rect width="28" height="20" rx="5" fill="#ff0033" />
+      <path d="M11 5.5v9l8-4.5z" fill="#fff" />
+    </svg>
   );
 }

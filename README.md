@@ -6,7 +6,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Roadmap (`/roadmap`)**: a transit-style map with seven colored lines, one per phase. Each level card shows progress, interview and job weight badges, and prerequisite hints. The hints never lock anything.
 - **Level (`/level/[id]`)**: modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
 - **Module (`/module/[id]`)**: four tabs.
-  - **Learn**: topics, with done, confidence 1 to 3, a note and a bookmark on each.
+  - **Learn**: topics, with done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
   - **Practice**: a quiz runner, exercises, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
@@ -179,7 +179,9 @@ These decisions were made while building v1, without stopping to ask:
    - CampusX links that appear on the roadmap pages are included.
    - Paid items (CampusX One courses and one book) are marked `free: false`.
    - No deep link was guessed.
-9. **One search link per module.** Each of the 165 modules gets exactly one YouTube search link (`searchLink: true`, titled "YouTube search: …"). This is in addition to its verified resources, so every module has at least one video entry point without inventing video URLs. These are the only search links.
+9. **One search link per module.** Each of the 165 modules gets exactly one YouTube search link (`searchLink: true`, titled "YouTube search: …"). This is in addition to its verified resources, so every module has at least one video entry point without inventing video URLs. These are the only search links in `resources.json`.
+
+   **A YouTube link beside every topic.** Each topic row on module and level pages has a small YouTube button. It opens a YouTube search for the topic title plus the module title for context, so short topic names still find relevant videos. These links are generated at runtime by `src/lib/youtube.ts`, are flagged `searchLink`, and never point at a guessed video. When a module has verified videos (CampusX, Karpathy, 3Blue1Brown), they're listed under "Watch first" at the top of its Learn tab.
 10. **Quizzes** cover L0 to L13, with 5 per module (740 in total). They are written to be factually checkable and tied to each module's topics. Answer positions are shuffled deterministically. L14 is a set of portfolio projects and L15 is interview practice, so they get exercises and scenarios instead of quizzes.
 11. **Exercises.**
     - 47 modules have a "Try it" prompt on the source. Each was rewritten by hand as a concrete task with acceptance criteria.

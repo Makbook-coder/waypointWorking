@@ -8,6 +8,7 @@
  * YouTube search link, flagged `searchLink: true`, so there is always a way to find
  * a current video without inventing a deep link.
  */
+import { youtubeSearch } from "../src/lib/youtube";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Resource, ResourceMap, Roadmap } from "../src/lib/types";
@@ -472,15 +473,6 @@ export const MAP: Record<string, Key[]> = {
   "M15.10": ["chipInterviews", "chipPlatform"],
 };
 
-export function youtubeSearch(query: string): Resource {
-  return {
-    type: "video",
-    title: `YouTube search: ${query}`,
-    url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
-    free: true,
-    searchLink: true,
-  };
-}
 
 export function buildResources(roadmap: Roadmap): ResourceMap {
   const out: ResourceMap = {};

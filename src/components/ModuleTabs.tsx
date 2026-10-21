@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { ExerciseItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
+import { verifiedVideos } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
 import { ExerciseCard } from "./ExerciseCard";
 import { NoteEditor } from "./NoteEditor";
@@ -72,7 +73,7 @@ export function ModuleTabs({ module: mod, resources, practice, color }: { module
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
-        {tab === "learn" && <LearnPanel mod={mod} color={color} />}
+        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} quizzes={quizzes} color={color} />}
         {tab === "notes" && (
@@ -85,18 +86,34 @@ export function ModuleTabs({ module: mod, resources, practice, color }: { module
   );
 }
 
-function LearnPanel({ mod, color }: { mod: Module; color: string }) {
+function LearnPanel({ mod, color, videos }: { mod: Module; color: string; videos: Resource[] }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <section aria-labelledby="topics-h">
         <SectionTitle id="topics-h">Topics</SectionTitle>
         <ul className="rounded-lg border border-line bg-surface px-4">
           {mod.topics.map((t) => (
-            <TopicRow key={t.id} topic={t} />
+            <TopicRow key={t.id} topic={t} moduleTitle={mod.title} />
           ))}
         </ul>
       </section>
       <aside className="space-y-3">
+        {videos.length > 0 && (
+          <div className="rounded-lg border border-line bg-surface p-4" style={{ borderLeft: "4px solid #ff0033" }}>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted">Watch first</p>
+            <ul className="mt-1 space-y-1 text-sm">
+              {videos.map((v) => (
+                <li key={v.url}>
+                  <a href={v.url} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
+                    {v.title}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                    <span aria-hidden="true"> ↗</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {mod.mentalModel && <Callout title="Mental model" color={color} text={mod.mentalModel} />}
         {mod.outcome && <Callout title="Outcome" color={color} text={mod.outcome} />}
         {mod.tryIt && <Callout title="Try it" color={color} text={mod.tryIt} />}
