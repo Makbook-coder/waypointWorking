@@ -7,6 +7,7 @@ import type { SourcedInterviewItem } from "@/lib/sourced";
 import { getNote, type ModuleNote } from "@/lib/notes";
 import { linkTerms } from "@/lib/glossary";
 import type { Lab } from "@/lib/lab-steps";
+import type { Explainer } from "@/lib/explainers";
 import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
@@ -18,6 +19,7 @@ import { ExerciseCard } from "./ExerciseCard";
 import { Segments } from "./GlossaryText";
 import { InterviewCard } from "./InterviewCard";
 import { LabCard } from "./LabCard";
+import { ModuleExplainer } from "./ModuleExplainer";
 import { MiniProjectCard } from "./MiniProjectCard";
 import { NoteEditor } from "./NoteEditor";
 import { ProjectChecklist } from "./ProjectChecklist";
@@ -40,6 +42,7 @@ export function ModuleTabs({
   color,
   topicNotes = {},
   labs = [],
+  explainer,
 }: {
   module: Module;
   resources: Resource[];
@@ -48,6 +51,7 @@ export function ModuleTabs({
   color: string;
   topicNotes?: Record<string, TopicNote>;
   labs?: Lab[];
+  explainer?: Explainer;
 }) {
   const [tab, setTab] = useState<Tab>("learn");
   const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, applied: null, resources: null, practice: null, notes: null });
@@ -104,7 +108,7 @@ export function ModuleTabs({
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
-        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} />}
+        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} explainer={explainer} />}
         {tab === "applied" && <AppliedPanel mod={mod} color={color} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} labs={labs} />}
@@ -118,12 +122,13 @@ export function ModuleTabs({
   );
 }
 
-function LearnPanel({ mod, color, videos, topicNotes }: { mod: Module; color: string; videos: Resource[]; topicNotes: Record<string, TopicNote> }) {
+function LearnPanel({ mod, color, videos, topicNotes, explainer }: { mod: Module; color: string; videos: Resource[]; topicNotes: Record<string, TopicNote>; explainer?: Explainer }) {
   const note = getNote(mod.id);
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="min-w-0 space-y-6">
         {note && <UnderstandIt note={note} color={color} />}
+        {explainer && <ModuleExplainer explainer={explainer} color={color} />}
         <section aria-labelledby="topics-h">
           <SectionTitle id="topics-h">Topics</SectionTitle>
           <ul className="rounded-lg border border-line bg-surface px-4">
