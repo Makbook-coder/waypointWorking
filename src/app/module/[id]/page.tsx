@@ -10,6 +10,7 @@ import { PhaseTag } from "@/components/ui";
 import { getPractice, getResources } from "@/lib/content-data";
 import { getLevel, getModule, getPhase, levelHref, moduleHref, moduleIdFromParam, modules } from "@/lib/data";
 import { PHASE_STYLE } from "@/lib/phase";
+import { getSourcedForModule } from "@/lib/sourced";
 import { moduleTopicIds } from "@/lib/progress";
 
 type Props = { params: Promise<{ id: string }> };
@@ -76,6 +77,7 @@ export default async function ModulePage({ params }: Props) {
         module={mod}
         resources={getResources(mod.id)}
         practice={getPractice(mod.id)}
+        sourced={getSourcedForModule(mod.id)}
         color={style.var}
         topicNotes={topicNotesFor(mod.topics.map((t) => t.id))}
       />

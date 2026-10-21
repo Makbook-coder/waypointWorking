@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { allPractice } from "@/lib/content-data";
 import { getModule, levels, moduleHref } from "@/lib/data";
+import { companyCounts, filterSourced, sourcedItems } from "@/lib/sourced";
 import { interviewSummary, mockAverage, pickMockQuestions } from "@/lib/interview";
 import { store } from "@/lib/store";
 import type { InterviewItem } from "@/lib/types";
@@ -11,6 +12,7 @@ import { useHydrated, useUserState } from "@/lib/use-store";
 import { InterviewCard } from "./InterviewCard";
 import { Card, EmptyState, SectionTitle, buttonClass, ghostButtonClass, inputClass } from "./ui";
 
+const companyList = companyCounts(sourcedItems);
 const bank = allPractice.filter((p): p is InterviewItem => p.type === "interview");
 const ctx = (moduleId: string) => {
   const m = getModule(moduleId);
@@ -25,12 +27,16 @@ export function MockInterview() {
   const s = useUserState();
   const hydrated = useHydrated();
   const [level, setLevel] = useState<number | "all">("all");
+  const [company, setCompany] = useState("all");
   const [count, setCount] = useState(5);
   const [seconds, setSeconds] = useState(180);
   const [run, setRun] = useState<Run | null>(null);
   const [finished, setFinished] = useState<Run | null>(null);
 
-  const pool = useMemo(() => bank.filter((q) => level === "all" || q.levelId === level), [level]);
+  const pool = useMemo(
+    () => (company === "all" ? bank.filter((q) => level === "all" || q.levelId === level) : filterSourced(sourcedItems, { company, levelId: level })),
+    [level, company],
+  );
   const summary = useMemo(() => interviewSummary(bank, s), [s]);
 
   function start() {
@@ -114,13 +120,23 @@ export function MockInterview() {
         <p className="mb-4 text-sm text-muted">
           Questions you scored low come first, then ones you haven&apos;t tried, then the rest. Answer in writing or out loud, reveal the model answer, tick the key points you hit, and score yourself.
         </p>
-        <form className="grid gap-3 sm:grid-cols-3" aria-labelledby="mock-setup" onSubmit={(e) => { e.preventDefault(); start(); }}>
+        <form className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-labelledby="mock-setup" onSubmit={(e) => { e.preventDefault(); start(); }}>
           <Field label="Levels">
             <select className={inputClass} value={String(level)} onChange={(e) => setLevel(e.target.value === "all" ? "all" : Number(e.target.value))}>
               <option value="all">All levels</option>
               {levels.map((l) => (
                 <option key={l.id} value={l.id}>
                   L{l.id} {l.title}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Company">
+            <select className={inputClass} value={company} onChange={(e) => setCompany(e.target.value)}>
+              <option value="all">Any (study bank)</option>
+              {companyList.map((c) => (
+                <option key={c.company} value={c.company}>
+                  Asked at {c.company} ({c.count})
                 </option>
               ))}
             </select>
@@ -142,7 +158,7 @@ export function MockInterview() {
               <option value={0}>No timer</option>
             </select>
           </Field>
-          <div className="flex flex-wrap items-center gap-3 sm:col-span-3">
+          <div className="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-4">
             <button type="submit" className={buttonClass} disabled={pool.length === 0}>
               Start · {Math.min(count, pool.length)} questions
             </button>

@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import { SCORE_LABELS, suggestScore } from "@/lib/interview";
 import { store } from "@/lib/store";
+import type { SourcedInterviewItem } from "@/lib/sourced";
 import type { InterviewItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
 import { BookmarkButton } from "./BookmarkButton";
@@ -20,7 +21,7 @@ export function InterviewCard({
   timerSeconds,
   onScored,
 }: {
-  item: InterviewItem;
+  item: InterviewItem | SourcedInterviewItem;
   context?: string;
   timerSeconds?: number;
   onScored?: (score: number) => void;
@@ -48,6 +49,7 @@ export function InterviewCard({
     return () => clearTimeout(t);
   }, [left, revealed]);
 
+  const sourced = "companies" in item ? item : null;
   const nCovered = covered.filter(Boolean).length;
   const suggested = suggestScore(nCovered, item.keyPoints.length);
 
@@ -64,6 +66,12 @@ export function InterviewCard({
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <Badge>interview</Badge>
             <Badge>{item.difficulty}</Badge>
+            {sourced?.format === "scenario" && <Badge>scenario</Badge>}
+            {sourced?.companies.map((c) => (
+              <Badge key={c} title={`Asked at ${c}, per the linked source`}>
+                {c}
+              </Badge>
+            ))}
             {last && <Badge title={`Last self-score ${last.score} out of 5`}>last {last.score}/5</Badge>}
             {context && <span className="text-xs text-muted">{context}</span>}
           </div>
@@ -100,6 +108,15 @@ export function InterviewCard({
             <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted">Model answer</p>
             {item.answer}
           </div>
+          {sourced && (
+            <p className="text-xs text-muted">
+              Source:{" "}
+              <a href={sourced.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">
+                {sourced.source.title}
+              </a>
+              {sourced.role ? ` · role: ${sourced.role}` : ""}
+            </p>
+          )}
           <fieldset>
             <legend className="text-xs font-semibold uppercase tracking-wider text-muted">Which key points did you cover?</legend>
             <ul className="mt-1 space-y-1.5">

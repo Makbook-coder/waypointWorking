@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { CodingItem, ExerciseItem, InterviewItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
+import type { SourcedInterviewItem } from "@/lib/sourced";
 import { getNote, type ModuleNote } from "@/lib/notes";
 import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
@@ -27,12 +28,14 @@ export function ModuleTabs({
   module: mod,
   resources,
   practice,
+  sourced = [],
   color,
   topicNotes = {},
 }: {
   module: Module;
   resources: Resource[];
   practice: PracticeItem[];
+  sourced?: SourcedInterviewItem[];
   color: string;
   topicNotes?: Record<string, TopicNote>;
 }) {
@@ -93,7 +96,7 @@ export function ModuleTabs({
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
         {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
-        {tab === "practice" && <PracticePanel mod={mod} practice={practice} quizzes={quizzes} color={color} />}
+        {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} />}
         {tab === "notes" && (
           <div className="max-w-3xl">
             <NoteEditor itemKey={`module:${mod.id}`} label={`Notes for ${mod.id}`} rows={16} />
@@ -210,14 +213,14 @@ function ResourcesPanel({ mod, resources }: { mod: Module; resources: Resource[]
   );
 }
 
-function PracticePanel({ mod, practice, quizzes, color }: { mod: Module; practice: PracticeItem[]; quizzes: QuizItem[]; color: string }) {
+function PracticePanel({ mod, practice, sourced, quizzes, color }: { mod: Module; practice: PracticeItem[]; sourced: SourcedInterviewItem[]; quizzes: QuizItem[]; color: string }) {
   const exercises = practice.filter((p): p is ExerciseItem => p.type === "exercise");
   const scenarios = practice.filter((p): p is ScenarioItem => p.type === "scenario");
   const projects = practice.filter((p): p is ProjectItem => p.type === "project");
   const coding = practice.filter((p): p is CodingItem => p.type === "coding");
   const minis = practice.filter((p): p is MiniProjectItem => p.type === "mini");
   const interview = practice.filter((p): p is InterviewItem => p.type === "interview");
-  if (practice.length === 0) return <EmptyState>No practice items for {mod.id}.</EmptyState>;
+  if (practice.length === 0 && sourced.length === 0) return <EmptyState>No practice items for {mod.id}.</EmptyState>;
   return (
     <div className="space-y-8">
       {quizzes.length > 0 && (
@@ -257,6 +260,16 @@ function PracticePanel({ mod, practice, quizzes, color }: { mod: Module; practic
           <SectionTitle id="iv-h">Interview question</SectionTitle>
           <div className="space-y-4">
             {interview.map((q) => (
+              <InterviewCard key={q.id} item={q} />
+            ))}
+          </div>
+        </section>
+      )}
+      {sourced.length > 0 && (
+        <section aria-labelledby="rq-h" className="max-w-3xl">
+          <SectionTitle id="rq-h">Asked in real interviews · {sourced.length}</SectionTitle>
+          <div className="space-y-4">
+            {sourced.map((q) => (
               <InterviewCard key={q.id} item={q} />
             ))}
           </div>
