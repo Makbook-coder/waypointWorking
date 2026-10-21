@@ -24,7 +24,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
   - Quiz accuracy, weak modules and shaky topics.
   - A "what to study next" list.
   - A daily study log and 21 milestone badges.
-- **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme and target role).
+- **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme, target role and optional cloud sync).
 
 ## Setup
 
@@ -131,39 +131,31 @@ A wrong quiz answer pulls every completed topic in that module back one interval
 
 You can also deploy with `npx vercel` from the project root. The data JSON is bundled at build time, so to update the content you regenerate the data, commit and redeploy.
 
-## Swapping localStorage for Supabase
+## Optional Supabase sync
 
-All user state goes through `src/lib/store.ts`. Components only call `store.*` actions and read state through `useUserState()`. The persistence boundary is one interface:
+Sync is **off by default**. With no configuration the app is fully local, and the Settings page says so. To sync progress across devices:
 
-```ts
-interface StorageAdapter { read(): string | null; write(value: string): void }
-```
+1. Create a free project at supabase.com.
+2. In the SQL editor, run [`supabase/schema.sql`](supabase/schema.sql). It creates a `waypoint_progress` table with one row per user, and row-level security so each user can only read and write their own row.
+3. Under Authentication → URL configuration, set the Site URL to your deployed URL, for example `https://your-app.vercel.app`, and add `https://your-app.vercel.app/settings` to the redirect URLs. Email sign-in is on by default.
+4. Set two environment variables in Vercel (Project → Settings → Environment Variables), or in `.env.local` for local dev. Copy them from Project Settings → API:
 
-To move to Supabase:
-
-1. Create a table, for example `progress(user_id uuid primary key references auth.users, state jsonb, updated_at timestamptz)`. Add a row-level-security policy `user_id = auth.uid()`.
-2. Write an adapter that keeps the synchronous contract by serving reads from memory. Hydrate it once after sign-in, then write through in the background (debounced):
-
-   ```ts
-   export function supabaseStorage(client: SupabaseClient, userId: string, initial: string | null): StorageAdapter {
-     let cache = initial;                 // fetched with select state from progress where user_id = …
-     let timer: ReturnType<typeof setTimeout> | undefined;
-     return {
-       read: () => cache,
-       write(value) {
-         cache = value;
-         clearTimeout(timer);
-         timer = setTimeout(() => {
-           client.from("progress").upsert({ user_id: userId, state: JSON.parse(value), updated_at: new Date().toISOString() });
-         }, 800);
-       },
-     };
-   }
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
    ```
 
-3. After sign-in, create the store with `createStore({ storage: supabaseStorage(...) })` instead of the default `browserStorage`, and call `store.reload()`. On first sign-in you can upload the existing localStorage blob so nobody loses progress. Migrations and sanitizing still run on whatever the server returns.
+   The anon key is designed to be public. Row-level security is what protects the data, so never put the `service_role` key in the app.
+5. Redeploy. Settings now shows **Cloud sync**: enter your email, open the sign-in link, and your progress uploads. On another device, sign in with the same email and it downloads.
 
-Nothing else changes. If you later want per-row tables, for example to query progress across users, split the `UserState` maps into tables behind the same adapter.
+How it works:
+- localStorage stays the copy the app reads, so everything works offline and stays instant.
+- `src/lib/sync/engine.ts` pulls the cloud row on start and whenever the tab becomes visible. It pushes about 1.5 seconds after you stop making changes.
+- A push only overwrites the version it last saw. If another device wrote in between, it re-reads first.
+- When both sides changed, the newer copy is kept whole. The other copy is saved locally and offered as a download that the Import button accepts (see decision 35).
+- The Supabase library is loaded only when sync is configured, so the default build doesn't ship it.
+
+The persistence boundary inside the store is still the `StorageAdapter` (`read()` / `write()`), if you'd rather replace localStorage outright.
 
 ## Project layout
 
@@ -177,6 +169,8 @@ public/py-worker.js Web Worker that runs coding tests in Pyodide
 src/app/            routes (App Router)
 src/components/     UI; client components are marked "use client"
 src/lib/            store, review scheduler, progress, focus ranking, search, data access
+src/lib/sync/       optional Supabase sync (engine, remote, browser client)
+supabase/schema.sql table and row-level-security policies for sync
 tests/              Vitest
 ```
 
@@ -246,3 +240,6 @@ These decisions were made while building v1, without stopping to ask:
 32. **Self-grading is guided, not automatic.** After you reveal the model answer, you tick the key points you covered. The card then suggests a score from 1 (none covered) to 5 (all covered), but you choose the score. Automatic grading of free text would need an LLM call and a backend, so it's out of scope for a local-only app. Typed answers are optional and are saved with the score.
 33. **Mock question order.** A mock takes questions with a latest score of 1 or 2 first, then questions you haven't tried, then the rest by rising score. Ties are random, so repeat mocks vary. The timer counts down and warns you when time is up, but it never submits or skips for you.
 34. **Schema v5** adds `interview` (the last 10 attempts per question) and `mocks` (the last 50 sessions). Both are capped so localStorage stays small, and answers are capped at 4,000 characters. The text-answer mock interview from the second feature list is built here.
+35. **Sync is whole-document, last writer wins, with a safety copy.** Progress is one JSON document of a few hundred KB at most, so syncing it as one row is simple and cheap. Merging every field (ticks, unticks, notes, attempts) would need per-field timestamps and tombstones throughout the schema. When both sides changed, the copy with the later change is kept. The other copy is never silently dropped: it's saved locally as an export file the user can download and re-import.
+36. **localStorage stays primary even when sync is on.** The UI never waits on the network. A failed sync shows an error in Settings and retries on the next change or focus, and nothing is lost.
+37. **Magic-link sign-in only.** There are no passwords to store or reset, and it works with Supabase's default email auth. Signing in with a different account on the same device resets the sync position, so one account's data is never pushed into another's row without the usual conflict check.

@@ -73,7 +73,7 @@ export function InterviewCard({
       </div>
 
       {left !== null && (
-        <p className={`num mt-2 text-sm font-semibold ${left === 0 ? "text-red-700 dark:text-red-400" : "text-muted"}`} role="timer" aria-live={left === 0 ? "assertive" : "off"}>
+        <p className={`num mt-2 text-sm font-semibold ${left === 0 ? "text-bad" : "text-muted"}`} role="timer" aria-live={left === 0 ? "assertive" : "off"}>
           {left === 0 ? "Time's up. Wrap up your answer." : `${fmt(left)} left`}
         </p>
       )}
