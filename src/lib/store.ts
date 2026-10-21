@@ -5,7 +5,7 @@ import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -58,8 +58,12 @@ export interface UserState {
   reviews: Record<string, ReviewEntry>; // topicId -> next review
   activity: DayString[]; // distinct active days, ascending
   lastVisited: LastVisited | null;
-  settings: { theme: Theme; targetRole: TargetRole };
+  studyMinutes: Record<DayString, number>; // focused minutes per day (tab visible and recently used)
+  log: Record<DayString, Note>; // one study-log entry per day
+  settings: { theme: Theme; targetRole: TargetRole; weeklyHours: number };
 }
+
+export const DEFAULT_WEEKLY_HOURS = 6;
 
 export function emptyState(): UserState {
   return {
@@ -74,7 +78,9 @@ export function emptyState(): UserState {
     reviews: {},
     activity: [],
     lastVisited: null,
-    settings: { theme: "system", targetRole: "none" },
+    studyMinutes: {},
+    log: {},
+    settings: { theme: "system", targetRole: "none", weeklyHours: DEFAULT_WEEKLY_HOURS },
   };
 }
 
@@ -110,8 +116,12 @@ function migrateV1(v1: Json): Json {
   };
 }
 
+/** v3 added studyMinutes, log and settings.weeklyHours; their defaults come from sanitize. */
+const migrateV2 = (v2: Json): Json => ({ ...v2, version: 3 });
+
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
+  2: migrateV2,
 };
 
 export function migrate(raw: unknown): Json {
@@ -178,9 +188,23 @@ export function sanitize(s: Json): UserState {
     lastVisited: last && typeof last.href === "string" && last.href.startsWith("/")
       ? { href: last.href, title: str(last.title), at: str(last.at) }
       : null,
+    studyMinutes: Object.fromEntries(
+      Object.entries(isObj(s.studyMinutes) ? s.studyMinutes : {})
+        .filter(([d, m]) => isDay(d) && typeof m === "number" && Number.isFinite(m) && m > 0)
+        .map(([d, m]) => [d, Math.min(24 * 60, Math.round(m as number))]),
+    ),
+    log: Object.fromEntries(
+      Object.entries(isObj(s.log) ? s.log : {})
+        .filter(([d, n]) => isDay(d) && isObj(n) && typeof n.text === "string")
+        .map(([d, n]) => [d, { text: (n as Json).text as string, updatedAt: str((n as Json).updatedAt) }]),
+    ),
     settings: {
       theme: theme === "light" || theme === "dark" || theme === "system" ? theme : base.settings.theme,
       targetRole: role === "ai-engineer" || role === "genai-ds" || role === "none" ? role : base.settings.targetRole,
+      weeklyHours: (() => {
+        const h = num(settings.weeklyHours, base.settings.weeklyHours);
+        return h >= 1 && h <= 80 ? Math.round(h) : base.settings.weeklyHours;
+      })(),
     },
   };
 }
@@ -384,6 +408,27 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
     },
     setTargetRole(targetRole: TargetRole) {
       update((s) => ({ ...s, settings: { ...s.settings, targetRole } }), { active: false });
+    },
+    setWeeklyHours(hours: number) {
+      const weeklyHours = Math.max(1, Math.min(80, Math.round(hours)));
+      update((s) => ({ ...s, settings: { ...s.settings, weeklyHours } }), { active: false });
+    },
+    /** Add focused study minutes to today. Does not count as an activity on its own. */
+    addStudyMinutes(minutes: number) {
+      if (!(minutes > 0)) return;
+      update((s) => {
+        const d = today();
+        return { ...s, studyMinutes: { ...s.studyMinutes, [d]: Math.min(24 * 60, (s.studyMinutes[d] ?? 0) + minutes) } };
+      }, { active: false });
+    },
+    /** Write the study-log entry for a day (default today). Empty text removes it. */
+    setLog(text: string, day: DayString = today()) {
+      update((s) => {
+        const log = { ...s.log };
+        if (text.trim()) log[day] = { text, updatedAt: stamp() };
+        else delete log[day];
+        return { ...s, log };
+      });
     },
 
     exportJSON(): string {
