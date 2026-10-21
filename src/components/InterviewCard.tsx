@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { gradeAnswer, type Grade } from "@/lib/ai/tasks";
+import { useAIRequest } from "@/lib/ai/use-ai";
 import { SCORE_LABELS, suggestScore } from "@/lib/interview";
 import { store } from "@/lib/store";
 import type { SourcedInterviewItem } from "@/lib/sourced";
 import type { InterviewItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
+import { AIErrorNote, AIGradeResult, AISetupHint } from "./AIKit";
+import { AIFollowUps, type FollowUp } from "./AIFollowUps";
 import { BookmarkButton } from "./BookmarkButton";
 import { Badge, buttonClass, ghostButtonClass } from "./ui";
 
@@ -14,17 +18,21 @@ const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "
 /**
  * Answer in your own words (optional), reveal the model answer, tick the key points you covered,
  * then self-score 1 to 5. With `timerSeconds` it shows a countdown; it never auto-submits.
+ * With an AI provider set up, the answer can be graded by the AI, and `aiInterviewer` (or the
+ * "Practice follow-ups" button) lets the AI ask follow-up questions first.
  */
 export function InterviewCard({
   item,
   context,
   timerSeconds,
   onScored,
+  aiInterviewer = false,
 }: {
   item: InterviewItem | SourcedInterviewItem;
   context?: string;
   timerSeconds?: number;
   onScored?: (score: number) => void;
+  aiInterviewer?: boolean;
 }) {
   const history = useUserState().interview[item.id] ?? [];
   const last = history[history.length - 1];
@@ -34,6 +42,10 @@ export function InterviewCard({
   const [covered, setCovered] = useState<boolean[]>(() => item.keyPoints.map(() => false));
   const [scored, setScored] = useState<number | null>(null);
   const [left, setLeft] = useState(timerSeconds ?? null);
+  const ai = useAIRequest();
+  const [grade, setGrade] = useState<Grade | null>(null);
+  const [followUps, setFollowUps] = useState<FollowUp[]>([]);
+  const [interviewer, setInterviewer] = useState(aiInterviewer);
 
   useEffect(() => {
     setAnswer("");
@@ -41,7 +53,10 @@ export function InterviewCard({
     setCovered(item.keyPoints.map(() => false));
     setScored(null);
     setLeft(timerSeconds ?? null);
-  }, [item.id, item.keyPoints, timerSeconds]);
+    setGrade(null);
+    setFollowUps([]);
+    setInterviewer(aiInterviewer);
+  }, [item.id, item.keyPoints, timerSeconds, aiInterviewer]);
 
   useEffect(() => {
     if (left === null || left <= 0 || revealed) return;
@@ -53,10 +68,20 @@ export function InterviewCard({
   const nCovered = covered.filter(Boolean).length;
   const suggested = suggestScore(nCovered, item.keyPoints.length);
 
-  function score(n: number) {
-    store.recordInterview(item.id, n, answer);
+  function score(n: number, byAI = false) {
+    store.recordInterview(item.id, n, answer, { ai: byAI });
     setScored(n);
     onScored?.(n);
+  }
+
+  async function gradeIt() {
+    const g = await ai.run((p, signal) =>
+      gradeAnswer(p, { kind: "interview", question: item.question, modelAnswer: item.answer, keyPoints: item.keyPoints, answer, followUps }, signal),
+    );
+    if (!g) return;
+    setGrade(g);
+    setRevealed(true);
+    if (scored === null) setCovered(g.covered);
   }
 
   return (
@@ -98,12 +123,35 @@ export function InterviewCard({
         className="mt-1 w-full resize-y rounded-md border border-line bg-surface-2 p-3 text-sm text-ink placeholder:text-muted"
       />
 
-      {!revealed ? (
-        <button type="button" className={`${buttonClass} mt-3`} onClick={() => setRevealed(true)}>
-          Show model answer
-        </button>
-      ) : (
+      {interviewer && ai.configured && !revealed && <AIFollowUps item={item} answer={answer} followUps={followUps} onChange={setFollowUps} />}
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {!revealed && (
+          <button type="button" className={buttonClass} onClick={() => setRevealed(true)}>
+            Show model answer
+          </button>
+        )}
+        {ai.configured && scored === null && (
+          <button type="button" className={ghostButtonClass} disabled={ai.loading || answer.trim().length < 20} title={answer.trim().length < 20 ? "Write an answer first" : undefined} onClick={gradeIt}>
+            {ai.loading ? "Grading…" : grade ? "Grade again" : "Grade my answer with AI"}
+          </button>
+        )}
+        {ai.configured && !interviewer && !revealed && (
+          <button type="button" className={ghostButtonClass} onClick={() => setInterviewer(true)}>
+            Practice follow-ups
+          </button>
+        )}
+      </div>
+      {!ai.configured && (
+        <div className="mt-2">
+          <AISetupHint>Get your answer graded and practice follow-up questions</AISetupHint>
+        </div>
+      )}
+      <AIErrorNote error={ai.error} />
+
+      {revealed && (
         <div className="mt-3 space-y-3">
+          {grade && <AIGradeResult grade={grade} saved={scored !== null} onSave={(n) => score(n, true)} />}
           <div className="rounded-md border-l-4 border-strong-line bg-surface-2 p-3 text-sm leading-relaxed">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted">Model answer</p>
             {item.answer}

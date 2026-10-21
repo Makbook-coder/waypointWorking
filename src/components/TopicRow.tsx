@@ -9,6 +9,7 @@ import { topicVideo } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
 import { InlineCode } from "./InlineCode";
 import { NoteEditor } from "./NoteEditor";
+import { TutorPanel } from "./TutorPanel";
 
 const CONF_LABEL: Record<Confidence, string> = { 1: "Shaky", 2: "Okay", 3: "Solid" };
 
@@ -28,6 +29,7 @@ export function TopicRow({
   const done = Boolean(p?.done);
   const hasNote = Boolean(s.notes[`topic:${topic.id}`]);
   const [noteOpen, setNoteOpen] = useState(false);
+  const [tutorOpen, setTutorOpen] = useState(false);
   const checkId = `t-${topic.id}`;
   const video = topicVideo(topic, { title: moduleTitle });
 
@@ -75,6 +77,15 @@ export function TopicRow({
             >
               {hasNote ? "Note ✎" : "Add note"}
             </button>
+            <button
+              type="button"
+              aria-expanded={tutorOpen}
+              onClick={() => setTutorOpen((o) => !o)}
+              className="rounded border border-line px-1.5 py-0.5 text-[11px] text-muted hover:text-ink"
+            >
+              Ask tutor
+              <span className="sr-only"> about {topic.title}</span>
+            </button>
             <a
               href={video.url}
               target="_blank"
@@ -88,6 +99,17 @@ export function TopicRow({
             </a>
             <BookmarkButton itemKey={`topic:${topic.id}`} label={topic.title} compact />
           </div>
+          {tutorOpen && (
+            <div className="mt-3 rounded-md border border-line bg-bg p-3">
+              <TutorPanel
+                compact
+                context={{
+                  title: `${topic.title} (part of "${moduleTitle}")`,
+                  facts: [topic.description, ...(simple ? [simple.simple, `Analogy: ${simple.analogy}`, `Example: ${simple.example}`, `Common mistake: ${simple.mistake}`] : [])].filter(Boolean),
+                }}
+              />
+            </div>
+          )}
           {noteOpen && (
             <div className="mt-3">
               <NoteEditor itemKey={`topic:${topic.id}`} label={`Note on ${topic.title}`} rows={4} />

@@ -14,7 +14,19 @@ function topicIdsOf(moduleId: string) {
 }
 
 /** Runs a list of quiz questions one at a time and reports a score at the end. */
-export function QuizRunner({ items, title = "Quiz", showModule = false, onRestart }: { items: QuizItem[]; title?: string; showModule?: boolean; onRestart?: () => void }) {
+export function QuizRunner({
+  items,
+  title = "Quiz",
+  showModule = false,
+  onRestart,
+  bookmarks = true,
+}: {
+  items: QuizItem[];
+  title?: string;
+  showModule?: boolean;
+  onRestart?: () => void;
+  bookmarks?: boolean; // off for AI-generated questions, which bookmarks can't resolve
+}) {
   const [index, setIndex] = useState(0);
   const [choice, setChoice] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -71,7 +83,7 @@ export function QuizRunner({ items, title = "Quiz", showModule = false, onRestar
           Question {index + 1} of {items.length} · {q.difficulty}
           {showModule && mod ? ` · ${mod.id} ${mod.title}` : ""}
         </span>
-        <BookmarkButton itemKey={`practice:${q.id}`} label={q.question} compact />
+        {bookmarks && <BookmarkButton itemKey={`practice:${q.id}`} label={q.question} compact />}
       </div>
       <h3 className="text-lg font-semibold leading-snug" id={`q-${q.id}`}>
         {q.question}

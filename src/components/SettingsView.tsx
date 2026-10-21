@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { store, type Theme } from "@/lib/store";
 import { useHydrated, useUserState } from "@/lib/use-store";
+import { AISettingsPanel } from "./AISettingsPanel";
 import { RoleToggle } from "./RoleToggle";
 import { SyncPanel } from "./SyncPanel";
 import { Card, SectionTitle, buttonClass, ghostButtonClass } from "./ui";
@@ -73,6 +74,8 @@ export function SettingsView() {
         <p className="mb-3 text-sm text-muted">Optional. Changes how the dashboard ranks recommended levels using interview and job weights.</p>
         <RoleToggle />
       </Card>
+
+      <AISettingsPanel />
 
       <SyncPanel />
 

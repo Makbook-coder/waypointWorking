@@ -3,9 +3,10 @@
 // replacing the StorageAdapter below and nothing else. See README "Optional Supabase sync".
 import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
+import type { Difficulty, QuizItem, ScenarioItem } from "./types";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 6;
+export const SCHEMA_VERSION = 7;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -27,6 +28,7 @@ export interface QuizRecord {
 export interface ScenarioRecord {
   score: number; // 1..5 self-score
   at: string;
+  ai?: true; // the score came from the AI tutor
 }
 
 export interface Note {
@@ -57,6 +59,7 @@ export interface InterviewAttempt {
   score: number; // 1..5 self-score against the model answer
   at: string;
   answer?: string; // what the learner typed, if anything
+  ai?: true; // the score came from the AI tutor
 }
 
 export interface MockSession {
@@ -72,6 +75,10 @@ export const MAX_ANSWER_LENGTH = 4_000;
 export const MAX_ATTEMPTS_PER_QUESTION = 10;
 export const MAX_MOCK_SESSIONS = 50;
 export const MAX_FOCUS_SESSIONS = 500;
+export const MAX_GENERATED_PER_MODULE = 60;
+
+/** Extra quiz questions and scenarios the AI tutor wrote for a module. */
+export type GeneratedItem = QuizItem | ScenarioItem;
 
 export interface FocusSession {
   at: string; // when the focus block ended
@@ -90,6 +97,7 @@ export interface UserState {
   mocks: MockSession[]; // finished mock interviews, oldest first
   focus: FocusSession[]; // finished Pomodoro focus blocks, oldest first
   scenarios: Record<string, ScenarioRecord[]>;
+  generated: Record<string, GeneratedItem[]>; // moduleId -> AI-generated practice, oldest first
   bookmarks: Record<ItemKey, string>; // key -> addedAt
   notes: Record<ItemKey, Note>;
   reviews: Record<string, ReviewEntry>; // topicId -> next review
@@ -114,6 +122,7 @@ export function emptyState(): UserState {
     mocks: [],
     focus: [],
     scenarios: {},
+    generated: {},
     bookmarks: {},
     notes: {},
     reviews: {},
@@ -165,6 +174,8 @@ const migrateV3 = (v3: Json): Json => ({ ...v3, version: 4 });
 const migrateV4 = (v4: Json): Json => ({ ...v4, version: 5 });
 /** v6 added focus; its default comes from sanitize. */
 const migrateV5 = (v5: Json): Json => ({ ...v5, version: 6 });
+/** v7 added generated and the optional `ai` flag on scores; defaults come from sanitize. */
+const migrateV6 = (v6: Json): Json => ({ ...v6, version: 7 });
 
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
@@ -172,6 +183,7 @@ const MIGRATIONS: Record<number, (s: Json) => Json> = {
   3: migrateV3,
   4: migrateV4,
   5: migrateV5,
+  6: migrateV6,
 };
 
 export function migrate(raw: unknown): Json {
@@ -236,6 +248,7 @@ export function sanitize(s: Json): UserState {
           score: Math.round(num(r.score)),
           at: str(r.at),
           ...(typeof r.answer === "string" && r.answer ? { answer: r.answer.slice(0, MAX_ANSWER_LENGTH) } : {}),
+          ...(r.ai === true ? { ai: true as const } : {}),
         }))
         .slice(-MAX_ATTEMPTS_PER_QUESTION);
       return list.length ? list : undefined;
@@ -260,7 +273,12 @@ export function sanitize(s: Json): UserState {
       if (!Array.isArray(x)) return undefined;
       return x
         .filter((r): r is Json => isObj(r) && num(r.score) >= 1 && num(r.score) <= 5)
-        .map((r) => ({ score: Math.round(num(r.score)), at: str(r.at) }));
+        .map((r) => ({ score: Math.round(num(r.score)), at: str(r.at), ...(r.ai === true ? { ai: true as const } : {}) }));
+    }),
+    generated: mapValues(s.generated, (x) => {
+      if (!Array.isArray(x)) return undefined;
+      const list = x.map(sanitizeGenerated).filter((g): g is GeneratedItem => g !== undefined).slice(-MAX_GENERATED_PER_MODULE);
+      return list.length ? list : undefined;
     }),
     bookmarks: mapValues(s.bookmarks, (x) => (typeof x === "string" ? x : undefined)),
     notes: mapValues(s.notes, (x) =>
@@ -292,6 +310,25 @@ export function sanitize(s: Json): UserState {
       })(),
     },
   };
+}
+
+const strs = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
+
+function sanitizeGenerated(x: unknown): GeneratedItem | undefined {
+  if (!isObj(x) || typeof x.id !== "string" || typeof x.moduleId !== "string") return undefined;
+  const d = x.difficulty;
+  const base = { id: x.id, moduleId: x.moduleId, levelId: num(x.levelId), difficulty: (d === "easy" || d === "hard" ? d : "medium") as Difficulty };
+  if (x.type === "quiz") {
+    const options = strs(x.options);
+    const answer = num(x.answer, -1);
+    if (typeof x.question !== "string" || options.length !== 4 || ![0, 1, 2, 3].includes(answer)) return undefined;
+    return { ...base, type: "quiz", question: x.question, options: options as QuizItem["options"], answer: answer as QuizItem["answer"], explanation: str(x.explanation) };
+  }
+  if (x.type === "scenario") {
+    if (typeof x.title !== "string" || typeof x.prompt !== "string") return undefined;
+    return { ...base, type: "scenario", title: x.title, prompt: x.prompt, hints: strs(x.hints) };
+  }
+  return undefined;
 }
 
 /** Parse whatever is in storage into a valid, current-version state. Never throws. */
@@ -490,11 +527,11 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
       });
     },
     /** Self-score an interview answer. Keeps the last few attempts per question. */
-    recordInterview(id: string, score: number, answer = "") {
+    recordInterview(id: string, score: number, answer = "", { ai = false } = {}) {
       const clamped = Math.max(1, Math.min(5, Math.round(score)));
       const text = answer.trim().slice(0, MAX_ANSWER_LENGTH);
       update((s) => {
-        const attempt: InterviewAttempt = { score: clamped, at: stamp(), ...(text ? { answer: text } : {}) };
+        const attempt: InterviewAttempt = { score: clamped, at: stamp(), ...(text ? { answer: text } : {}), ...(ai ? { ai: true as const } : {}) };
         const list = [...(s.interview[id] ?? []), attempt].slice(-MAX_ATTEMPTS_PER_QUESTION);
         return { ...s, interview: { ...s.interview, [id]: list } };
       });
@@ -513,9 +550,30 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
         return { ...s, focus: [...s.focus, session].sort((a, b) => (a.at < b.at ? -1 : 1)).slice(-MAX_FOCUS_SESSIONS) };
       });
     },
-    recordScenario(id: string, score: number) {
+    recordScenario(id: string, score: number, { ai = false } = {}) {
       const clamped = Math.max(1, Math.min(5, Math.round(score)));
-      update((s) => ({ ...s, scenarios: { ...s.scenarios, [id]: [...(s.scenarios[id] ?? []), { score: clamped, at: stamp() }] } }));
+      const record: ScenarioRecord = { score: clamped, at: stamp(), ...(ai ? { ai: true as const } : {}) };
+      update((s) => ({ ...s, scenarios: { ...s.scenarios, [id]: [...(s.scenarios[id] ?? []), record] } }));
+    },
+    /** Keep AI-generated practice for a module. Oldest items fall off past the cap. */
+    addGenerated(moduleId: string, items: GeneratedItem[]) {
+      if (items.length === 0) return;
+      update((s) => {
+        const prev = s.generated[moduleId] ?? [];
+        const ids = new Set(prev.map((g) => g.id));
+        const list = [...prev, ...items.filter((g) => !ids.has(g.id))].slice(-MAX_GENERATED_PER_MODULE);
+        return { ...s, generated: { ...s.generated, [moduleId]: list } };
+      });
+    },
+    /** Remove one generated item by id, or every generated item of a type ("quiz" | "scenario"). */
+    removeGenerated(moduleId: string, idOrType: string) {
+      update((s) => {
+        const list = (s.generated[moduleId] ?? []).filter((g) => g.id !== idOrType && g.type !== idOrType);
+        const generated = { ...s.generated };
+        if (list.length) generated[moduleId] = list;
+        else delete generated[moduleId];
+        return { ...s, generated };
+      }, { active: false });
     },
     toggleBookmark(key: ItemKey) {
       update((s) => {
