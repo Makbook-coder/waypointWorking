@@ -16,6 +16,10 @@ export interface CodingSrc {
   tests: [string, string][];
   /** What "done" means, beyond the tests passing */
   checklist: string[];
+  /** Hint 1 and hint 2. Older tasks keep theirs in content/coding/hints.ts. */
+  hints?: [string, string];
+  /** "debug": the starter is broken code to fix. Default "build". */
+  kind?: "build" | "debug";
 }
 
 export const CODING_TASKS: CodingSrc[] = [

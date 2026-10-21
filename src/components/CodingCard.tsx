@@ -10,6 +10,7 @@ import { useUserState } from "@/lib/use-store";
 import { AICodeHints } from "./AIKit";
 import { BookmarkButton } from "./BookmarkButton";
 import { InlineCode } from "./InlineCode";
+import { StuckLadder } from "./StuckLadder";
 import { Badge, buttonClass, ghostButtonClass } from "./ui";
 
 const SAVE_DELAY_MS = 600;
@@ -22,7 +23,6 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
   const [code, setCode] = useState(record?.code ?? item.starter);
   const [status, setStatus] = useState<RunnerStatus>("idle");
   const [result, setResult] = useState<RunResult | null>(null);
-  const [showSolution, setShowSolution] = useState(false);
   const escaped = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const uid = useId();
@@ -86,7 +86,7 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <Badge>coding</Badge>
+            <Badge>{item.kind === "debug" ? "debug this" : "coding"}</Badge>
             <Badge>{item.difficulty}</Badge>
             {passed && <Badge title="All tests passed">✓ passed</Badge>}
             {context && <span className="text-xs text-muted">{context}</span>}
@@ -102,7 +102,7 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
       </p>
 
       <label htmlFor={`${uid}-code`} className="mt-3 block text-xs font-semibold uppercase tracking-wider text-muted">
-        Your code (Python)
+        {item.kind === "debug" ? "Broken code to fix (Python)" : "Your code (Python)"}
       </label>
       <textarea
         id={`${uid}-code`}
@@ -134,9 +134,6 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
           disabled={code === item.starter}
         >
           Reset to starter
-        </button>
-        <button type="button" className={ghostButtonClass} aria-expanded={showSolution} onClick={() => setShowSolution((v) => !v)}>
-          {showSolution ? "Hide solution" : "Show solution"}
         </button>
       </div>
       <div className="mt-3">
@@ -178,15 +175,23 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
         )}
       </div>
 
-      {showSolution && (
-        <div className="mt-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted">Reference solution</p>
-          <pre className="mt-1 overflow-auto rounded-md border border-line bg-surface-2 p-3 font-mono text-[13px] leading-relaxed">{item.solution}</pre>
-          <button type="button" className={`${ghostButtonClass} mt-2`} onClick={() => edit(item.solution)}>
-            Copy into editor
-          </button>
-        </div>
-      )}
+      <StuckLadder
+        resetKey={item.id}
+        rungs={[
+          { label: "Hint 1", text: item.hints[0] },
+          { label: "Hint 2", text: item.hints[1] },
+          { label: "Solution", text: "" },
+        ]}
+        last={
+          <>
+            <span className="text-muted">Read it line by line, then close it and write it yourself.</span>
+            <pre className="mt-1 overflow-auto rounded-md border border-line bg-surface p-3 font-mono text-[13px] leading-relaxed">{item.solution}</pre>
+            <button type="button" className={`${ghostButtonClass} mt-2`} onClick={() => edit(item.solution)}>
+              Copy into editor
+            </button>
+          </>
+        }
+      />
 
       <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted">Before you call it done</p>
       <ul className="mt-1 space-y-1.5">

@@ -18,6 +18,7 @@ import { EXERCISES } from "../content/practice/exercises";
 import { SCENARIOS } from "../content/practice/scenarios";
 import { PROJECTS } from "../content/practice/projects";
 import { CODING_TASKS } from "../content/coding/tasks";
+import { CODING_HINTS } from "../content/coding/hints";
 import { INTERVIEW_L0_L4 } from "../content/interview/l0-l4";
 import { INTERVIEW_L5_L9 } from "../content/interview/l5-l9";
 import { INTERVIEW_L10_L15 } from "../content/interview/l10-l15";
@@ -106,6 +107,8 @@ export function buildPractice(roadmap: Roadmap): PracticeMap {
 
   for (const t of CODING_TASKS) {
     const m = need(t.moduleId);
+    const hints = t.hints ?? CODING_HINTS[t.id];
+    if (!hints) throw new Error(`Coding task ${t.id}: no hints (add them to the task or content/coding/hints.ts)`);
     push({
       id: `${moduleSlug(t.moduleId)}-code-${t.id}`,
       type: "coding",
@@ -123,8 +126,13 @@ export function buildPractice(roadmap: Roadmap): PracticeMap {
       solution: t.solution,
       tests: t.tests.map(([name, code]) => ({ name, code })),
       checklist: t.checklist,
+      hints,
+      kind: t.kind ?? "build",
     } satisfies CodingItem);
   }
+
+  const taskIds = new Set(CODING_TASKS.map((t) => t.id));
+  for (const id of Object.keys(CODING_HINTS)) if (!taskIds.has(id)) throw new Error(`content/coding/hints.ts: unknown task ${id}`);
 
   for (const [moduleId, d, question, answer, keyPoints] of [...INTERVIEW_L0_L4, ...INTERVIEW_L5_L9, ...INTERVIEW_L10_L15]) {
     const m = need(moduleId);
@@ -181,6 +189,7 @@ export function validatePractice(roadmap: Roadmap, practice: PracticeMap): strin
     if (ids.has(it.id)) errors.push(`duplicate id ${it.id}`);
     ids.add(it.id);
     if (it.type === "coding" && (it.tests.length === 0 || it.topicIds.length === 0)) errors.push(`${it.id}: coding task needs tests and topics`);
+    if (it.type === "coding" && (it.hints?.length !== 2 || it.hints.some((h) => h.trim().length < 20))) errors.push(`${it.id}: coding task needs two real hints`);
     if (it.type === "interview" && (it.keyPoints.length < 3 || it.answer.length < 80)) errors.push(`${it.id}: interview question needs 3+ key points and a full answer`);
     if (it.type === "mini" && it.steps.length < 2) errors.push(`${it.id}: mini project has too few steps`);
     if (it.type === "quiz") {

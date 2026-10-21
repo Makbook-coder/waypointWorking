@@ -4,7 +4,9 @@ import { useId } from "react";
 import { store } from "@/lib/store";
 import type { MiniProjectItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
+import { buildLadder } from "@/lib/hints";
 import { BookmarkButton } from "./BookmarkButton";
+import { StuckLadder } from "./StuckLadder";
 import { Badge, ProgressBar } from "./ui";
 
 /** A per-module build: one step per topic. Steps share projectChecks; "complete" shares exercises. */
@@ -53,6 +55,7 @@ export function MiniProjectCard({ item, context, color }: { item: MiniProjectIte
         <span className="font-semibold">Done when: </span>
         {item.doneWhen}
       </div>
+      <StuckLadder rungs={buildLadder(item)} resetKey={item.id} />
       <div className="mt-3 flex items-center gap-2">
         <input id={`${uid}-done`} type="checkbox" checked={complete} onChange={(e) => store.setExerciseDone(item.id, e.target.checked)} className="h-5 w-5 cursor-pointer accent-[var(--ink)]" />
         <label htmlFor={`${uid}-done`} className="cursor-pointer text-sm">
