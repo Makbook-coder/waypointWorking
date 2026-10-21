@@ -24,6 +24,7 @@ export const getTopic = (id: string) => topicIndex.get(id);
 /** URL segment for a module: "M4.6" -> "m4-6" */
 export const moduleHref = (id: string) => `/module/${id.toLowerCase().replace(".", "-")}`;
 export const levelHref = (id: number) => `/level/${id}`;
+export const topicHref = (topicId: string) => `/topic/${topicId}`;
 export function moduleIdFromParam(param: string): string | null {
   const m = /^m(\d+)-(\d+)$/i.exec(param);
   return m ? `M${Number(m[1])}.${Number(m[2])}` : null;

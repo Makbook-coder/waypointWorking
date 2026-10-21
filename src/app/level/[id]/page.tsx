@@ -16,6 +16,8 @@ import { levelTopicIds, moduleTopicIds } from "@/lib/progress";
 import { getTopicNote } from "@/lib/topic-notes";
 import { EXAM_LEVELS } from "@/lib/exam";
 import { labsForLevel } from "@/lib/labs";
+import { mistakesForLevel } from "@/lib/mistakes";
+import { LevelMistakes } from "@/components/LevelMistakes";
 import type { ProjectItem } from "@/lib/types";
 
 type Props = { params: Promise<{ id: string }> };
@@ -102,6 +104,7 @@ export default async function LevelPage({ params }: Props) {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-4">
+          <LevelMistakes levelId={level.id} mistakes={mistakesForLevel(level.id)} color={style.var} />
           <SectionTitle>Modules</SectionTitle>
           {level.modules.map((m) => (
             <Card key={m.id} as="article">
