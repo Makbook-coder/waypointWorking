@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import type { ExerciseItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
+import type { CodingItem, ExerciseItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
+import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
+import { MiniProjectCard } from "./MiniProjectCard";
 import { NoteEditor } from "./NoteEditor";
 import { ProjectChecklist } from "./ProjectChecklist";
 import { QuizRunner } from "./QuizRunner";
@@ -161,6 +163,8 @@ function PracticePanel({ mod, practice, quizzes, color }: { mod: Module; practic
   const exercises = practice.filter((p): p is ExerciseItem => p.type === "exercise");
   const scenarios = practice.filter((p): p is ScenarioItem => p.type === "scenario");
   const projects = practice.filter((p): p is ProjectItem => p.type === "project");
+  const coding = practice.filter((p): p is CodingItem => p.type === "coding");
+  const minis = practice.filter((p): p is MiniProjectItem => p.type === "mini");
   if (practice.length === 0) return <EmptyState>No practice items for {mod.id}.</EmptyState>;
   return (
     <div className="space-y-8">
@@ -170,6 +174,22 @@ function PracticePanel({ mod, practice, quizzes, color }: { mod: Module; practic
           <QuizRunner items={quizzes} title={`${mod.id} quiz`} />
         </section>
       )}
+      {coding.length > 0 && (
+        <section aria-labelledby="code-h" className="max-w-4xl">
+          <SectionTitle id="code-h">Coding · runs in your browser</SectionTitle>
+          <div className="space-y-4">
+            {coding.map((c) => (
+              <CodingCard key={c.id} item={c} />
+            ))}
+          </div>
+        </section>
+      )}
+      {minis.map((m) => (
+        <section key={m.id} aria-labelledby={`mini-${m.id}`} className="max-w-3xl">
+          <SectionTitle id={`mini-${m.id}`}>Mini project</SectionTitle>
+          <MiniProjectCard item={m} color={color} />
+        </section>
+      ))}
       {exercises.length > 0 && (
         <section aria-labelledby="ex-h">
           <SectionTitle id="ex-h">Exercises</SectionTitle>

@@ -212,3 +212,40 @@ describe("export, import, reset", () => {
     expect(store.getState().topics.t1.done).toBe(true); // keeps working in memory
   });
 });
+
+describe("coding records (v4)", () => {
+  it("migrates v3 data without losing it and adds an empty coding map", () => {
+    const s = loadState(JSON.stringify({ version: 3, topics: { a: { done: true } }, studyMinutes: { "2026-03-01": 30 } }));
+    expect(s.version).toBe(SCHEMA_VERSION);
+    expect(s.topics.a.done).toBe(true);
+    expect(s.studyMinutes).toEqual({ "2026-03-01": 30 });
+    expect(s.coding).toEqual({});
+  });
+
+  it("saves drafts without counting activity, and records the first pass", () => {
+    const { store, setNow } = setup();
+    store.saveCode("t1", "print(1)");
+    expect(store.getState().coding.t1).toEqual({ code: "print(1)" });
+    expect(store.getState().activity).toEqual([]);
+    store.markCodingPassed("t1");
+    const first = store.getState().coding.t1.passedAt;
+    expect(first).toBeTruthy();
+    expect(store.getState().activity).toEqual(["2026-03-10"]);
+    setNow("2026-03-12T09:00:00");
+    store.markCodingPassed("t1");
+    expect(store.getState().coding.t1.passedAt).toBe(first);
+    store.saveCode("t1", "");
+    expect(store.getState().coding.t1).toEqual({ passedAt: first });
+    store.saveCode("t2", "x");
+    store.saveCode("t2", "");
+    expect(store.getState().coding.t2).toBeUndefined();
+  });
+
+  it("sanitizes coding records", () => {
+    const s = loadState(
+      JSON.stringify({ version: 4, coding: { ok: { code: "x".repeat(30_000), passedAt: "2026-03-01T00:00:00Z" }, empty: {}, bad: 5, num: { code: 7 } } }),
+    );
+    expect(Object.keys(s.coding)).toEqual(["ok"]);
+    expect(s.coding.ok.code!.length).toBe(20_000);
+  });
+});

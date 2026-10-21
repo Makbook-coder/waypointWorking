@@ -5,7 +5,7 @@ import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -46,12 +46,20 @@ export interface LastVisited {
  */
 export type ItemKey = string;
 
+export interface CodingRecord {
+  code?: string; // the learner's draft
+  passedAt?: string; // first time every test passed
+}
+
+export const MAX_CODE_LENGTH = 20_000;
+
 export interface UserState {
   version: typeof SCHEMA_VERSION;
   topics: Record<string, TopicProgress>;
   quiz: Record<string, QuizRecord>;
   exercises: Record<string, string>; // id -> completedAt
-  projectChecks: Record<string, string>; // "<projectId>#<index>" -> checkedAt
+  projectChecks: Record<string, string>; // "<projectId>#<index>" -> checkedAt (level projects, mini-project steps, coding checklists)
+  coding: Record<string, CodingRecord>; // coding task id -> draft and first pass
   scenarios: Record<string, ScenarioRecord[]>;
   bookmarks: Record<ItemKey, string>; // key -> addedAt
   notes: Record<ItemKey, Note>;
@@ -72,6 +80,7 @@ export function emptyState(): UserState {
     quiz: {},
     exercises: {},
     projectChecks: {},
+    coding: {},
     scenarios: {},
     bookmarks: {},
     notes: {},
@@ -118,10 +127,13 @@ function migrateV1(v1: Json): Json {
 
 /** v3 added studyMinutes, log and settings.weeklyHours; their defaults come from sanitize. */
 const migrateV2 = (v2: Json): Json => ({ ...v2, version: 3 });
+/** v4 added coding; its default comes from sanitize. */
+const migrateV3 = (v3: Json): Json => ({ ...v3, version: 4 });
 
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
   2: migrateV2,
+  3: migrateV3,
 };
 
 export function migrate(raw: unknown): Json {
@@ -171,6 +183,13 @@ export function sanitize(s: Json): UserState {
     ),
     exercises: mapValues(s.exercises, (x) => (typeof x === "string" ? x : undefined)),
     projectChecks: mapValues(s.projectChecks, (x) => (typeof x === "string" ? x : undefined)),
+    coding: mapValues(s.coding, (x) => {
+      if (!isObj(x)) return undefined;
+      const r: CodingRecord = {};
+      if (typeof x.code === "string") r.code = x.code.slice(0, MAX_CODE_LENGTH);
+      if (typeof x.passedAt === "string") r.passedAt = x.passedAt;
+      return r.code !== undefined || r.passedAt ? r : undefined;
+    }),
     scenarios: mapValues(s.scenarios, (x) => {
       if (!Array.isArray(x)) return undefined;
       return x
@@ -378,6 +397,30 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
         if (checked) projectChecks[key] = stamp();
         else delete projectChecks[key];
         return { ...s, projectChecks };
+      });
+    },
+    /** Save a coding draft. Typing is not study activity on its own; passing the tests is. */
+    saveCode(id: string, code: string) {
+      update(
+        (s) => {
+          const coding = { ...s.coding };
+          const prev = coding[id] ?? {};
+          const next: CodingRecord = { ...prev };
+          if (code) next.code = code.slice(0, MAX_CODE_LENGTH);
+          else delete next.code;
+          if (next.code === undefined && !next.passedAt) delete coding[id];
+          else coding[id] = next;
+          return { ...s, coding };
+        },
+        { active: false },
+      );
+    },
+    /** Mark a coding task passed. Keeps the first pass time. */
+    markCodingPassed(id: string) {
+      update((s) => {
+        const prev = s.coding[id] ?? {};
+        if (prev.passedAt) return s;
+        return { ...s, coding: { ...s.coding, [id]: { ...prev, passedAt: stamp() } } };
       });
     },
     recordScenario(id: string, score: number) {

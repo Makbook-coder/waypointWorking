@@ -110,6 +110,32 @@ export interface ProjectItem extends PracticeBase {
   definitionOfDone: string;
 }
 
-export type PracticeItem = QuizItem | ExerciseItem | ScenarioItem | ProjectItem;
+/** A small build for one module: one step per topic, done when the module outcome is shown. */
+export interface MiniProjectItem extends PracticeBase {
+  type: "mini";
+  title: string;
+  brief: string;
+  steps: string[];
+  doneWhen: string;
+}
+
+export interface CodingTest {
+  name: string;
+  code: string; // python, uses assert
+}
+
+/** A Python task that runs in the browser (Pyodide). */
+export interface CodingItem extends PracticeBase {
+  type: "coding";
+  title: string;
+  topicIds: string[];
+  prompt: string;
+  starter: string;
+  solution: string;
+  tests: CodingTest[];
+  checklist: string[];
+}
+
+export type PracticeItem = QuizItem | ExerciseItem | ScenarioItem | ProjectItem | MiniProjectItem | CodingItem;
 export type PracticeType = PracticeItem["type"];
 export type PracticeMap = Record<string, PracticeItem[]>;
