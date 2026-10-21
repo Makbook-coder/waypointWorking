@@ -333,7 +333,7 @@ export const TOPIC_DEPTH_L3: TopicDepthSrc[] = [
   ["m3-9-correctness",
     "Correct answers are the first thing users need.",
     ["Compare outputs to expected answers", "Count matches", "Review the misses"],
-    "Any eval.",
+    "Every eval and accuracy report.",
     "Answers are often clearly right or wrong; some tasks need a rubric.",
     "\"Looks right to me.\"",
     "\"43 of 50 correct.\"",
