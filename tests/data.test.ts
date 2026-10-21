@@ -6,6 +6,7 @@ import { countRoadmap, moduleSlug, slugify, validateRoadmap } from "@/lib/roadma
 import type { PracticeMap, ResourceMap, Roadmap } from "@/lib/types";
 import { buildPractice, countPractice, validatePractice } from "../scripts/build-practice";
 import { notes, validateNotes } from "@/lib/notes";
+import { topicNotes, validateTopicNotes } from "@/lib/topic-notes";
 
 const roadmap = roadmapJson as unknown as Roadmap;
 const resources = resourcesJson as unknown as ResourceMap;
@@ -134,5 +135,18 @@ describe("module notes", () => {
     const ids = modules.filter((m) => !m.isCapstone).map((m) => m.id);
     expect(validateNotes(ids)).toEqual([]);
     expect(Object.keys(notes)).toHaveLength(ids.length);
+  });
+});
+
+describe("topic notes", () => {
+  it("covers whole levels with complete, known notes", () => {
+    const byLevel: Record<number, string[]> = {};
+    for (const m of modules) (byLevel[m.levelId] ??= []).push(...m.topics.map((t) => t.id));
+    expect(validateTopicNotes(byLevel)).toEqual([]);
+  });
+
+  it("covers every topic in L0 to L3", () => {
+    const ids = modules.filter((m) => m.levelId <= 3).flatMap((m) => m.topics.map((t) => t.id));
+    expect(ids.filter((id) => !topicNotes[id])).toEqual([]);
   });
 });

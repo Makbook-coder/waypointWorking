@@ -12,6 +12,7 @@ import { allPractice } from "@/lib/content-data";
 import { getLevel, getPhase, levelHref, levels, moduleHref } from "@/lib/data";
 import { PHASE_STYLE } from "@/lib/phase";
 import { levelTopicIds, moduleTopicIds } from "@/lib/progress";
+import { getTopicNote } from "@/lib/topic-notes";
 import type { ProjectItem } from "@/lib/types";
 
 type Props = { params: Promise<{ id: string }> };
@@ -122,7 +123,7 @@ export default async function LevelPage({ params }: Props) {
               </div>
               <ul className="mt-2">
                 {m.topics.map((t) => (
-                  <TopicRow key={t.id} topic={t} moduleTitle={m.title} showDescription={false} />
+                  <TopicRow key={t.id} topic={t} moduleTitle={m.title} showDescription={false} simple={getTopicNote(t.id)} />
                 ))}
               </ul>
             </Card>

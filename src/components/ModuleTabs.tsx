@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { CodingItem, ExerciseItem, InterviewItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
 import { getNote, type ModuleNote } from "@/lib/notes";
+import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
@@ -22,7 +23,19 @@ const TABS = ["learn", "resources", "practice", "notes"] as const;
 type Tab = (typeof TABS)[number];
 const LABEL: Record<Tab, string> = { learn: "Learn", resources: "Resources", practice: "Practice", notes: "Notes" };
 
-export function ModuleTabs({ module: mod, resources, practice, color }: { module: Module; resources: Resource[]; practice: PracticeItem[]; color: string }) {
+export function ModuleTabs({
+  module: mod,
+  resources,
+  practice,
+  color,
+  topicNotes = {},
+}: {
+  module: Module;
+  resources: Resource[];
+  practice: PracticeItem[];
+  color: string;
+  topicNotes?: Record<string, TopicNote>;
+}) {
   const [tab, setTab] = useState<Tab>("learn");
   const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, resources: null, practice: null, notes: null });
   const hasNote = Boolean(useUserState().notes[`module:${mod.id}`]);
@@ -78,7 +91,7 @@ export function ModuleTabs({ module: mod, resources, practice, color }: { module
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
-        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} />}
+        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} quizzes={quizzes} color={color} />}
         {tab === "notes" && (
@@ -91,7 +104,7 @@ export function ModuleTabs({ module: mod, resources, practice, color }: { module
   );
 }
 
-function LearnPanel({ mod, color, videos }: { mod: Module; color: string; videos: Resource[] }) {
+function LearnPanel({ mod, color, videos, topicNotes }: { mod: Module; color: string; videos: Resource[]; topicNotes: Record<string, TopicNote> }) {
   const note = getNote(mod.id);
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -101,7 +114,7 @@ function LearnPanel({ mod, color, videos }: { mod: Module; color: string; videos
           <SectionTitle id="topics-h">Topics</SectionTitle>
           <ul className="rounded-lg border border-line bg-surface px-4">
             {mod.topics.map((t) => (
-              <TopicRow key={t.id} topic={t} moduleTitle={mod.title} />
+              <TopicRow key={t.id} topic={t} moduleTitle={mod.title} simple={topicNotes[t.id]} />
             ))}
           </ul>
         </section>
