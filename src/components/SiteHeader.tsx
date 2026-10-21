@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { FocusPill } from "./FocusPill";
 
 const LINKS = [
   { href: "/", label: "Dashboard" },
@@ -30,13 +31,13 @@ export function SiteHeader() {
           <span>Waypoint</span>
         </Link>
         <nav aria-label="Main" className="ml-auto hidden lg:block">
-          <ul className="flex items-center gap-1">
+          <ul className="flex items-center gap-0.5 xl:gap-1">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}
                   aria-current={active(l.href) ? "page" : undefined}
-                  className="rounded-md px-2.5 py-1.5 text-sm text-muted hover:bg-surface-2 hover:text-ink aria-[current=page]:bg-ink aria-[current=page]:text-bg"
+                  className="rounded-md px-2 py-1.5 text-sm text-muted xl:px-2.5 hover:bg-surface-2 hover:text-ink aria-[current=page]:bg-ink aria-[current=page]:text-bg"
                 >
                   {l.label}
                 </Link>
@@ -44,9 +45,12 @@ export function SiteHeader() {
             ))}
           </ul>
         </nav>
+        <div className="ml-auto lg:ml-0">
+          <FocusPill />
+        </div>
         <button
           type="button"
-          className="ml-auto rounded-md border border-line px-3 py-1.5 text-sm lg:hidden"
+          className="rounded-md border border-line px-3 py-1.5 text-sm lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((o) => !o)}
