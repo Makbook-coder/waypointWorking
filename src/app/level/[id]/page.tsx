@@ -51,6 +51,9 @@ export default async function LevelPage({ params }: Props) {
           <PhaseTag phase={level.phase} title={phase.title} />
           <div className="flex items-center gap-2">
             <WeightBadges interview={level.interviewWeight} job={level.jobWeight} />
+            <Link href={`/cheatsheet/${level.id}`} className="rounded-md border border-line px-2.5 py-1 text-sm hover:bg-surface-2">
+              Cheat sheet
+            </Link>
             <BookmarkButton itemKey={`level:${level.id}`} label={`Level ${level.id} ${level.title}`} />
           </div>
         </div>

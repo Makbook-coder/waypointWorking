@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LevelCard, type LevelCardData } from "@/components/LevelCard";
 import { ProgressFor } from "@/components/ProgressFor";
 import { getLevel, phases } from "@/lib/data";
@@ -15,6 +16,9 @@ export default function RoadmapPage() {
         <p className="mt-2 max-w-2xl text-muted">
           Sixteen levels on seven lines. Badges show how much each level counts in interviews (INT) and on the job (JOB), out of 10.
           Prerequisite hints are suggestions; every level is open.
+        </p>
+        <p className="mt-2 text-sm">
+          <Link href="/cheatsheet" className="underline underline-offset-2">Printable cheat sheets for every level →</Link>
         </p>
         <ol className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs" aria-label="Phase legend">
           {phases.map((p) => (
