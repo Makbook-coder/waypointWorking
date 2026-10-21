@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { NoteEditor } from "@/components/NoteEditor";
 import { ProgressFor } from "@/components/ProgressFor";
+import { CapstoneGuide } from "@/components/CapstoneGuide";
 import { ProjectChecklist } from "@/components/ProjectChecklist";
 import { TopicRow } from "@/components/TopicRow";
 import { VisitTracker } from "@/components/VisitTracker";
@@ -164,6 +165,12 @@ export default async function LevelPage({ params }: Props) {
               <SectionTitle>Project</SectionTitle>
               <h3 className="mb-3 font-semibold">{project.title}</h3>
               <ProjectChecklist project={project} color={style.var} />
+            </Card>
+          )}
+          {project && (
+            <Card>
+              <SectionTitle>Capstone guide</SectionTitle>
+              <CapstoneGuide levelId={level.id} projectId={project.id} color={style.var} />
             </Card>
           )}
           <Card>

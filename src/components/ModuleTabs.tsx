@@ -9,6 +9,7 @@ import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
+import { CapstoneGuide } from "./CapstoneGuide";
 import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
 import { InlineCode } from "./InlineCode";
@@ -316,6 +317,9 @@ function PracticePanel({ mod, practice, sourced, quizzes, color, labs }: { mod: 
           <SectionTitle id={`pr-${p.id}`}>Level project</SectionTitle>
           <h3 className="mb-3 text-lg font-semibold">{p.title}</h3>
           <ProjectChecklist project={p} color={color} />
+          <div className="mt-6 border-t border-line pt-5">
+            <CapstoneGuide levelId={p.levelId} projectId={p.id} color={color} />
+          </div>
         </section>
       ))}
       <GeneratedPractice mod={mod} existing={[...quizzes.map((q) => q.question), ...scenarios.map((x) => x.title)]} />

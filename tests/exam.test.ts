@@ -89,3 +89,21 @@ describe("level exams", () => {
     expect(loadState(JSON.stringify({ version: 7 })).exams).toEqual([]);
   });
 });
+
+describe("capstone guides", async () => {
+  const { validateCapstones, getCapstone, rubricFor, rubricResult, milestoneProgress, milestoneKey } = await import("@/lib/capstones");
+  const { levels } = await import("@/lib/data");
+
+  it("every level project has a guide with milestones and a rubric", () => {
+    expect(validateCapstones(levels.filter((l) => l.project).map((l) => l.id))).toEqual([]);
+  });
+
+  it("tracks milestone tasks and rubric scores", () => {
+    const c = getCapstone(4)!;
+    const store = createStore({ storage: memoryStorage() });
+    store.setProjectCheck(milestoneKey("l4-project", 0), 1, true);
+    expect(milestoneProgress(c, "l4-project", store.getState()).done).toBe(1);
+    rubricFor(c).forEach((_, i) => store.setRubric("l4-project", i, 3));
+    expect(rubricResult(c, "l4-project", store.getState())).toMatchObject({ complete: true, pct: 75 });
+  });
+});
