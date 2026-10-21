@@ -1,13 +1,26 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { aiSettings, defaultAISettings, isConfigured, type AISettings } from "./config";
+import { AI_STORAGE_KEY, aiSettings, defaultAISettings, isConfigured, type AISettings } from "./config";
 import { AIError, createProvider, describeAIError, type Provider } from "./provider";
 
 const SERVER_SETTINGS = defaultAISettings();
 
+/** Also picks up a key saved in Settings in another tab, so open pages don't keep showing "set up AI". */
+function subscribe(listener: () => void) {
+  const unsubscribe = aiSettings.subscribe(listener);
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === AI_STORAGE_KEY || e.key === null) aiSettings.reload();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    unsubscribe();
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
 export function useAISettings(): AISettings {
-  return useSyncExternalStore(aiSettings.subscribe, aiSettings.get, () => SERVER_SETTINGS);
+  return useSyncExternalStore(subscribe, aiSettings.get, () => SERVER_SETTINGS);
 }
 
 /** Whether the AI tutor can be used right now. False during SSR. */

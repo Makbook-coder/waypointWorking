@@ -192,10 +192,13 @@ The default model is `gemini-flash-latest`, an alias Google keeps pointed at its
 | --- | --- |
 | Interview questions (module Practice tab, `/interview`, company questions) | **Grade my answer with AI**: a 1 to 5 score using the same scale as self-scoring, what worked, what to improve, and a comparison with the model answer. It ticks the key points you covered. **Save AI score** adds it to your score history (marked `ai`), or you can still pick your own score. |
 | Scenarios | Write an answer and have it graded against what a strong answer covers. |
+| Interview questions, company drills, scenarios, system-design prompts and debug snippets | **Ask AI about this question**: ask anything about that item (what the interviewer wants, a hint without the answer, whether your draft is on track). The chat knows the question, its model answer or key points, and your draft. |
 | Every topic row and every module's Learn tab | **Ask tutor**: a short chat that explains in beginner language. The prompt includes that topic's or module's own notes so answers match the course. Chats aren't saved. |
 | Module Practice tab | **Generate 5 quiz questions / 2 interview scenarios** for that module. They're checked (4 distinct options, a valid answer, no repeats of existing questions), saved in your progress (so they're exported and synced), marked **AI**, and removable. |
 | Coding tasks | **Get a hint from AI**: reviews your draft and your last test run, and gives up to three hints without the solution. The reference solution is never sent, and any code block longer than four lines in the reply is hidden. |
 | Mock interview | **AI interviewer** (on by default when AI is set up): after your answer it asks up to three follow-up questions, and grading then takes the whole exchange into account. Any interview card also has **Practice follow-ups**. |
+
+AI buttons are never greyed out without a reason. If no key is set, clicking one explains how to add it. If grading needs an answer, it says to write one first.
 
 ### Privacy
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { reviewCode, type CodeReviewInput, type Grade } from "@/lib/ai/tasks";
+import { MIN_ANSWER_CHARS, reviewCode, type AIBlocker, type CodeReviewInput, type Grade } from "@/lib/ai/tasks";
 import { useAIRequest, useAISettings } from "@/lib/ai/use-ai";
 import { SCORE_LABELS } from "@/lib/interview";
 import { buttonClass, ghostButtonClass } from "./ui";
@@ -18,6 +18,29 @@ export function AISetupHint({ children = "Get AI feedback here" }: { children?: 
       </Link>
       .
     </p>
+  );
+}
+
+/** Why an AI button didn't run: no provider yet, or nothing written to grade. */
+export function AIBlockerNote({ blocker }: { blocker: AIBlocker }) {
+  return (
+    <div aria-live="polite">
+      {blocker === "no-key" && (
+        <p className="mt-2 rounded-md border border-line bg-surface-2 px-3 py-2 text-sm">
+          The AI tutor isn&apos;t set up yet.{" "}
+          <Link href="/settings#ai" className="font-medium underline underline-offset-2">
+            Add a free Gemini key in Settings
+          </Link>{" "}
+          (it takes a minute), then come back.
+        </p>
+      )}
+      {blocker === "short-answer" && (
+        <p className="mt-2 rounded-md border border-line bg-surface-2 px-3 py-2 text-sm">
+          Write your answer in the box first (at least a sentence, {MIN_ANSWER_CHARS}+ characters). To ask about the question itself, use{" "}
+          <strong>Ask AI about this question</strong>.
+        </p>
+      )}
+    </div>
   );
 }
 

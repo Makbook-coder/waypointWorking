@@ -1,11 +1,11 @@
 "use client";
 
 import { useId, useState } from "react";
-import { askFollowUp, MAX_FOLLOW_UPS } from "@/lib/ai/tasks";
+import { aiBlocker, askFollowUp, MAX_FOLLOW_UPS, type AIBlocker } from "@/lib/ai/tasks";
 import { useAIRequest } from "@/lib/ai/use-ai";
 import { MAX_ANSWER_LENGTH } from "@/lib/store";
 import type { InterviewItem } from "@/lib/types";
-import { AIBadge, AIErrorNote, AIModelTag } from "./AIKit";
+import { AIBadge, AIBlockerNote, AIErrorNote, AIModelTag } from "./AIKit";
 import { buttonClass, ghostButtonClass } from "./ui";
 
 export interface FollowUp {
@@ -23,6 +23,7 @@ export function AIFollowUps({ item, answer, followUps, onChange }: { item: Inter
   const [pending, setPending] = useState<string | null>(null); // question waiting for a reply
   const [reply, setReply] = useState("");
   const [done, setDone] = useState(false);
+  const [blocker, setBlocker] = useState<AIBlocker>(null);
 
   /** The next question, null when the interviewer is satisfied, undefined if the request failed. */
   async function next(previous: FollowUp[]): Promise<string | null | undefined> {
@@ -33,6 +34,9 @@ export function AIFollowUps({ item, answer, followUps, onChange }: { item: Inter
   }
 
   async function start() {
+    const b = aiBlocker(ai.configured, answer);
+    setBlocker(b);
+    if (b) return;
     const q = await next(followUps);
     if (q) setPending(q);
     else if (q === null) setDone(true);
@@ -79,7 +83,7 @@ export function AIFollowUps({ item, answer, followUps, onChange }: { item: Inter
       )}
       {canStart && (
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <button type="button" className={ghostButtonClass} disabled={ai.loading || answer.trim().length < 20} onClick={start}>
+          <button type="button" className={ghostButtonClass} disabled={ai.loading} onClick={start}>
             {ai.loading ? "Interviewer is reading…" : "Send my answer to the interviewer"}
           </button>
           <span className="text-xs text-muted">They&apos;ll ask up to {MAX_FOLLOW_UPS} follow-ups, like a real interview.</span>
@@ -122,6 +126,7 @@ export function AIFollowUps({ item, answer, followUps, onChange }: { item: Inter
         </div>
       )}
       {done && <p className="mt-2 text-sm text-muted">That&apos;s all from the interviewer. Grade your answer or reveal the model answer.</p>}
+      {canStart && <AIBlockerNote blocker={blocker} />}
       <AIErrorNote error={ai.error} />
     </div>
   );

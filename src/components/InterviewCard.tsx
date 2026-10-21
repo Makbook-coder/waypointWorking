@@ -1,17 +1,25 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { gradeAnswer, type Grade } from "@/lib/ai/tasks";
+import { aiBlocker, gradeAnswer, type AIBlocker, type Grade } from "@/lib/ai/tasks";
 import { useAIRequest } from "@/lib/ai/use-ai";
 import { SCORE_LABELS, suggestScore } from "@/lib/interview";
 import { store } from "@/lib/store";
 import { SCENARIO_SOURCE_KINDS, type SourcedInterviewItem } from "@/lib/sourced";
 import type { InterviewItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
-import { AIErrorNote, AIGradeResult, AISetupHint } from "./AIKit";
+import { AIBlockerNote, AIErrorNote, AIGradeResult } from "./AIKit";
 import { AIFollowUps, type FollowUp } from "./AIFollowUps";
 import { BookmarkButton } from "./BookmarkButton";
+import { TutorPanel } from "./TutorPanel";
 import { Badge, buttonClass, ghostButtonClass } from "./ui";
+
+const QUESTION_STARTERS = [
+  "Explain this question in simple words",
+  "What is the interviewer really looking for?",
+  "Give me a hint, not the answer",
+  "Is my answer on the right track?",
+];
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
@@ -46,6 +54,8 @@ export function InterviewCard({
   const [grade, setGrade] = useState<Grade | null>(null);
   const [followUps, setFollowUps] = useState<FollowUp[]>([]);
   const [interviewer, setInterviewer] = useState(aiInterviewer);
+  const [blocker, setBlocker] = useState<AIBlocker>(null);
+  const [askOpen, setAskOpen] = useState(false);
 
   useEffect(() => {
     setAnswer("");
@@ -56,6 +66,8 @@ export function InterviewCard({
     setGrade(null);
     setFollowUps([]);
     setInterviewer(aiInterviewer);
+    setBlocker(null);
+    setAskOpen(false);
   }, [item.id, item.keyPoints, timerSeconds, aiInterviewer]);
 
   useEffect(() => {
@@ -75,6 +87,9 @@ export function InterviewCard({
   }
 
   async function gradeIt() {
+    const b = aiBlocker(ai.configured, answer);
+    setBlocker(b);
+    if (b) return;
     const g = await ai.run((p, signal) =>
       gradeAnswer(p, { kind: "interview", question: item.question, modelAnswer: item.answer, keyPoints: item.keyPoints, answer, followUps }, signal),
     );
@@ -117,7 +132,10 @@ export function InterviewCard({
       <textarea
         id={`${uid}-a`}
         value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
+        onChange={(e) => {
+          setAnswer(e.target.value);
+          setBlocker(null);
+        }}
         rows={4}
         placeholder="Answer as you would out loud. It's saved with your score, only in this browser."
         className="mt-1 w-full resize-y rounded-md border border-line bg-surface-2 p-3 text-sm text-ink placeholder:text-muted"
@@ -131,20 +149,44 @@ export function InterviewCard({
             Show model answer
           </button>
         )}
-        {ai.configured && scored === null && (
-          <button type="button" className={ghostButtonClass} disabled={ai.loading || answer.trim().length < 20} title={answer.trim().length < 20 ? "Write an answer first" : undefined} onClick={gradeIt}>
+        {scored === null && (
+          <button type="button" className={ghostButtonClass} disabled={ai.loading} onClick={gradeIt}>
             {ai.loading ? "Grading…" : grade ? "Grade again" : "Grade my answer with AI"}
           </button>
         )}
-        {ai.configured && !interviewer && !revealed && (
-          <button type="button" className={ghostButtonClass} onClick={() => setInterviewer(true)}>
+        {!(interviewer && ai.configured) && !revealed && (
+          <button
+            type="button"
+            className={ghostButtonClass}
+            onClick={() => {
+              const b = aiBlocker(ai.configured);
+              setBlocker(b);
+              if (!b) setInterviewer(true);
+            }}
+          >
             Practice follow-ups
           </button>
         )}
+        <button type="button" className={ghostButtonClass} aria-expanded={askOpen} onClick={() => setAskOpen((o) => !o)}>
+          Ask AI about this question
+        </button>
       </div>
-      {!ai.configured && (
-        <div className="mt-2">
-          <AISetupHint>Get your answer graded and practice follow-up questions</AISetupHint>
+      <AIBlockerNote blocker={blocker} />
+      {askOpen && (
+        <div className="mt-3 rounded-md border border-line bg-bg p-3">
+          <TutorPanel
+            compact
+            starters={QUESTION_STARTERS}
+            context={{
+              title: `this interview question: "${item.question}"`,
+              facts: [
+                "The learner is preparing for AI engineering interviews. Coach them; if they ask for hints, don't hand over the full answer unless they ask for it.",
+                `Model answer: ${item.answer}`,
+                `Key points a strong answer covers: ${item.keyPoints.join("; ")}`,
+                ...(answer.trim() ? [`The learner's draft answer so far: ${answer.trim()}`] : []),
+              ],
+            }}
+          />
         </div>
       )}
       <AIErrorNote error={ai.error} />

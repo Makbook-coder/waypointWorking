@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AI_STORAGE_KEY, MODEL_SUGGESTIONS, PRESETS, createAISettingsStore, defaultAISettings, isConfigured, loadAISettings, type AISettings } from "@/lib/ai/config";
 import { AIError, createProvider, describeAIError, listModels, type CompleteRequest, type Provider } from "@/lib/ai/provider";
 import {
+  aiBlocker,
   askFollowUp,
   gradeAnswer,
   generatePractice,
@@ -346,5 +347,31 @@ describe("choosing a model", () => {
     const err = await createProvider({ ...gemini, model: "gemini-9" }, fn).complete({ system: "", messages: [] }).catch((e) => e);
     expect(err.kind).toBe("model");
     expect(describeAIError(err)).toMatch(/Pick another model in Settings/);
+  });
+});
+
+describe("AI buttons stay usable (regression: Grade button greyed out with no reason)", () => {
+  it("only blocks for a missing key or a missing answer, and says which", () => {
+    expect(aiBlocker(false, "a long enough answer to grade here")).toBe("no-key");
+    expect(aiBlocker(true, "")).toBe("short-answer");
+    expect(aiBlocker(true, "   too short   ")).toBe("short-answer");
+    expect(aiBlocker(true, "Hybrid search merges BM25 and vectors with RRF.")).toBeNull();
+  });
+
+  it("actions that need no answer (Ask AI, follow-ups) only need a key", () => {
+    expect(aiBlocker(true)).toBeNull();
+    expect(aiBlocker(false)).toBe("no-key");
+  });
+
+  it("picks up a key saved in another tab after reload()", () => {
+    const storage = memoryStorage();
+    const ai = createAISettingsStore(storage);
+    expect(isConfigured(ai.get())).toBe(false);
+    storage.write(JSON.stringify({ provider: "gemini", apiKey: "saved-elsewhere" }));
+    const seen = vi.fn();
+    ai.subscribe(seen);
+    ai.reload();
+    expect(seen).toHaveBeenCalled();
+    expect(isConfigured(ai.get())).toBe(true);
   });
 });

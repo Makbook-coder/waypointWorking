@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { gradeAnswer, type Grade } from "@/lib/ai/tasks";
+import { aiBlocker, gradeAnswer, type AIBlocker, type Grade } from "@/lib/ai/tasks";
 import { useAIRequest } from "@/lib/ai/use-ai";
 import { MAX_ANSWER_LENGTH, store } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
 import type { ScenarioItem } from "@/lib/types";
-import { AIBadge, AIErrorNote, AIGradeResult, AISetupHint } from "./AIKit";
+import { AIBadge, AIBlockerNote, AIErrorNote, AIGradeResult } from "./AIKit";
 import { BookmarkButton } from "./BookmarkButton";
+import { TutorPanel } from "./TutorPanel";
 import { Badge, ghostButtonClass } from "./ui";
 
 function useCountdown(seconds: number | null) {
@@ -20,6 +21,8 @@ function useCountdown(seconds: number | null) {
   }, [left]);
   return left;
 }
+
+const SCENARIO_STARTERS = ["Explain this scenario simply", "Where should I start?", "Give me a hint, not the answer", "What trade-offs matter here?"];
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
@@ -49,6 +52,8 @@ export function ScenarioCard({
   const [answer, setAnswer] = useState("");
   const [grade, setGrade] = useState<Grade | null>(null);
   const [savedAI, setSavedAI] = useState(false);
+  const [blocker, setBlocker] = useState<AIBlocker>(null);
+  const [askOpen, setAskOpen] = useState(false);
   const left = useCountdown(started ? timerSeconds : null);
 
   useEffect(() => {
@@ -57,9 +62,14 @@ export function ScenarioCard({
     setAnswer("");
     setGrade(null);
     setSavedAI(false);
+    setBlocker(null);
+    setAskOpen(false);
   }, [item.id, timerSeconds]);
 
   async function gradeIt() {
+    const b = aiBlocker(ai.configured, answer);
+    setBlocker(b);
+    if (b) return;
     const g = await ai.run((p, signal) => gradeAnswer(p, { kind: "scenario", question: `${item.title}\n${item.prompt}`, keyPoints: item.hints, answer }, signal));
     if (g) {
       setGrade(g);
@@ -114,18 +124,38 @@ export function ScenarioCard({
       <textarea
         id={`${uid}-a`}
         value={answer}
-        onChange={(e) => setAnswer(e.target.value.slice(0, MAX_ANSWER_LENGTH))}
+        onChange={(e) => {
+          setAnswer(e.target.value.slice(0, MAX_ANSWER_LENGTH));
+          setBlocker(null);
+        }}
         rows={3}
         placeholder="Sketch your approach: what you'd ask, decide and measure."
         className="mt-1 w-full resize-y rounded-md border border-line bg-surface-2 p-3 text-sm text-ink placeholder:text-muted"
       />
-      {ai.configured ? (
-        <button type="button" className={`${ghostButtonClass} mt-2`} disabled={ai.loading || answer.trim().length < 20} onClick={gradeIt}>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <button type="button" className={ghostButtonClass} disabled={ai.loading} onClick={gradeIt}>
           {ai.loading ? "Grading…" : grade ? "Grade again" : "Grade my answer with AI"}
         </button>
-      ) : (
-        <div className="mt-2">
-          <AISetupHint>Get your written answer graded</AISetupHint>
+        <button type="button" className={ghostButtonClass} aria-expanded={askOpen} onClick={() => setAskOpen((o) => !o)}>
+          Ask AI about this question
+        </button>
+      </div>
+      <AIBlockerNote blocker={blocker} />
+      {askOpen && (
+        <div className="mt-3 rounded-md border border-line bg-bg p-3">
+          <TutorPanel
+            compact
+            starters={SCENARIO_STARTERS}
+            context={{
+              title: `this interview scenario: "${item.title}"`,
+              facts: [
+                "The learner is preparing for AI engineering interviews. Coach them; if they ask for hints, don't hand over a full answer unless they ask for it.",
+                `Scenario: ${item.prompt}`,
+                `What a strong answer covers: ${item.hints.join("; ")}`,
+                ...(answer.trim() ? [`The learner's draft answer so far: ${answer.trim()}`] : []),
+              ],
+            }}
+          />
         </div>
       )}
       <AIErrorNote error={ai.error} />
