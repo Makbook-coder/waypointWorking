@@ -119,7 +119,7 @@ export default async function LevelPage({ params }: Props) {
               </div>
               <ul className="mt-2">
                 {m.topics.map((t) => (
-                  <TopicRow key={t.id} topic={t} showDescription={false} />
+                  <TopicRow key={t.id} topic={t} moduleTitle={m.title} showDescription={false} />
                 ))}
               </ul>
             </Card>
