@@ -8,9 +8,10 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Module (`/module/[id]`)**: four tabs.
   - **Learn**: topics, with done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
-  - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, scenarios and the level project.
+  - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, an interview question, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
 - **Practice (`/practice`)**: filter by level, type, difficulty, not attempted or wrong answers. There is a Random 10 quiz mode and an interview mode, which serves timed scenarios with a self-score from 1 to 5.
+- **Mock interview (`/interview`)**: timed runs of 5, 10 or 15 questions from a 151-question bank (one per module). You type an answer (optional), reveal the model answer, tick the key points you covered and self-score 1 to 5. Weak answers come back first. Every mock is saved, with your average, and the page lists your weakest answers.
 - **Flashcards (`/flashcards`)**: one card per topic. There are three decks:
   - **Due today**: driven by the spaced-review schedule.
   - **Shaky topics**: topics you rated 1.
@@ -83,22 +84,25 @@ Resource { type: "video" | "docs" | "article" | "course" | "repo" | "paper", tit
 - `quiz`: `question`, `options` (4), `answer` (0 to 3), `explanation`
 - `exercise`: `title`, `task`, `acceptance[]`
 - `mini`: `title`, `brief`, `steps[]` (one per module topic, plus a NOTES.md step), `doneWhen` (the module outcome)
+- `interview`: `question`, `answer` (model answer), `keyPoints[]` (3 to 5 points a strong answer covers)
 - `coding`: `title`, `topicIds[]`, `prompt`, `starter`, `solution`, `tests[]` (`{ name, code }`, Python using `assert`), `checklist[]`
 - `scenario`: `title`, `prompt`, `hints[]` (what a strong answer covers)
 - `project`: `title`, `checklist[]` (taken from the level deliverables), `definitionOfDone`
 
-The source for practice items is `content/practice/*.ts`, written in a compact tuple format, and `content/coding/tasks.ts` for coding tasks. `scripts/build-practice.ts` adds ids and shuffles quiz options deterministically, seeded by item id.
+The source for practice items is `content/practice/*.ts`, written in a compact tuple format, `content/coding/tasks.ts` for coding tasks and `content/interview/*.ts` for interview questions. `scripts/build-practice.ts` adds ids and shuffles quiz options deterministically, seeded by item id.
 
 ### User state (localStorage key `aet:state`)
 
 ```ts
 UserState {
-  version: 4,
+  version: 5,
   topics:        Record<topicId, { done, doneAt?, confidence?: 1|2|3 }>,
   quiz:          Record<quizId, { attempts, correct, lastCorrect, lastAt }>,
   exercises:     Record<exerciseId, completedAt>,
   projectChecks: Record<"<itemId>#<index>", checkedAt>,     // level projects, mini-project steps, coding checklists
   coding:        Record<codingId, { code?, passedAt? }>,     // draft and first full pass
+  interview:     Record<questionId, { score: 1..5, at, answer? }[]>, // last 10 self-scored attempts
+  mocks:         { id, startedAt, finishedAt, secondsPerQuestion, itemIds[], scores[] }[], // last 50; score 0 = skipped
   scenarios:     Record<scenarioId, { score: 1..5, at }[]>,
   bookmarks:     Record<"<kind>:<id>", addedAt>,          // kind: topic | module | level | practice | resource
   notes:         Record<"<kind>:<id>", { text, updatedAt }>,
@@ -166,6 +170,7 @@ Nothing else changes. If you later want per-row tables, for example to query pro
 ```
 content/practice/   authored quizzes, exercises, scenarios, project definitions of done
 content/coding/     authored Python coding tasks (starter, solution, tests)
+content/interview/  authored interview questions, model answers and key points
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
 scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
 public/py-worker.js Web Worker that runs coding tests in Pyodide
@@ -237,3 +242,7 @@ These decisions were made while building v1, without stopping to ask:
 28. **Tests run in a Web Worker with a 10 second limit.** If a run goes over, the worker is terminated and restarted, so an infinite loop never freezes the page. The harness in `src/lib/coding.ts` runs your code once, then runs each test against a fresh copy of its globals. It allows top-level `await`, so async tasks can be tested; Pyodide can't call `asyncio.run`.
 29. **Every coding task is checked twice in CI-style tests.** `tests/coding.test.ts` runs every task with local `python3` through the same harness: the reference solution must pass all of its tests and the starter must fail at least one. The tasks were also run once under real Pyodide in Node. That check found two tasks that would have broken in the browser: one needed `sqlite3`, which isn't in the base runtime, and one used `asyncio.run`. Both were rewritten.
 30. **Schema v4** adds `coding: { [taskId]: { code?, passedAt? } }`. Drafts save as you type, are capped at 20,000 characters, and don't count as streak activity. The first time all tests pass is recorded once and counts as activity. Checklist ticks reuse `projectChecks`.
+31. **One interview question per module.** All 151 non-capstone modules, L0 to L15, have one hand-written conceptual question. Each has a model answer of a few sentences and 3 to 5 key points. Capstones are covered by level projects. Scenarios stay separate: they are open-ended design prompts, and the practice page's timed scenario drill (renamed from "Interview mode") still serves them.
+32. **Self-grading is guided, not automatic.** After you reveal the model answer, you tick the key points you covered. The card then suggests a score from 1 (none covered) to 5 (all covered), but you choose the score. Automatic grading of free text would need an LLM call and a backend, so it's out of scope for a local-only app. Typed answers are optional and are saved with the score.
+33. **Mock question order.** A mock takes questions with a latest score of 1 or 2 first, then questions you haven't tried, then the rest by rising score. Ties are random, so repeat mocks vary. The timer counts down and warns you when time is up, but it never submits or skips for you.
+34. **Schema v5** adds `interview` (the last 10 attempts per question) and `mocks` (the last 50 sessions). Both are capped so localStorage stays small, and answers are capped at 4,000 characters. The text-answer mock interview from the second feature list is built here.

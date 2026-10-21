@@ -7,7 +7,7 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import roadmapJson from "../data/roadmap.json";
-import type { CodingItem, Difficulty, MiniProjectItem, Module, PracticeItem, PracticeMap, QuizItem, Roadmap } from "../src/lib/types";
+import type { CodingItem, Difficulty, InterviewItem, MiniProjectItem, Module, PracticeItem, PracticeMap, QuizItem, Roadmap } from "../src/lib/types";
 import { moduleSlug } from "../src/lib/roadmap-build";
 import type { D } from "../content/practice/types";
 import { QUIZZES_L0_L3 } from "../content/practice/quizzes-l0-l3";
@@ -18,6 +18,9 @@ import { EXERCISES } from "../content/practice/exercises";
 import { SCENARIOS } from "../content/practice/scenarios";
 import { PROJECTS } from "../content/practice/projects";
 import { CODING_TASKS } from "../content/coding/tasks";
+import { INTERVIEW_L0_L4 } from "../content/interview/l0-l4";
+import { INTERVIEW_L5_L9 } from "../content/interview/l5-l9";
+import { INTERVIEW_L10_L15 } from "../content/interview/l10-l15";
 
 const ROOT = path.resolve(__dirname, "..");
 const OUT = path.join(ROOT, "data", "practice.json");
@@ -123,6 +126,11 @@ export function buildPractice(roadmap: Roadmap): PracticeMap {
     } satisfies CodingItem);
   }
 
+  for (const [moduleId, d, question, answer, keyPoints] of [...INTERVIEW_L0_L4, ...INTERVIEW_L5_L9, ...INTERVIEW_L10_L15]) {
+    const m = need(moduleId);
+    push({ id: nextId(moduleId, "iq"), type: "interview", moduleId, levelId: m.levelId, difficulty: DIFF[d], question, answer, keyPoints } satisfies InterviewItem);
+  }
+
   for (const [moduleId, d, title, prompt, hints] of SCENARIOS) {
     const m = need(moduleId);
     push({ id: nextId(moduleId, "sc"), type: "scenario", moduleId, levelId: m.levelId, difficulty: DIFF[d], title, prompt, hints });
@@ -173,6 +181,7 @@ export function validatePractice(roadmap: Roadmap, practice: PracticeMap): strin
     if (ids.has(it.id)) errors.push(`duplicate id ${it.id}`);
     ids.add(it.id);
     if (it.type === "coding" && (it.tests.length === 0 || it.topicIds.length === 0)) errors.push(`${it.id}: coding task needs tests and topics`);
+    if (it.type === "interview" && (it.keyPoints.length < 3 || it.answer.length < 80)) errors.push(`${it.id}: interview question needs 3+ key points and a full answer`);
     if (it.type === "mini" && it.steps.length < 2) errors.push(`${it.id}: mini project has too few steps`);
     if (it.type === "quiz") {
       if (new Set(it.options).size !== 4) errors.push(`${it.id}: options not 4 distinct`);
@@ -187,6 +196,10 @@ export function validatePractice(roadmap: Roadmap, practice: PracticeMap): strin
           const n = (practice[m.id] ?? []).filter((i) => i.type === "quiz").length;
           if (n !== QUIZZES_PER_MODULE) errors.push(`${m.id}: ${n} quizzes (expected ${QUIZZES_PER_MODULE})`);
         }
+      for (const m of l.modules) {
+        const n = (practice[m.id] ?? []).filter((i) => i.type === "interview").length;
+        if (m.isCapstone ? n > 0 : n === 0) errors.push(`${m.id}: ${n} interview questions (expected ${m.isCapstone ? 0 : "1+"})`);
+      }
       if (l.project && !items.some((i) => i.type === "project" && i.levelId === l.id)) errors.push(`L${l.id}: project missing`);
     }
   return errors;
@@ -195,7 +208,7 @@ export function validatePractice(roadmap: Roadmap, practice: PracticeMap): strin
 export function countPractice(practice: PracticeMap) {
   const items = Object.values(practice).flat();
   const by = (t: string) => items.filter((i) => i.type === t).length;
-  return { total: items.length, quiz: by("quiz"), exercise: by("exercise"), mini: by("mini"), coding: by("coding"), scenario: by("scenario"), project: by("project") };
+  return { total: items.length, quiz: by("quiz"), exercise: by("exercise"), mini: by("mini"), coding: by("coding"), interview: by("interview"), scenario: by("scenario"), project: by("project") };
 }
 
 async function main() {
@@ -208,7 +221,7 @@ async function main() {
   }
   await writeFile(OUT, JSON.stringify(practice, null, 2) + "\n");
   const c = countPractice(practice);
-  console.log(`OK  total=${c.total} quiz=${c.quiz} exercise=${c.exercise} mini=${c.mini} coding=${c.coding} scenario=${c.scenario} project=${c.project}`);
+  console.log(`OK  total=${c.total} quiz=${c.quiz} exercise=${c.exercise} mini=${c.mini} coding=${c.coding} interview=${c.interview} scenario=${c.scenario} project=${c.project}`);
   const answers = [0, 0, 0, 0];
   for (const it of Object.values(practice).flat()) if (it.type === "quiz") answers[it.answer]++;
   console.log(`Answer positions A/B/C/D: ${answers.join("/")}`);

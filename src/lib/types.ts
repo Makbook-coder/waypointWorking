@@ -136,6 +136,14 @@ export interface CodingItem extends PracticeBase {
   checklist: string[];
 }
 
-export type PracticeItem = QuizItem | ExerciseItem | ScenarioItem | ProjectItem | MiniProjectItem | CodingItem;
+/** A conceptual interview question with a model answer and the points a strong answer covers. */
+export interface InterviewItem extends PracticeBase {
+  type: "interview";
+  question: string;
+  answer: string;
+  keyPoints: string[];
+}
+
+export type PracticeItem = QuizItem | ExerciseItem | ScenarioItem | ProjectItem | MiniProjectItem | CodingItem | InterviewItem;
 export type PracticeType = PracticeItem["type"];
 export type PracticeMap = Record<string, PracticeItem[]>;

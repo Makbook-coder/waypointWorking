@@ -8,6 +8,7 @@ import type { Difficulty, PracticeItem, PracticeType, QuizItem, ScenarioItem } f
 import { useHydrated, useUserState } from "@/lib/use-store";
 import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
+import { InterviewCard } from "./InterviewCard";
 import { MiniProjectCard } from "./MiniProjectCard";
 import { ProjectChecklist } from "./ProjectChecklist";
 import { QuizRunner } from "./QuizRunner";
@@ -34,6 +35,8 @@ export function attempted(item: PracticeItem, s: UserState): boolean {
       return Boolean(s.exercises[item.id]) || item.steps.some((_, i) => s.projectChecks[`${item.id}#${i}`]);
     case "coding":
       return Boolean(s.coding[item.id]?.passedAt || s.coding[item.id]?.code);
+    case "interview":
+      return (s.interview[item.id]?.length ?? 0) > 0;
     case "scenario":
       return (s.scenarios[item.id]?.length ?? 0) > 0;
     case "project":
@@ -105,7 +108,7 @@ export function PracticeHub() {
   const modes: { id: Mode; label: string; hint: string }[] = [
     { id: "browse", label: "Browse", hint: "Everything that matches your filters" },
     { id: "random", label: "Random 10", hint: "Ten quiz questions drawn from your filters" },
-    { id: "interview", label: "Interview mode", hint: "Timed scenarios with a 1 to 5 self-score" },
+    { id: "interview", label: "Scenario drill", hint: "Timed scenarios with a 1 to 5 self-score" },
   ];
 
   return (
@@ -143,6 +146,7 @@ export function PracticeHub() {
           <option value="quiz">Quiz</option>
           <option value="coding">Coding</option>
           <option value="mini">Mini project</option>
+          <option value="interview">Interview question</option>
           <option value="exercise">Exercise</option>
           <option value="scenario">Scenario</option>
           <option value="project">Project</option>
@@ -163,7 +167,7 @@ export function PracticeHub() {
       {!hydrated ? null : mode === "browse" ? (
         <div className="space-y-6">
           <p className="num text-sm text-muted" aria-live="polite">
-            {filtered.length} items · {quizzes.length} quiz questions · {others.length} coding tasks, projects, exercises and scenarios
+            {filtered.length} items · {quizzes.length} quiz questions · {others.length} coding tasks, interview questions, projects, exercises and scenarios
           </p>
           {quizzes.length > 0 && (
             <section aria-label="Quiz questions">
@@ -189,6 +193,8 @@ export function PracticeHub() {
                   <ExerciseCard item={it} context={ctx(it.moduleId)} />
                 ) : it.type === "coding" ? (
                   <CodingCard item={it} context={ctx(it.moduleId)} />
+                ) : it.type === "interview" ? (
+                  <InterviewCard item={it} context={ctx(it.moduleId)} />
                 ) : it.type === "mini" ? (
                   <MiniProjectCard item={it} context={ctx(it.moduleId)} />
                 ) : it.type === "scenario" ? (

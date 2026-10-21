@@ -5,7 +5,7 @@ import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -53,6 +53,25 @@ export interface CodingRecord {
 
 export const MAX_CODE_LENGTH = 20_000;
 
+export interface InterviewAttempt {
+  score: number; // 1..5 self-score against the model answer
+  at: string;
+  answer?: string; // what the learner typed, if anything
+}
+
+export interface MockSession {
+  id: string;
+  startedAt: string;
+  finishedAt: string;
+  secondsPerQuestion: number;
+  itemIds: string[];
+  scores: number[]; // aligned with itemIds; 0 = skipped
+}
+
+export const MAX_ANSWER_LENGTH = 4_000;
+export const MAX_ATTEMPTS_PER_QUESTION = 10;
+export const MAX_MOCK_SESSIONS = 50;
+
 export interface UserState {
   version: typeof SCHEMA_VERSION;
   topics: Record<string, TopicProgress>;
@@ -60,6 +79,8 @@ export interface UserState {
   exercises: Record<string, string>; // id -> completedAt
   projectChecks: Record<string, string>; // "<projectId>#<index>" -> checkedAt (level projects, mini-project steps, coding checklists)
   coding: Record<string, CodingRecord>; // coding task id -> draft and first pass
+  interview: Record<string, InterviewAttempt[]>; // interview question id -> self-scored attempts, oldest first
+  mocks: MockSession[]; // finished mock interviews, oldest first
   scenarios: Record<string, ScenarioRecord[]>;
   bookmarks: Record<ItemKey, string>; // key -> addedAt
   notes: Record<ItemKey, Note>;
@@ -81,6 +102,8 @@ export function emptyState(): UserState {
     exercises: {},
     projectChecks: {},
     coding: {},
+    interview: {},
+    mocks: [],
     scenarios: {},
     bookmarks: {},
     notes: {},
@@ -129,11 +152,14 @@ function migrateV1(v1: Json): Json {
 const migrateV2 = (v2: Json): Json => ({ ...v2, version: 3 });
 /** v4 added coding; its default comes from sanitize. */
 const migrateV3 = (v3: Json): Json => ({ ...v3, version: 4 });
+/** v5 added interview and mocks; defaults come from sanitize. */
+const migrateV4 = (v4: Json): Json => ({ ...v4, version: 5 });
 
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
   2: migrateV2,
   3: migrateV3,
+  4: migrateV4,
 };
 
 export function migrate(raw: unknown): Json {
@@ -190,6 +216,29 @@ export function sanitize(s: Json): UserState {
       if (typeof x.passedAt === "string") r.passedAt = x.passedAt;
       return r.code !== undefined || r.passedAt ? r : undefined;
     }),
+    interview: mapValues(s.interview, (x) => {
+      if (!Array.isArray(x)) return undefined;
+      const list = x
+        .filter((r): r is Json => isObj(r) && num(r.score) >= 1 && num(r.score) <= 5)
+        .map((r) => ({
+          score: Math.round(num(r.score)),
+          at: str(r.at),
+          ...(typeof r.answer === "string" && r.answer ? { answer: r.answer.slice(0, MAX_ANSWER_LENGTH) } : {}),
+        }))
+        .slice(-MAX_ATTEMPTS_PER_QUESTION);
+      return list.length ? list : undefined;
+    }),
+    mocks: (Array.isArray(s.mocks) ? s.mocks : [])
+      .filter((m): m is Json => isObj(m) && Array.isArray(m.itemIds) && Array.isArray(m.scores) && m.itemIds.length === m.scores.length)
+      .map((m) => ({
+        id: str(m.id),
+        startedAt: str(m.startedAt),
+        finishedAt: str(m.finishedAt),
+        secondsPerQuestion: Math.max(0, Math.round(num(m.secondsPerQuestion))),
+        itemIds: (m.itemIds as unknown[]).map((x) => str(x)),
+        scores: (m.scores as unknown[]).map((x) => Math.max(0, Math.min(5, Math.round(num(x))))),
+      }))
+      .slice(-MAX_MOCK_SESSIONS),
     scenarios: mapValues(s.scenarios, (x) => {
       if (!Array.isArray(x)) return undefined;
       return x
@@ -421,6 +470,23 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
         const prev = s.coding[id] ?? {};
         if (prev.passedAt) return s;
         return { ...s, coding: { ...s.coding, [id]: { ...prev, passedAt: stamp() } } };
+      });
+    },
+    /** Self-score an interview answer. Keeps the last few attempts per question. */
+    recordInterview(id: string, score: number, answer = "") {
+      const clamped = Math.max(1, Math.min(5, Math.round(score)));
+      const text = answer.trim().slice(0, MAX_ANSWER_LENGTH);
+      update((s) => {
+        const attempt: InterviewAttempt = { score: clamped, at: stamp(), ...(text ? { answer: text } : {}) };
+        const list = [...(s.interview[id] ?? []), attempt].slice(-MAX_ATTEMPTS_PER_QUESTION);
+        return { ...s, interview: { ...s.interview, [id]: list } };
+      });
+    },
+    saveMock(session: Omit<MockSession, "id" | "finishedAt">) {
+      update((s) => {
+        const finishedAt = stamp();
+        const mock: MockSession = { ...session, id: `mock-${finishedAt}`, finishedAt };
+        return { ...s, mocks: [...s.mocks, mock].slice(-MAX_MOCK_SESSIONS) };
       });
     },
     recordScenario(id: string, score: number) {

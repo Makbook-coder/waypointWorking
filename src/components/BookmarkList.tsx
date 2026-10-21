@@ -25,7 +25,7 @@ export function resolveBookmark(key: string, addedAt: string): ResolvedBookmark 
     const p = getPracticeItem(rest);
     if (!p) return null;
     const m = getModule(p.moduleId);
-    const title = p.type === "quiz" ? p.question : p.title;
+    const title = p.type === "quiz" || p.type === "interview" ? p.question : p.title;
     return { key, kind: p.type, title, context: m ? `${m.id} ${m.title}` : "", href: `${moduleHref(p.moduleId)}#practice`, external: false, addedAt };
   }
   if (kind === "resource") {
