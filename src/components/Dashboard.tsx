@@ -12,6 +12,7 @@ import { store } from "@/lib/store";
 import { useHydrated, useUserState } from "@/lib/use-store";
 import { BookmarkList, useBookmarks } from "./BookmarkList";
 import { RoleToggle } from "./RoleToggle";
+import { TodayCard } from "./TodayCard";
 import { Card, EmptyState, ProgressBar, SectionTitle, WeightBadges, buttonClass, ghostButtonClass } from "./ui";
 
 export function Dashboard() {
@@ -54,6 +55,8 @@ export function Dashboard() {
           <Stat label="Bookmarks" value={v(bookmarks.length)} hint="Saved for later" />
         </div>
       </header>
+
+      <TodayCard />
 
       <nav aria-label="Hands-on practice" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[

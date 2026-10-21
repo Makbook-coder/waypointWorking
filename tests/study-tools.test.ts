@@ -114,7 +114,7 @@ describe("store v3 fields", () => {
     const s = loadState(JSON.stringify(v2));
     expect(s.version).toBe(SCHEMA_VERSION);
     expect(s.topics.t.done).toBe(true);
-    expect(s.settings).toEqual({ theme: "dark", targetRole: "none", weeklyHours: 6 });
+    expect(s.settings).toEqual({ theme: "dark", targetRole: "none", weeklyHours: 6, dailyGoal: 2 });
     expect(s.studyMinutes).toEqual({});
     expect(s.log).toEqual({});
   });
