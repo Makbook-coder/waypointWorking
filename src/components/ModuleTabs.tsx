@@ -8,6 +8,7 @@ import type { Lab } from "@/lib/lab-steps";
 import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
+import { AppliedPanel } from "./AppliedPanel";
 import { BookmarkButton } from "./BookmarkButton";
 import { CapstoneGuide } from "./CapstoneGuide";
 import { CodingCard } from "./CodingCard";
@@ -25,9 +26,9 @@ import { GeneratedPractice } from "./GeneratedPractice";
 import { TutorPanel } from "./TutorPanel";
 import { Badge, EmptyState, SectionTitle } from "./ui";
 
-const TABS = ["learn", "resources", "practice", "notes"] as const;
+const TABS = ["learn", "applied", "resources", "practice", "notes"] as const;
 type Tab = (typeof TABS)[number];
-const LABEL: Record<Tab, string> = { learn: "Learn", resources: "Resources", practice: "Practice", notes: "Notes" };
+const LABEL: Record<Tab, string> = { learn: "Learn", applied: "In practice", resources: "Resources", practice: "Practice", notes: "Notes" };
 
 export function ModuleTabs({
   module: mod,
@@ -47,7 +48,7 @@ export function ModuleTabs({
   labs?: Lab[];
 }) {
   const [tab, setTab] = useState<Tab>("learn");
-  const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, resources: null, practice: null, notes: null });
+  const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, applied: null, resources: null, practice: null, notes: null });
   const hasNote = Boolean(useUserState().notes[`module:${mod.id}`]);
 
   // Deep links like /module/m4-6#practice
@@ -73,7 +74,7 @@ export function ModuleTabs({
   }
 
   const quizzes = practice.filter((p): p is QuizItem => p.type === "quiz");
-  const counts: Record<Tab, number | null> = { learn: mod.topics.length, resources: resources.length, practice: practice.length + labs.length, notes: null };
+  const counts: Record<Tab, number | null> = { learn: mod.topics.length, applied: null, resources: resources.length, practice: practice.length + labs.length, notes: null };
 
   return (
     <div>
@@ -102,6 +103,7 @@ export function ModuleTabs({
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
         {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} />}
+        {tab === "applied" && <AppliedPanel mod={mod} color={color} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} labs={labs} />}
         {tab === "notes" && (

@@ -239,6 +239,7 @@ content/capstones.ts milestones and rubric criteria for each level project
 docs/               practice-plan.md (the practice audit and plan)
 content/interview/  authored interview questions, model answers and key points
 content/notes/      authored "Understand it" study notes, one per non-capstone module
+content/applied/    "In practice" sections: real-world use, a project walkthrough, trade-offs, sources
 content/topic-notes/ authored beginner "Explain simply" notes, one per topic
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
 scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
@@ -337,3 +338,4 @@ These decisions were made while building v1, without stopping to ask:
 51. **No exam for L14 and L15.** L14 is the portfolio capstone and L15 is interview prep, which the mock interviews and the L15 scenarios already test.
 52. **Capstones are judged with a saved self-review rubric.** Four shared criteria (works end to end, evidence not vibes, handles failure, you can explain it) plus two per level, on a 1 to 4 scale. Milestone ticks reuse `projectChecks`. Scores go in `rubrics`.
 53. **Readiness is a weighted guide, and says so.** Per level: exam 30, mocks 20 (L15 only), quizzes 15, coding 15, labs 15, scenarios 10, project 10, topics 5, normalised to what that level has. Levels are weighted by the target role's importance. The page and the README both say that practice improves readiness but guarantees nothing.
+54. **"In practice" is its own tab with sourced, real-world content.** Each covered module gets how it works in practice, where it is used (every named company backed by a public page that was fetched and read, paraphrased), a step-by-step project with its architecture and tools, a worked code or config example, trade-offs and what teams do about them, a junior vs senior note, and 2 or 3 further-reading links. It lives in `content/applied/` and a separate tab so it does not crowd the Learn tab. `tests/applied.test.ts` fails the build if a covered module is missing a section, a section is thin, or a source has no https URL or an unmarked search link. Capstones are skipped because they are the application. No user state is stored, so the schema is unchanged.
