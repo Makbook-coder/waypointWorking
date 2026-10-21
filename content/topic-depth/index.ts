@@ -11,6 +11,7 @@ import { TOPIC_DEPTH_L9 } from "./l9";
 import { TOPIC_DEPTH_L10 } from "./l10";
 import { TOPIC_DEPTH_L11 } from "./l11";
 import { TOPIC_DEPTH_L12 } from "./l12";
+import { TOPIC_DEPTH_L13 } from "./l13";
 import type { TopicDepthSrc } from "./types";
 
 export const TOPIC_DEPTH_SOURCES: TopicDepthSrc[] = [
@@ -27,4 +28,5 @@ export const TOPIC_DEPTH_SOURCES: TopicDepthSrc[] = [
   ...TOPIC_DEPTH_L10,
   ...TOPIC_DEPTH_L11,
   ...TOPIC_DEPTH_L12,
+  ...TOPIC_DEPTH_L13,
 ];
