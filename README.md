@@ -18,6 +18,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
   - **A module**: every topic in one module.
 
   The keyboard shortcuts are Space to flip, 1 for forgot and 2 for remembered.
+- **Focus timer (`/focus`)**: Pomodoro blocks of 25/5, 50/10 or 15/3 minutes, tied to a module if you like. The timer keeps running across pages, shows its countdown in the header, chimes when a block ends (with an optional browser notification) and logs every finished block.
 - **Weekly plan (`/plan`)**: pick your hours per week, and the remaining modules are spread across dated weeks, with an estimated finish date.
 - **Progress (`/progress`)**:
   - Focused study time for today, this week and in total, plus a 14-day chart.
@@ -169,7 +170,7 @@ scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodi
 public/py-worker.js Web Worker that runs coding tests in Pyodide
 src/app/            routes (App Router)
 src/components/     UI; client components are marked "use client"
-src/lib/            store, review scheduler, progress, focus ranking, search, data access
+src/lib/            store, review scheduler, progress, focus ranking, Pomodoro timer, search, data access
 src/lib/sync/       optional Supabase sync (engine, remote, browser client)
 supabase/schema.sql table and row-level-security policies for sync
 tests/              Vitest
@@ -246,3 +247,5 @@ These decisions were made while building v1, without stopping to ask:
 37. **Magic-link sign-in only.** There are no passwords to store or reset, and it works with Supabase's default email auth. Signing in with a different account on the same device resets the sync position, so one account's data is never pushed into another's row without the usual conflict check.
 38. **Resource re-check (October 2026).** All 224 verified links were fetched again. None were dead, but 8 had moved or been renamed and were updated: Pydantic models, the LangChain quickstart, Google ADK (now adk.dev) and its multi-agent page, the E2B quickstart, MLflow model versions (now the `latest` docs path), Microsoft Foundry (renamed from Azure AI Foundry) and the one paid book (now a bookshop.org link instead of a retailer). A LiveKit voice page was dropped in favor of the LiveKit Agents docs. 52 resources were added to the 43 modules that had only two verified links, using 8 new verified URLs (tiktoken, the OpenAI and Claude batch APIs, OpenAI prompt caching, GitHub's Python guide, TRL GRPO and GKD trainers, and GitHub profile READMEs) plus existing ones that fit. The total is now 705 resources and 231 unique verified URLs. Every module except M15.9 has at least three verified links.
 39. **Built-in "Understand it" notes.** Each of the 151 non-capstone modules has a short note written for this app, in `content/notes/`, shown at the top of its Learn tab. It has four parts: what it is, why it matters, a tiny example and common mistakes. Notes are plain sentences with `backticks` for code, kept to a few lines so they orient you before the resources rather than replace them. The 14 capstone modules have no note, since they are build projects rather than concepts. A data test checks that every non-capstone module has exactly one complete note.
+40. **The focus timer lives outside user state.** Its ticking state sits in its own localStorage key (`aet:pomodoro`), so it survives reloads and is shared by open tabs without rewriting the whole progress document every second. Only finished focus blocks reach `UserState` (schema v6 adds `focus`, the last 500 blocks). The tab that notices a block ending writes the new timer state before saving the block, and blocks are de-duplicated by end time, so two open tabs log it once.
+41. **Focus blocks and study minutes stay separate.** The passive study timer already counts minutes you're active in the app. A Pomodoro block can include reading elsewhere, so it is reported on its own as blocks and minutes instead of being added to study minutes, which would double-count. A block only counts if it runs to the end. Pausing is fine, but resetting drops it. After a block, the break starts automatically; after a break, the timer waits for you.

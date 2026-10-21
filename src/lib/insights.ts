@@ -1,5 +1,5 @@
 // Progress insights: time spent, accuracy, weak spots and what to do next.
-import { addDays, type DayString } from "./dates";
+import { addDays, toDay, type DayString } from "./dates";
 import type { Level, Module } from "./types";
 import type { UserState } from "./store";
 import { weekStart } from "./plan";
@@ -21,6 +21,23 @@ export function timeSummary(s: UserState, today: DayString) {
     thisWeek: minutesBetween(s, weekStart(today), today),
     total: Object.values(s.studyMinutes).reduce((a, b) => a + b, 0),
   };
+}
+
+/** Finished Pomodoro blocks today, this week and in total (by local day of the block's end). */
+export function focusSummary(s: UserState, today: DayString) {
+  const from = weekStart(today);
+  const out = { today: { blocks: 0, minutes: 0 }, thisWeek: { blocks: 0, minutes: 0 }, total: { blocks: 0, minutes: 0 } };
+  for (const f of s.focus) {
+    const day = toDay(new Date(f.at));
+    const add = (b: { blocks: number; minutes: number }) => {
+      b.blocks += 1;
+      b.minutes += f.minutes;
+    };
+    add(out.total);
+    if (day >= from && day <= today) add(out.thisWeek);
+    if (day === today) add(out.today);
+  }
+  return out;
 }
 
 export interface ModuleAccuracy {

@@ -5,7 +5,7 @@ import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -71,6 +71,13 @@ export interface MockSession {
 export const MAX_ANSWER_LENGTH = 4_000;
 export const MAX_ATTEMPTS_PER_QUESTION = 10;
 export const MAX_MOCK_SESSIONS = 50;
+export const MAX_FOCUS_SESSIONS = 500;
+
+export interface FocusSession {
+  at: string; // when the focus block ended
+  minutes: number;
+  moduleId: string | null;
+}
 
 export interface UserState {
   version: typeof SCHEMA_VERSION;
@@ -81,6 +88,7 @@ export interface UserState {
   coding: Record<string, CodingRecord>; // coding task id -> draft and first pass
   interview: Record<string, InterviewAttempt[]>; // interview question id -> self-scored attempts, oldest first
   mocks: MockSession[]; // finished mock interviews, oldest first
+  focus: FocusSession[]; // finished Pomodoro focus blocks, oldest first
   scenarios: Record<string, ScenarioRecord[]>;
   bookmarks: Record<ItemKey, string>; // key -> addedAt
   notes: Record<ItemKey, Note>;
@@ -104,6 +112,7 @@ export function emptyState(): UserState {
     coding: {},
     interview: {},
     mocks: [],
+    focus: [],
     scenarios: {},
     bookmarks: {},
     notes: {},
@@ -154,12 +163,15 @@ const migrateV2 = (v2: Json): Json => ({ ...v2, version: 3 });
 const migrateV3 = (v3: Json): Json => ({ ...v3, version: 4 });
 /** v5 added interview and mocks; defaults come from sanitize. */
 const migrateV4 = (v4: Json): Json => ({ ...v4, version: 5 });
+/** v6 added focus; its default comes from sanitize. */
+const migrateV5 = (v5: Json): Json => ({ ...v5, version: 6 });
 
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
   2: migrateV2,
   3: migrateV3,
   4: migrateV4,
+  5: migrateV5,
 };
 
 export function migrate(raw: unknown): Json {
@@ -239,6 +251,11 @@ export function sanitize(s: Json): UserState {
         scores: (m.scores as unknown[]).map((x) => Math.max(0, Math.min(5, Math.round(num(x))))),
       }))
       .slice(-MAX_MOCK_SESSIONS),
+    focus: (Array.isArray(s.focus) ? s.focus : [])
+      .filter((f): f is Json => isObj(f) && typeof f.at === "string" && num(f.minutes) > 0)
+      .map((f) => ({ at: f.at as string, minutes: Math.min(180, Math.round(num(f.minutes))), moduleId: typeof f.moduleId === "string" ? f.moduleId : null }))
+      .sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0))
+      .slice(-MAX_FOCUS_SESSIONS),
     scenarios: mapValues(s.scenarios, (x) => {
       if (!Array.isArray(x)) return undefined;
       return x
@@ -487,6 +504,13 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
         const finishedAt = stamp();
         const mock: MockSession = { ...session, id: `mock-${finishedAt}`, finishedAt };
         return { ...s, mocks: [...s.mocks, mock].slice(-MAX_MOCK_SESSIONS) };
+      });
+    },
+    /** Save a finished focus block. A block with the same end time is only saved once (two tabs can both see it end). */
+    recordFocus(session: FocusSession) {
+      update((s) => {
+        if (s.focus.some((f) => f.at === session.at)) return s;
+        return { ...s, focus: [...s.focus, session].sort((a, b) => (a.at < b.at ? -1 : 1)).slice(-MAX_FOCUS_SESSIONS) };
       });
     },
     recordScenario(id: string, score: number) {
