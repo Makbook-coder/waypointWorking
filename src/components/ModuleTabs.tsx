@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { CodingItem, ExerciseItem, InterviewItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
+import { getNote, type ModuleNote } from "@/lib/notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
 import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
+import { InlineCode } from "./InlineCode";
 import { InterviewCard } from "./InterviewCard";
 import { MiniProjectCard } from "./MiniProjectCard";
 import { NoteEditor } from "./NoteEditor";
@@ -90,16 +92,20 @@ export function ModuleTabs({ module: mod, resources, practice, color }: { module
 }
 
 function LearnPanel({ mod, color, videos }: { mod: Module; color: string; videos: Resource[] }) {
+  const note = getNote(mod.id);
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <section aria-labelledby="topics-h">
-        <SectionTitle id="topics-h">Topics</SectionTitle>
-        <ul className="rounded-lg border border-line bg-surface px-4">
-          {mod.topics.map((t) => (
-            <TopicRow key={t.id} topic={t} moduleTitle={mod.title} />
-          ))}
-        </ul>
-      </section>
+      <div className="min-w-0 space-y-6">
+        {note && <UnderstandIt note={note} color={color} />}
+        <section aria-labelledby="topics-h">
+          <SectionTitle id="topics-h">Topics</SectionTitle>
+          <ul className="rounded-lg border border-line bg-surface px-4">
+            {mod.topics.map((t) => (
+              <TopicRow key={t.id} topic={t} moduleTitle={mod.title} />
+            ))}
+          </ul>
+        </section>
+      </div>
       <aside className="space-y-3">
         {videos.length > 0 && (
           <div className="rounded-lg border border-line bg-surface p-4" style={{ borderLeft: "4px solid #ff0033" }}>
@@ -122,6 +128,37 @@ function LearnPanel({ mod, color, videos }: { mod: Module; color: string; videos
         {mod.tryIt && <Callout title="Try it" color={color} text={mod.tryIt} />}
       </aside>
     </div>
+  );
+}
+
+function UnderstandIt({ note, color }: { note: ModuleNote; color: string }) {
+  const parts: [string, string][] = [
+    ["What it is", note.what],
+    ["Why it matters", note.why],
+    ["Example", note.example],
+  ];
+  return (
+    <section aria-labelledby="understand-h" className="rounded-lg border border-line bg-surface p-4" style={{ borderTop: `4px solid ${color}` }}>
+      <h2 id="understand-h" className="text-base font-semibold">Understand it</h2>
+      <dl className="mt-3 space-y-3 text-sm leading-relaxed">
+        {parts.map(([label, text]) => (
+          <div key={label}>
+            <dt className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</dt>
+            <dd className="mt-0.5"><InlineCode text={text} /></dd>
+          </div>
+        ))}
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wider text-muted">Common mistakes</dt>
+          <dd className="mt-0.5">
+            <ul className="list-disc space-y-0.5 pl-5">
+              {note.mistakes.map((m) => (
+                <li key={m}><InlineCode text={m} /></li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      </dl>
+    </section>
   );
 }
 

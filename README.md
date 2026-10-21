@@ -1,12 +1,12 @@
 # Waypoint: AI engineering learning tracker
 
-A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven phases). It covers 165 modules and 1,062 topics. Each module has curated resources, plus quizzes, exercises, interview scenarios and level projects. Progress stays in your browser. There is no backend in v1.
+A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven phases). It covers 165 modules and 1,062 topics. Each module has a short built-in study note, curated resources, plus quizzes, exercises, interview scenarios and level projects. Progress stays in your browser. There is no backend in v1.
 
 - **Dashboard (`/`)**: shows overall and per-phase progress, where you left off, your daily streak, reviews due today, a recommended focus list and your bookmarks.
 - **Roadmap (`/roadmap`)**: a transit-style map with seven colored lines, one per phase. Each level card shows progress, interview and job weight badges, and prerequisite hints. The hints never lock anything.
 - **Level (`/level/[id]`)**: modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
 - **Module (`/module/[id]`)**: four tabs.
-  - **Learn**: topics, with done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
+  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), then topics, with done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
   - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, an interview question, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
@@ -163,6 +163,7 @@ The persistence boundary inside the store is still the `StorageAdapter` (`read()
 content/practice/   authored quizzes, exercises, scenarios, project definitions of done
 content/coding/     authored Python coding tasks (starter, solution, tests)
 content/interview/  authored interview questions, model answers and key points
+content/notes/      authored "Understand it" study notes, one per non-capstone module
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
 scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
 public/py-worker.js Web Worker that runs coding tests in Pyodide
@@ -193,7 +194,7 @@ These decisions were made while building v1, without stopping to ask:
 6. **Weights and prerequisites** come from the level pages. Prerequisite hints count a prerequisite as "covered" at 80% of its topics, and they never block navigation.
 7. **Phase grouping.** The seven phases are Foundations (L0 to L3), Retrieval (L4), Agentic (L5 and L6), Evaluation & Trust (L7 and L8), Production (L9 to L11), Frontier & Proof (L12 to L14) and Interview (L15). They map to the seven color tokens `--phase-1` to `--phase-7`.
 8. **Resource verification.**
-   - Network access to arbitrary hosts was blocked, so a URL counts as verified only if it appeared in a web search or fetch result during the build. 224 unique URLs were verified this way, mostly official docs, papers and free courses.
+   - Network access to arbitrary hosts was blocked, so a URL counts as verified only if it appeared in a web search or fetch result during the build. 224 unique URLs were verified this way at first, and 231 after the re-check in decision 38, mostly official docs, papers and free courses.
    - CampusX links that appear on the roadmap pages are included.
    - Paid items (CampusX One courses and one book) are marked `free: false`.
    - No deep link was guessed.
@@ -243,3 +244,5 @@ These decisions were made while building v1, without stopping to ask:
 35. **Sync is whole-document, last writer wins, with a safety copy.** Progress is one JSON document of a few hundred KB at most, so syncing it as one row is simple and cheap. Merging every field (ticks, unticks, notes, attempts) would need per-field timestamps and tombstones throughout the schema. When both sides changed, the copy with the later change is kept. The other copy is never silently dropped: it's saved locally as an export file the user can download and re-import.
 36. **localStorage stays primary even when sync is on.** The UI never waits on the network. A failed sync shows an error in Settings and retries on the next change or focus, and nothing is lost.
 37. **Magic-link sign-in only.** There are no passwords to store or reset, and it works with Supabase's default email auth. Signing in with a different account on the same device resets the sync position, so one account's data is never pushed into another's row without the usual conflict check.
+38. **Resource re-check (October 2026).** All 224 verified links were fetched again. None were dead, but 8 had moved or been renamed and were updated: Pydantic models, the LangChain quickstart, Google ADK (now adk.dev) and its multi-agent page, the E2B quickstart, MLflow model versions (now the `latest` docs path), Microsoft Foundry (renamed from Azure AI Foundry) and the one paid book (now a bookshop.org link instead of a retailer). A LiveKit voice page was dropped in favor of the LiveKit Agents docs. 52 resources were added to the 43 modules that had only two verified links, using 8 new verified URLs (tiktoken, the OpenAI and Claude batch APIs, OpenAI prompt caching, GitHub's Python guide, TRL GRPO and GKD trainers, and GitHub profile READMEs) plus existing ones that fit. The total is now 705 resources and 231 unique verified URLs. Every module except M15.9 has at least three verified links.
+39. **Built-in "Understand it" notes.** Each of the 151 non-capstone modules has a short note written for this app, in `content/notes/`, shown at the top of its Learn tab. It has four parts: what it is, why it matters, a tiny example and common mistakes. Notes are plain sentences with `backticks` for code, kept to a few lines so they orient you before the resources rather than replace them. The 14 capstone modules have no note, since they are build projects rather than concepts. A data test checks that every non-capstone module has exactly one complete note.

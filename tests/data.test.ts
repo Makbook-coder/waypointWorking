@@ -5,6 +5,7 @@ import practiceJson from "../data/practice.json";
 import { countRoadmap, moduleSlug, slugify, validateRoadmap } from "@/lib/roadmap-build";
 import type { PracticeMap, ResourceMap, Roadmap } from "@/lib/types";
 import { buildPractice, countPractice, validatePractice } from "../scripts/build-practice";
+import { notes, validateNotes } from "@/lib/notes";
 
 const roadmap = roadmapJson as unknown as Roadmap;
 const resources = resourcesJson as unknown as ResourceMap;
@@ -125,5 +126,13 @@ describe("practice.json", () => {
   it("has one project per level that defines one", () => {
     const withProject = roadmap.phases.flatMap((p) => p.levels).filter((l) => l.project);
     expect(countPractice(practice).project).toBe(withProject.length);
+  });
+});
+
+describe("module notes", () => {
+  it("has one valid note for every non-capstone module", () => {
+    const ids = modules.filter((m) => !m.isCapstone).map((m) => m.id);
+    expect(validateNotes(ids)).toEqual([]);
+    expect(Object.keys(notes)).toHaveLength(ids.length);
   });
 });
