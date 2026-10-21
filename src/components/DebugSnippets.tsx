@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { getModule, moduleHref } from "@/lib/data";
 import { debugSnippets, type DebugSnippet } from "@/lib/interview-prep";
+import { AskAIAbout } from "./TutorPanel";
 import { Badge, Card, EmptyState, buttonClass, ghostButtonClass, inputClass } from "./ui";
 
 /** Short Python snippets with a bug that mirrors a real LLM-app failure. Diagnose it, then reveal the answer. */
@@ -88,6 +89,20 @@ function Snippet({ s, result, onResult }: { s: DebugSnippet; result?: "found" | 
         )}
       </div>
       {hint && !revealed && <p className="mt-2 text-sm text-muted">Hint: {s.hint}</p>}
+      <AskAIAbout
+        className="mt-3"
+        starters={["Explain what this code does", "Give me a hint, not the answer", "Is my guess right?"]}
+        context={{
+          title: `the debugging exercise "${s.title}"`,
+          facts: [
+            "The learner is hunting for a bug in a code snippet. Give hints and guiding questions; only reveal the bug if they ask for it directly.",
+            `Symptom: ${s.symptom}`,
+            `Code:\n${s.code}`,
+            `The bug (don't reveal unless asked): ${s.bugs.join("; ")}`,
+            ...(guess.trim() ? [`The learner's guess: ${guess.trim()}`] : []),
+          ],
+        }}
+      />
       {revealed && (
         <div className="mt-3 space-y-3">
           <div className="rounded-md border-l-4 border-strong-line bg-surface-2 p-3 text-sm">

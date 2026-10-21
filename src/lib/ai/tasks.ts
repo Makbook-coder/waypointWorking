@@ -30,6 +30,20 @@ const strList = (v: unknown, max = 6): string[] =>
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
 // ---------------------------------------------------------------------------
+// Whether an AI action can run. Buttons stay clickable and explain what's missing instead of
+// silently disabling (a greyed-out button with no reason reads as broken).
+
+export const MIN_ANSWER_CHARS = 20;
+export type AIBlocker = "no-key" | "short-answer" | null;
+
+/** What stops an AI action, if anything. `text` is the learner's answer when the action needs one. */
+export function aiBlocker(configured: boolean, text?: string, min = MIN_ANSWER_CHARS): AIBlocker {
+  if (!configured) return "no-key";
+  if (text !== undefined && text.trim().length < min) return "short-answer";
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // 1. Grade a free-text answer to an interview question or scenario.
 
 export interface GradeInput {

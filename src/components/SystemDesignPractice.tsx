@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getModule, moduleHref } from "@/lib/data";
 import { DESIGN_CHECKLIST, systemDesignPrompts, type SystemDesignPrompt } from "@/lib/interview-prep";
+import { AskAIAbout } from "./TutorPanel";
 import { Badge, Card, EmptyState, SectionTitle, buttonClass, ghostButtonClass, inputClass } from "./ui";
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -199,6 +200,21 @@ function Session({ prompt: p, onClose }: { prompt: SystemDesignPrompt; onClose: 
           rows={8}
           placeholder="Requirements, components, data flow, trade-offs…"
           className="mt-1 w-full resize-y rounded-md border border-line bg-surface-2 p-3 text-sm text-ink placeholder:text-muted"
+        />
+        <AskAIAbout
+          className="mt-3"
+          starters={["Where should I start this design?", "What requirements should I ask about?", "Review my notes so far", "What trade-offs will they probe?"]}
+          context={{
+            title: `the system design interview prompt "${p.title}"`,
+            facts: [
+              "The learner is practising an AI engineering system design interview. Coach them step by step; don't hand over a full design unless they ask for it.",
+              `Prompt: ${p.prompt}`,
+              `A strong answer must cover: ${p.mustCover.join("; ")}`,
+              `Strong-answer outline: ${p.outline.join("; ")}`,
+              `Likely follow-ups: ${p.followUps.join("; ")}`,
+              ...(notes.trim() ? [`The learner's design notes so far: ${notes.trim()}`] : []),
+            ],
+          }}
         />
         {!showOutline ? (
           <button type="button" className={`${buttonClass} mt-3`} onClick={() => setShowOutline(true)}>
