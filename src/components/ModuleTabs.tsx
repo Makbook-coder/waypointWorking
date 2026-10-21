@@ -1,10 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { CodingItem, ExerciseItem, InterviewItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
 import type { SourcedInterviewItem } from "@/lib/sourced";
 import { getNote, type ModuleNote } from "@/lib/notes";
+import { linkTerms } from "@/lib/glossary";
 import type { Lab } from "@/lib/lab-steps";
+import type { Explainer } from "@/lib/explainers";
 import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
@@ -12,9 +15,10 @@ import { BookmarkButton } from "./BookmarkButton";
 import { CapstoneGuide } from "./CapstoneGuide";
 import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
-import { InlineCode } from "./InlineCode";
+import { Segments } from "./GlossaryText";
 import { InterviewCard } from "./InterviewCard";
 import { LabCard } from "./LabCard";
+import { ModuleExplainer } from "./ModuleExplainer";
 import { MiniProjectCard } from "./MiniProjectCard";
 import { NoteEditor } from "./NoteEditor";
 import { ProjectChecklist } from "./ProjectChecklist";
@@ -37,6 +41,7 @@ export function ModuleTabs({
   color,
   topicNotes = {},
   labs = [],
+  explainer,
 }: {
   module: Module;
   resources: Resource[];
@@ -45,6 +50,7 @@ export function ModuleTabs({
   color: string;
   topicNotes?: Record<string, TopicNote>;
   labs?: Lab[];
+  explainer?: Explainer;
 }) {
   const [tab, setTab] = useState<Tab>("learn");
   const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, resources: null, practice: null, notes: null });
@@ -101,7 +107,7 @@ export function ModuleTabs({
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
-        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} />}
+        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} explainer={explainer} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} labs={labs} />}
         {tab === "notes" && (
@@ -114,12 +120,13 @@ export function ModuleTabs({
   );
 }
 
-function LearnPanel({ mod, color, videos, topicNotes }: { mod: Module; color: string; videos: Resource[]; topicNotes: Record<string, TopicNote> }) {
+function LearnPanel({ mod, color, videos, topicNotes, explainer }: { mod: Module; color: string; videos: Resource[]; topicNotes: Record<string, TopicNote>; explainer?: Explainer }) {
   const note = getNote(mod.id);
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="min-w-0 space-y-6">
         {note && <UnderstandIt note={note} color={color} />}
+        {explainer && <ModuleExplainer explainer={explainer} color={color} />}
         <section aria-labelledby="topics-h">
           <SectionTitle id="topics-h">Topics</SectionTitle>
           <ul className="rounded-lg border border-line bg-surface px-4">
@@ -169,32 +176,31 @@ function moduleTutorContext(mod: Module, note: ModuleNote | undefined) {
 }
 
 function UnderstandIt({ note, color }: { note: ModuleNote; color: string }) {
-  const parts: [string, string][] = [
-    ["What it is", note.what],
-    ["Why it matters", note.why],
-    ["Example", note.example],
-  ];
+  const labels = ["What it is", "Why it matters", "Example"];
+  // Linked together so each glossary term is underlined once per note.
+  const [what, why, example, ...mistakes] = linkTerms([note.what, note.why, note.example, ...note.mistakes]);
   return (
     <section aria-labelledby="understand-h" className="rounded-lg border border-line bg-surface p-4" style={{ borderTop: `4px solid ${color}` }}>
       <h2 id="understand-h" className="text-base font-semibold">Understand it</h2>
       <dl className="mt-3 space-y-3 text-sm leading-relaxed">
-        {parts.map(([label, text]) => (
-          <div key={label}>
-            <dt className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</dt>
-            <dd className="mt-0.5"><InlineCode text={text} /></dd>
+        {[what, why, example].map((segments, i) => (
+          <div key={labels[i]}>
+            <dt className="text-xs font-semibold uppercase tracking-wider text-muted">{labels[i]}</dt>
+            <dd className="mt-0.5"><Segments segments={segments} /></dd>
           </div>
         ))}
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wider text-muted">Common mistakes</dt>
           <dd className="mt-0.5">
             <ul className="list-disc space-y-0.5 pl-5">
-              {note.mistakes.map((m) => (
-                <li key={m}><InlineCode text={m} /></li>
+              {mistakes.map((segments, i) => (
+                <li key={note.mistakes[i]}><Segments segments={segments} /></li>
               ))}
             </ul>
           </dd>
         </div>
       </dl>
+      <p className="mt-3 text-xs text-muted">Dotted words have a plain-word definition: hover or tap them, or browse the <Link href="/glossary" className="underline underline-offset-2 hover:text-ink">glossary</Link>.</p>
     </section>
   );
 }

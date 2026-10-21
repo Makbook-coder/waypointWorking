@@ -6,7 +6,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Roadmap (`/roadmap`)**: a transit-style map with seven colored lines, one per phase. Each level card shows progress, interview and job weight badges, and prerequisite hints. The hints never lock anything.
 - **Level (`/level/[id]`)**: the five most common beginner mistakes for that level (each opens to show how to spot it and how to fix it), modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
 - **Module (`/module/[id]`)**: four tabs.
-  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), then topics. Each topic has an "Explain simply" note for beginners and can be marked done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
+  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), a "Picture it" diagram of how the module's main pieces fit, a worked example you step through one line at a time followed by a similar "Your turn" problem with two hints, then topics. Each topic has an "Explain simply" note for beginners and can be marked done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
   - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, an interview question, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
@@ -33,6 +33,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Capstone guides**: each level project has milestones with concrete tasks, a definition of done and a self-review rubric (1 to 4 per criterion) that is saved.
 - **Readiness (`/readiness`)**: for your target role, a score per level built from exams, quizzes, coding, labs, scenarios, projects, topics and mock interviews, plus a ranked list of gaps with links. It is a guide to what to practise next. Practice improves your readiness, but no score here guarantees passing an exam or interview.
 - **Optional AI tutor**: connect a free Gemini key (or a local Ollama model) in Settings to get AI grading of written answers, an "Ask tutor" chat on every topic and module, extra AI-written quiz questions and scenarios, hints on your coding drafts, and an AI interviewer that asks follow-up questions. See [Optional AI tutor](#optional-ai-tutor). Everything else works without it.
+- **Glossary (`/glossary`)**: about 250 terms in plain words, each linked to the module that teaches it, with search and an A to Z jump. In the "Understand it" and "Explain simply" notes, the first mention of a glossary term has a dotted underline: hover or tap it for the definition without leaving the page.
 - **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme, target role, AI tutor and optional cloud sync).
 
 ## Setup
@@ -241,6 +242,8 @@ docs/               practice-plan.md (the practice audit and plan)
 content/interview/  authored interview questions, model answers and key points
 content/notes/      authored "Understand it" study notes, one per non-capstone module
 content/topic-notes/ authored beginner "Explain simply" notes, one per topic
+content/glossary/   authored plain-word glossary terms, each tied to the module that teaches it
+content/explainers/ authored diagram, worked example and "your turn" problem per non-capstone module
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
 scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
 public/py-worker.js Web Worker that runs coding tests in Pyodide
@@ -338,4 +341,6 @@ These decisions were made while building v1, without stopping to ask:
 51. **No exam for L14 and L15.** L14 is the portfolio capstone and L15 is interview prep, which the mock interviews and the L15 scenarios already test.
 52. **Capstones are judged with a saved self-review rubric.** Four shared criteria (works end to end, evidence not vibes, handles failure, you can explain it) plus two per level, on a 1 to 4 scale. Milestone ticks reuse `projectChecks`. Scores go in `rubrics`.
 53. **Readiness is a weighted guide, and says so.** Per level: exam 30, mocks 20 (L15 only), quizzes 15, coding 15, labs 15, scenarios 10, project 10, topics 5, normalised to what that level has. Levels are weighted by the target role's importance. The page and the README both say that practice improves readiness but guarantees nothing.
+54. **Glossary terms are found, not tagged.** Notes stay plain sentences; `src/lib/glossary.ts` builds one matcher from every term and spelling and finds them at render time, longest phrase first. Acronyms and mixed-case names (RAG, LoRA, LangChain) must match their capitals so ordinary words never light up, hyphenated words count as one word so "agent" doesn't fire inside "multi-agent", and code spans are skipped. Only the first mention per note is underlined. The definition card is positioned against the viewport so it stays on screen on a phone, and a data test rejects duplicate spellings and unknown modules.
+55. **Diagrams are data, drawn with HTML.** Each module's "Picture it" diagram is a short list of steps (`Label :: detail`, with `|` for side-by-side options) and a shape: flow, loop or hub. One component draws all 151, as boxes and arrows that run across on wide screens and down on phones, so they are real text (searchable, readable by screen readers, themed and printable) rather than 151 hand-drawn images. Worked examples reveal one step at a time so you can predict the next line before you see it, and each ends with a similar problem whose hints and answer use the same hint ladder as practice. Only the current module's explainer is sent to the browser.
 56. **Mistakes are per level, with a symptom.** The module notes already list mistakes in passing; the level page adds the five that trip beginners up most, each with "how to spot it" written as something you can observe in your own work (a log line, a symptom, a test result), because naming a mistake doesn't help if you can't tell you're making it. Each links to the module that teaches the fix. A data test requires exactly five per level.
