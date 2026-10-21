@@ -8,7 +8,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Module (`/module/[id]`)**: four tabs.
   - **Learn**: topics, with done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
-  - **Practice**: a quiz runner, exercises, scenarios and the level project.
+  - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
 - **Practice (`/practice`)**: filter by level, type, difficulty, not attempted or wrong answers. There is a Random 10 quiz mode and an interview mode, which serves timed scenarios with a self-score from 1 to 5.
 - **Flashcards (`/flashcards`)**: one card per topic. There are three decks:
@@ -82,20 +82,23 @@ Resource { type: "video" | "docs" | "article" | "course" | "repo" | "paper", tit
 
 - `quiz`: `question`, `options` (4), `answer` (0 to 3), `explanation`
 - `exercise`: `title`, `task`, `acceptance[]`
+- `mini`: `title`, `brief`, `steps[]` (one per module topic, plus a NOTES.md step), `doneWhen` (the module outcome)
+- `coding`: `title`, `topicIds[]`, `prompt`, `starter`, `solution`, `tests[]` (`{ name, code }`, Python using `assert`), `checklist[]`
 - `scenario`: `title`, `prompt`, `hints[]` (what a strong answer covers)
 - `project`: `title`, `checklist[]` (taken from the level deliverables), `definitionOfDone`
 
-The source for practice items is `content/practice/*.ts`, written in a compact tuple format. `scripts/build-practice.ts` adds ids and shuffles quiz options deterministically, seeded by item id.
+The source for practice items is `content/practice/*.ts`, written in a compact tuple format, and `content/coding/tasks.ts` for coding tasks. `scripts/build-practice.ts` adds ids and shuffles quiz options deterministically, seeded by item id.
 
 ### User state (localStorage key `aet:state`)
 
 ```ts
 UserState {
-  version: 3,
+  version: 4,
   topics:        Record<topicId, { done, doneAt?, confidence?: 1|2|3 }>,
   quiz:          Record<quizId, { attempts, correct, lastCorrect, lastAt }>,
   exercises:     Record<exerciseId, completedAt>,
-  projectChecks: Record<"<projectId>#<index>", checkedAt>,
+  projectChecks: Record<"<itemId>#<index>", checkedAt>,     // level projects, mini-project steps, coding checklists
+  coding:        Record<codingId, { code?, passedAt? }>,     // draft and first full pass
   scenarios:     Record<scenarioId, { score: 1..5, at }[]>,
   bookmarks:     Record<"<kind>:<id>", addedAt>,          // kind: topic | module | level | practice | resource
   notes:         Record<"<kind>:<id>", { text, updatedAt }>,
@@ -162,8 +165,10 @@ Nothing else changes. If you later want per-row tables, for example to query pro
 
 ```
 content/practice/   authored quizzes, exercises, scenarios, project definitions of done
+content/coding/     authored Python coding tasks (starter, solution, tests)
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
-scripts/            scrape.ts, build-resources.ts, build-practice.ts
+scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
+public/py-worker.js Web Worker that runs coding tests in Pyodide
 src/app/            routes (App Router)
 src/components/     UI; client components are marked "use client"
 src/lib/            store, review scheduler, progress, focus ranking, search, data access
@@ -199,7 +204,7 @@ These decisions were made while building v1, without stopping to ask:
 10. **Quizzes** cover L0 to L13, with 5 per module (740 in total). They are written to be factually checkable and tied to each module's topics. Answer positions are shuffled deterministically. L14 is a set of portfolio projects and L15 is interview practice, so they get exercises and scenarios instead of quizzes.
 11. **Exercises.**
     - 47 modules have a "Try it" prompt on the source. Each was rewritten by hand as a concrete task with acceptance criteria.
-    - The other 95 non-capstone modules (L0 to L14) get a templated exercise built from their first three topics and the module outcome.
+    - The other 95 non-capstone modules (L0 to L14) get a mini project instead (see 25).
     - Capstones are covered by the level project instead.
 12. **Scenarios** total 67. Most are in L9 (system design, 20) and L15 (interview prep, 30), with a few in L4 to L8 and L10 to L13. The four required scenarios are all present: "RAG quality dropped after a week", "Agent in a costly loop", "Provider latency doubled" and "Design an enterprise support assistant". The quality-drop, costly-loop and latency scenarios have both a design version (L9) and an interview version (L15).
 13. **Spaced review.**
@@ -226,3 +231,9 @@ These decisions were made while building v1, without stopping to ask:
 22. **Weak spots** are judged on each question's most recent answer. A module counts as weak when at least two of its questions have been tried and fewer than 60% are currently right.
 23. **Badges** are calculated from existing progress and never stored, so they can't drift out of sync. Streak badges use your longest run ever, not just the current one.
 24. **Schema v3.** It adds `studyMinutes`, `log` and `settings.weeklyHours`. The v2 to v3 migration only bumps the version, and `sanitize` fills in the defaults.
+25. **Mini projects replace the templated exercises.** Each of the 95 modules without a hand-written exercise gets a mini project with one step per topic (title and description), a final NOTES.md step, and "done when" set to the module outcome. Every module's topics are covered, not just the first three. Mini projects keep the old `-ex1` ids, so anything already marked done still counts. Steps are stored in `projectChecks`, and "Project complete" uses `exercises`, so no new state was needed.
+26. **Coding tasks run Python in the browser with Pyodide.** There are 37 hand-written tasks across L0 to L13. Each is tied to specific topics, and each `topics` entry must match a topic title in its module or the build fails. Only the standard library is used, because extra Pyodide packages would need more self-hosted wheels.
+27. **Pyodide is self-hosted.** `pyodide@0.26.4` is pinned in `package.json`. `scripts/copy-pyodide.mjs` runs before `dev` and `build` and copies the runtime (about 14 MB, mostly the wasm file) into the git-ignored `public/pyodide/`. Nothing loads from a CDN, and the runtime downloads only when you first press Run.
+28. **Tests run in a Web Worker with a 10 second limit.** If a run goes over, the worker is terminated and restarted, so an infinite loop never freezes the page. The harness in `src/lib/coding.ts` runs your code once, then runs each test against a fresh copy of its globals. It allows top-level `await`, so async tasks can be tested; Pyodide can't call `asyncio.run`.
+29. **Every coding task is checked twice in CI-style tests.** `tests/coding.test.ts` runs every task with local `python3` through the same harness: the reference solution must pass all of its tests and the starter must fail at least one. The tasks were also run once under real Pyodide in Node. That check found two tasks that would have broken in the browser: one needed `sqlite3`, which isn't in the base runtime, and one used `asyncio.run`. Both were rewritten.
+30. **Schema v4** adds `coding: { [taskId]: { code?, passedAt? } }`. Drafts save as you type, are capped at 20,000 characters, and don't count as streak activity. The first time all tests pass is recorded once and counts as activity. Checklist ticks reuse `projectChecks`.

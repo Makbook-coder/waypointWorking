@@ -6,7 +6,9 @@ import { getModule, levels } from "@/lib/data";
 import type { UserState } from "@/lib/store";
 import type { Difficulty, PracticeItem, PracticeType, QuizItem, ScenarioItem } from "@/lib/types";
 import { useHydrated, useUserState } from "@/lib/use-store";
+import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
+import { MiniProjectCard } from "./MiniProjectCard";
 import { ProjectChecklist } from "./ProjectChecklist";
 import { QuizRunner } from "./QuizRunner";
 import { ScenarioCard } from "./ScenarioCard";
@@ -28,6 +30,10 @@ export function attempted(item: PracticeItem, s: UserState): boolean {
       return Boolean(s.quiz[item.id]);
     case "exercise":
       return Boolean(s.exercises[item.id]);
+    case "mini":
+      return Boolean(s.exercises[item.id]) || item.steps.some((_, i) => s.projectChecks[`${item.id}#${i}`]);
+    case "coding":
+      return Boolean(s.coding[item.id]?.passedAt || s.coding[item.id]?.code);
     case "scenario":
       return (s.scenarios[item.id]?.length ?? 0) > 0;
     case "project":
@@ -135,6 +141,8 @@ export function PracticeHub() {
         <Select label="Type" value={f.type} onChange={(v) => set("type", v as PracticeFilters["type"])} disabled={mode !== "browse"}>
           <option value="all">All types</option>
           <option value="quiz">Quiz</option>
+          <option value="coding">Coding</option>
+          <option value="mini">Mini project</option>
           <option value="exercise">Exercise</option>
           <option value="scenario">Scenario</option>
           <option value="project">Project</option>
@@ -155,7 +163,7 @@ export function PracticeHub() {
       {!hydrated ? null : mode === "browse" ? (
         <div className="space-y-6">
           <p className="num text-sm text-muted" aria-live="polite">
-            {filtered.length} items · {quizzes.length} quiz questions · {others.length} exercises, scenarios and projects
+            {filtered.length} items · {quizzes.length} quiz questions · {others.length} coding tasks, projects, exercises and scenarios
           </p>
           {quizzes.length > 0 && (
             <section aria-label="Quiz questions">
@@ -179,6 +187,10 @@ export function PracticeHub() {
               <li key={it.id}>
                 {it.type === "exercise" ? (
                   <ExerciseCard item={it} context={ctx(it.moduleId)} />
+                ) : it.type === "coding" ? (
+                  <CodingCard item={it} context={ctx(it.moduleId)} />
+                ) : it.type === "mini" ? (
+                  <MiniProjectCard item={it} context={ctx(it.moduleId)} />
                 ) : it.type === "scenario" ? (
                   <ScenarioCard item={it} context={ctx(it.moduleId)} />
                 ) : it.type === "project" ? (

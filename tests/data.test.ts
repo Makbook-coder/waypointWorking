@@ -108,6 +108,20 @@ describe("practice.json", () => {
     expect(heavy / all.length).toBeGreaterThan(0.6);
   });
 
+  it("gives every non-capstone L0..L14 module an exercise or a mini project built from its topics", () => {
+    for (const m of modules.filter((m) => m.levelId <= 14 && !m.isCapstone)) {
+      const items = practice[m.id] ?? [];
+      const builds = items.filter((p) => p.type === "exercise" || p.type === "mini");
+      expect(builds.length, m.id).toBe(1);
+      const mini = builds[0];
+      if (mini.type === "mini") {
+        expect(mini.steps.length, m.id).toBe(m.topics.length + 1);
+        m.topics.forEach((t, i) => expect(mini.steps[i].startsWith(t.title), m.id).toBe(true));
+      }
+    }
+    expect(countPractice(practice).mini).toBeGreaterThan(80);
+  });
+
   it("has one project per level that defines one", () => {
     const withProject = roadmap.phases.flatMap((p) => p.levels).filter((l) => l.project);
     expect(countPractice(practice).project).toBe(withProject.length);

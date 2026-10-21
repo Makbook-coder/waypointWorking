@@ -4,7 +4,7 @@ import { computeBadges } from "@/lib/badges";
 import { dailyMinutes, overallAccuracy, quizAccuracy, shakyTopicIds, timeSummary, weakModules } from "@/lib/insights";
 import { HOURS_PER_SESSION, MIN_MODULE_HOURS, buildPlan, moduleHours, weekStart } from "@/lib/plan";
 import { levelTopicIds } from "@/lib/progress";
-import { createStore, emptyState, loadState, memoryStorage, type UserState } from "@/lib/store";
+import { SCHEMA_VERSION, createStore, emptyState, loadState, memoryStorage, type UserState } from "@/lib/store";
 
 const totalHours = levels.flatMap((l) => l.modules).reduce((n, m) => n + moduleHours(m), 0);
 
@@ -112,7 +112,7 @@ describe("store v3 fields", () => {
   it("migrates v2 data, keeping progress and adding defaults", () => {
     const v2 = { version: 2, topics: { t: { done: true } }, settings: { theme: "dark", targetRole: "none" } };
     const s = loadState(JSON.stringify(v2));
-    expect(s.version).toBe(3);
+    expect(s.version).toBe(SCHEMA_VERSION);
     expect(s.topics.t.done).toBe(true);
     expect(s.settings).toEqual({ theme: "dark", targetRole: "none", weeklyHours: 6 });
     expect(s.studyMinutes).toEqual({});
