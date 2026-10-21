@@ -26,6 +26,12 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
   - Quiz accuracy, weak modules and shaky topics.
   - A "what to study next" list.
   - A daily study log and 21 milestone badges.
+- **Start here (`/start`)**: a beginner on-ramp with the daily study loop, a setup checklist (Python, editor, terminal, git), links to the refresher modules and an in-browser Python warm-up lab.
+- **Guided labs (`/labs`, and first in each module's Practice tab)**: 15 step-by-step builds, one per level from L0 to L13 plus the warm-up. Each lab is one Python file that grows over four or five steps. Steps go from *guided* (fill the gaps) to *partial* (a signature and a docstring) to *open* (just the spec), and each ends with a checkpoint that runs the tests in the browser. You can download your file as a `.py` with its tests, or run it in Colab.
+- **"Stuck? start here" hints**: every coding task, lab step, scenario, mini project and exercise reveals help one rung at a time (hint 1, hint 2, then the solution) so you try first and only see as much as you need. Some coding tasks are "debug this" tasks, where the starter is broken code to fix.
+- **Level exams (`/exam`)**: a 30-minute timed exam for each level from L0 to L13, with 10 quiz questions across the level's modules, one coding task and one scenario. The pass mark is 70%. Afterwards you review every mistake, and the topics of modules you were weak on come back for spaced review the next day. Your best score is kept.
+- **Capstone guides**: each level project has milestones with concrete tasks, a definition of done and a self-review rubric (1 to 4 per criterion) that is saved.
+- **Readiness (`/readiness`)**: for your target role, a score per level built from exams, quizzes, coding, labs, scenarios, projects, topics and mock interviews, plus a ranked list of gaps with links. It is a guide to what to practise next. Practice improves your readiness, but no score here guarantees passing an exam or interview.
 - **Optional AI tutor**: connect a free Gemini key (or a local Ollama model) in Settings to get AI grading of written answers, an "Ask tutor" chat on every topic and module, extra AI-written quiz questions and scenarios, hints on your coding drafts, and an AI interviewer that asks follow-up questions. See [Optional AI tutor](#optional-ai-tutor). Everything else works without it.
 - **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme, target role, AI tutor and optional cloud sync).
 
@@ -88,27 +94,35 @@ Resource { type: "video" | "docs" | "article" | "course" | "repo" | "paper", tit
 - `exercise`: `title`, `task`, `acceptance[]`
 - `mini`: `title`, `brief`, `steps[]` (one per module topic, plus a NOTES.md step), `doneWhen` (the module outcome)
 - `interview`: `question`, `answer` (model answer), `keyPoints[]` (3 to 5 points a strong answer covers)
-- `coding`: `title`, `topicIds[]`, `prompt`, `starter`, `solution`, `tests[]` (`{ name, code }`, Python using `assert`), `checklist[]`
+- `coding`: `title`, `topicIds[]`, `prompt`, `starter`, `solution`, `tests[]` (`{ name, code }`, Python using `assert`), `checklist[]`, `hints` (two strings, the first two rungs of the hint ladder), `kind: "build" | "debug"`
 - `scenario`: `title`, `prompt`, `hints[]` (what a strong answer covers)
 - `project`: `title`, `checklist[]` (taken from the level deliverables), `definitionOfDone`
 
-The source for practice items is `content/practice/*.ts`, written in a compact tuple format, `content/coding/tasks.ts` for coding tasks and `content/interview/*.ts` for interview questions. `scripts/build-practice.ts` adds ids and shuffles quiz options deterministically, seeded by item id.
+The source for practice items is `content/practice/*.ts`, written in a compact tuple format, `content/coding/tasks.ts` and `tasks-extra.ts` for coding tasks (hints for the original tasks are in `content/coding/hints.ts`) and `content/interview/*.ts` for interview questions. `scripts/build-practice.ts` adds ids and shuffles quiz options deterministically, seeded by item id. The build fails if a coding task has no hints, or if any level from L0 to L13 has fewer than 2 coding tasks or 3 scenarios.
+
+### Labs and capstones
+
+Labs are not in `practice.json`. They are TypeScript in `content/labs/` (`LabSrc`: `id`, `moduleId`, `title`, `goal`, `preamble`, `steps[]`, `stretch[]`; each step has `title`, `mode`, `instructions`, `scaffold`, `solution`, `tests[]` and two `hints`). A step's checkpoint runs the tests of that step and every step before it. `tests/labs.test.ts` runs every step with real Python and checks that the reference passes and the scaffold alone fails.
+
+Capstone guides are in `content/capstones.ts`: per level, `days`, four `milestones` (`title`, `tasks[]`) and two level-specific rubric criteria added to the four shared ones.
 
 ### User state (localStorage key `aet:state`)
 
 ```ts
 UserState {
-  version: 7,
+  version: 8,
   topics:        Record<topicId, { done, doneAt?, confidence?: 1|2|3 }>,
   quiz:          Record<quizId, { attempts, correct, lastCorrect, lastAt }>,
   exercises:     Record<exerciseId, completedAt>,
   projectChecks: Record<"<itemId>#<index>", checkedAt>,     // level projects, mini-project steps, coding checklists
-  coding:        Record<codingId, { code?, passedAt? }>,     // draft and first full pass
+  coding:        Record<codingId, { code?, passedAt? }>,     // draft and first full pass; labs use "lab:<id>" and "lab:<id>#<step>"
   interview:     Record<questionId, { score: 1..5, at, answer?, ai?: true }[]>, // last 10 attempts; ai = scored by the AI tutor
   mocks:         { id, startedAt, finishedAt, secondsPerQuestion, itemIds[], scores[] }[], // last 50; score 0 = skipped
   focus:         { at, minutes, moduleId }[],               // finished Pomodoro blocks, last 500
   scenarios:     Record<scenarioId, { score: 1..5, at, ai?: true }[]>,
   generated:     Record<moduleId, (QuizItem | ScenarioItem)[]>, // AI-written practice, last 60 per module
+  exams:         { id, levelId, startedAt, finishedAt, score, passed, quiz, coding, scenario, wrongQuizIds[], weakModules[] }[], // last 100
+  rubrics:       Record<"<projectId>#<criterion>", 1..4>,   // capstone self-review
   bookmarks:     Record<"<kind>:<id>", addedAt>,          // kind: topic | module | level | practice | resource
   notes:         Record<"<kind>:<id>", { text, updatedAt }>,
   reviews:       Record<topicId, { step: 0..3, due: "YYYY-MM-DD" }>,
@@ -216,7 +230,10 @@ The code lives in `src/lib/ai/`: `config.ts` (settings storage), `provider.ts` (
 
 ```
 content/practice/   authored quizzes, exercises, scenarios, project definitions of done
-content/coding/     authored Python coding tasks (starter, solution, tests)
+content/coding/     authored Python coding tasks (starter, solution, tests, hints)
+content/labs/       guided labs, one evolving Python file per lab, verified step by step
+content/capstones.ts milestones and rubric criteria for each level project
+docs/               practice-plan.md (the practice audit and plan)
 content/interview/  authored interview questions, model answers and key points
 content/notes/      authored "Understand it" study notes, one per non-capstone module
 content/topic-notes/ authored beginner "Explain simply" notes, one per topic
@@ -308,3 +325,12 @@ These decisions were made while building v1, without stopping to ask:
 42. **Cheat sheets are assembled, not separately written.** Each sheet is built at build time from content the app already has: the module notes, mental models, topic titles and the first four key points of the module's interview question. Capstones use their outcome as the gist. This keeps one source of truth, so fixing a note fixes its sheet. Print styles hide the navigation, switch to black on white whatever the theme, and keep each module together on a page.
 43. **"Explain simply" notes per topic.** Each topic has a short beginner note in four parts: what it means in plain words, an everyday analogy (left out when none fits), a tiny example and one common mistake. They're written for this app in `content/topic-notes/`, one file per level, and keyed by topic id. A data test rejects unknown ids, empty sections and half-finished levels, so a level ships with all its notes or none. The module page passes only that module's notes to the client, so the full set (about 1,000 notes) stays out of the browser bundle. Every topic in L0 to L15 has one.
 44. **AI tutor is bring-your-own-key, called from the browser.** A server proxy would need hosting and would hold a shared key, so instead each learner pastes their own free key, stored in a separate localStorage key so exports and sync never carry it. Gemini is the default because its free tier needs no card. Ollama and any OpenAI-compatible URL share one client. Prompts put learner text inside tags and tell the model to treat it as material, never instructions. Replies that must be structured (grades, generated questions) are requested as JSON, then validated and clamped, so a bad reply becomes a friendly "try again" rather than broken state. AI scores go into the existing history with an `ai` flag (schema v7), and the learner chooses whether to save them.
+45. **Practice-first work ships as one PR with focused commits.** Hints, extra practice, labs, exams, capstones, the on-ramp and readiness each landed as their own commit with tests, so any one can be reviewed or reverted alone. The audit and plan are in `docs/practice-plan.md`.
+46. **The hint ladder reveals one rung at a time.** Hint 1 points at the approach, hint 2 at the tricky part, and the solution comes last. Coding tasks and lab steps have two hand-written hints each, and the build fails without them. Mini projects and exercises build their ladder from the module's own "Understand it" note, so nothing needs writing twice. Scenarios reveal their strong-answer points in stages.
+47. **"Debug this" is a coding task kind, not a new item type.** The starter is plausible but broken code, and the tests are the bug report. It reuses the runner, the progress and the practice filters.
+48. **A lab is one evolving file with cumulative checkpoints.** Each step appends its scaffold to the learner's file, and its checkpoint runs every earlier step's tests too, so a later change can't quietly break earlier work. Progress reuses the `coding` map (`lab:<id>` for the draft, `lab:<id>#<step>` per checkpoint), so labs needed no schema change and sync for free.
+49. **One lab per level, not one per module.** Fifteen verified labs (the level's core module plus a Python warm-up) were worth more than 128 thin ones. Every other module's mini project now has "run it locally or in Colab" steps and the hint ladder instead.
+50. **Exams mix the level's own items with fixed weights.** Quiz 60%, coding 25% and scenario 15%, pass mark 70%, 30 minutes. Questions are sampled round-robin across the level's modules from a seed, putting questions you got wrong before first. The scenario is self-scored against its points, as everywhere else. Modules you were weak on have their topics lapsed in the review schedule so they are due the next day. Exams are stored in `exams` (schema v8, the last 100 kept).
+51. **No exam for L14 and L15.** L14 is the portfolio capstone and L15 is interview prep, which the mock interviews and the L15 scenarios already test.
+52. **Capstones are judged with a saved self-review rubric.** Four shared criteria (works end to end, evidence not vibes, handles failure, you can explain it) plus two per level, on a 1 to 4 scale. Milestone ticks reuse `projectChecks`. Scores go in `rubrics`.
+53. **Readiness is a weighted guide, and says so.** Per level: exam 30, mocks 20 (L15 only), quizzes 15, coding 15, labs 15, scenarios 10, project 10, topics 5, normalised to what that level has. Levels are weighted by the target role's importance. The page and the README both say that practice improves readiness but guarantees nothing.

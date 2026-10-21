@@ -45,4 +45,18 @@ Each item is a separate commit with tests, so it can be reviewed or reverted on 
 
 ## Status
 
-Tracked in the PR description and the README decisions log (decisions 44 onward).
+All seven items shipped in one PR (decisions 45 to 53 in the README):
+
+- Hint ladder on coding tasks, lab steps, scenarios, mini projects and exercises.
+- 23 more coding tasks (8 of them "debug this") and 22 more scenarios. Coding is now 60 tasks and scenarios 89, and every level from L0 to L13 has at least 2 coding tasks and 3 scenarios.
+- 15 guided labs (L0 to L13 plus a Python warm-up), every step verified with real Python in the tests.
+- Timed exams for L0 to L13 with mistake review and spaced review of weak modules.
+- Capstone guides with milestones and a saved rubric for every level project.
+- `/start` on-ramp and `/readiness` dashboard.
+
+Still open:
+
+- Labs cover the core module of each level, not every module. Other modules rely on their mini project.
+- L14 and L15 have no exam. L15 is covered by mock interviews.
+- Quiz questions have no hint ladder. They show an explanation after you answer.
+- Scenario, interview and rubric scores are self-assessed unless the AI tutor is connected.
