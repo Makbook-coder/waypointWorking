@@ -16,9 +16,11 @@ import { QUIZZES_L7_L9 } from "../content/practice/quizzes-l7-l9";
 import { QUIZZES_L10_L13 } from "../content/practice/quizzes-l10-l13";
 import { EXERCISES } from "../content/practice/exercises";
 import { SCENARIOS } from "../content/practice/scenarios";
+import { EXTRA_SCENARIOS } from "../content/practice/scenarios-extra";
 import { PROJECTS } from "../content/practice/projects";
 import { CODING_TASKS } from "../content/coding/tasks";
 import { CODING_HINTS } from "../content/coding/hints";
+import { EXTRA_CODING_TASKS } from "../content/coding/tasks-extra";
 import { INTERVIEW_L0_L4 } from "../content/interview/l0-l4";
 import { INTERVIEW_L5_L9 } from "../content/interview/l5-l9";
 import { INTERVIEW_L10_L15 } from "../content/interview/l10-l15";
@@ -105,7 +107,8 @@ export function buildPractice(roadmap: Roadmap): PracticeMap {
     push(miniProject(m, nextId(m.id, "ex")));
   }
 
-  for (const t of CODING_TASKS) {
+  const allTasks = [...CODING_TASKS, ...EXTRA_CODING_TASKS];
+  for (const t of allTasks) {
     const m = need(t.moduleId);
     const hints = t.hints ?? CODING_HINTS[t.id];
     if (!hints) throw new Error(`Coding task ${t.id}: no hints (add them to the task or content/coding/hints.ts)`);
@@ -131,7 +134,7 @@ export function buildPractice(roadmap: Roadmap): PracticeMap {
     } satisfies CodingItem);
   }
 
-  const taskIds = new Set(CODING_TASKS.map((t) => t.id));
+  const taskIds = new Set(allTasks.map((t) => t.id));
   for (const id of Object.keys(CODING_HINTS)) if (!taskIds.has(id)) throw new Error(`content/coding/hints.ts: unknown task ${id}`);
 
   for (const [moduleId, d, question, answer, keyPoints] of [...INTERVIEW_L0_L4, ...INTERVIEW_L5_L9, ...INTERVIEW_L10_L15]) {
@@ -139,7 +142,7 @@ export function buildPractice(roadmap: Roadmap): PracticeMap {
     push({ id: nextId(moduleId, "iq"), type: "interview", moduleId, levelId: m.levelId, difficulty: DIFF[d], question, answer, keyPoints } satisfies InterviewItem);
   }
 
-  for (const [moduleId, d, title, prompt, hints] of SCENARIOS) {
+  for (const [moduleId, d, title, prompt, hints] of [...SCENARIOS, ...EXTRA_SCENARIOS]) {
     const m = need(moduleId);
     push({ id: nextId(moduleId, "sc"), type: "scenario", moduleId, levelId: m.levelId, difficulty: DIFF[d], title, prompt, hints });
   }
@@ -208,6 +211,11 @@ export function validatePractice(roadmap: Roadmap, practice: PracticeMap): strin
       for (const m of l.modules) {
         const n = (practice[m.id] ?? []).filter((i) => i.type === "interview").length;
         if (m.isCapstone ? n > 0 : n === 0) errors.push(`${m.id}: ${n} interview questions (expected ${m.isCapstone ? 0 : "1+"})`);
+      }
+      if (l.id <= QUIZ_LEVELS) {
+        const of = (t: string) => items.filter((i) => i.levelId === l.id && i.type === t).length;
+        if (of("coding") < 2) errors.push(`L${l.id}: ${of("coding")} coding tasks (expected 2+, level exams draw from them)`);
+        if (of("scenario") < 3) errors.push(`L${l.id}: ${of("scenario")} scenarios (expected 3+, level exams draw from them)`);
       }
       if (l.project && !items.some((i) => i.type === "project" && i.levelId === l.id)) errors.push(`L${l.id}: project missing`);
     }

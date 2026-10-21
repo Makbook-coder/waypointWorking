@@ -104,10 +104,12 @@ describe("practice.json", () => {
       expect(titles.some((t) => t.includes(needle)), needle).toBe(true);
   });
 
-  it("scenarios are concentrated in L9 and L15", () => {
+  it("scenarios are heaviest in L9 and L15, and every exam level has at least three", () => {
     const all = Object.values(practice).flat().filter((p) => p.type === "scenario");
-    const heavy = all.filter((p) => p.levelId === 9 || p.levelId === 15).length;
-    expect(heavy / all.length).toBeGreaterThan(0.6);
+    const at = (id: number) => all.filter((p) => p.levelId === id).length;
+    expect(at(9)).toBeGreaterThanOrEqual(20);
+    expect(at(15)).toBeGreaterThanOrEqual(20);
+    for (let l = 0; l <= 13; l++) expect(at(l), `L${l}`).toBeGreaterThanOrEqual(3);
   });
 
   it("gives every non-capstone L0..L14 module an exercise or a mini project built from its topics", () => {
