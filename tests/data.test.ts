@@ -145,8 +145,8 @@ describe("topic notes", () => {
     expect(validateTopicNotes(byLevel)).toEqual([]);
   });
 
-  it("covers every topic in L0 to L8", () => {
-    const ids = modules.filter((m) => m.levelId <= 8).flatMap((m) => m.topics.map((t) => t.id));
+  it("covers every topic in the roadmap", () => {
+    const ids = modules.flatMap((m) => m.topics.map((t) => t.id));
     expect(ids.filter((id) => !topicNotes[id])).toEqual([]);
   });
 });
