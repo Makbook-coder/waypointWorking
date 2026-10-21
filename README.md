@@ -6,7 +6,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Roadmap (`/roadmap`)**: a transit-style map with seven colored lines, one per phase. Each level card shows progress, interview and job weight badges, and prerequisite hints. The hints never lock anything.
 - **Level (`/level/[id]`)**: modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
 - **Module (`/module/[id]`)**: four tabs.
-  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), then topics, with done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
+  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), then topics. Each topic has an "Explain simply" note for beginners and can be marked done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
   - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, an interview question, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
@@ -166,6 +166,7 @@ content/practice/   authored quizzes, exercises, scenarios, project definitions 
 content/coding/     authored Python coding tasks (starter, solution, tests)
 content/interview/  authored interview questions, model answers and key points
 content/notes/      authored "Understand it" study notes, one per non-capstone module
+content/topic-notes/ authored beginner "Explain simply" notes, one per topic
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
 scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
 public/py-worker.js Web Worker that runs coding tests in Pyodide
@@ -251,3 +252,4 @@ These decisions were made while building v1, without stopping to ask:
 40. **The focus timer lives outside user state.** Its ticking state sits in its own localStorage key (`aet:pomodoro`), so it survives reloads and is shared by open tabs without rewriting the whole progress document every second. Only finished focus blocks reach `UserState` (schema v6 adds `focus`, the last 500 blocks). The tab that notices a block ending writes the new timer state before saving the block, and blocks are de-duplicated by end time, so two open tabs log it once.
 41. **Focus blocks and study minutes stay separate.** The passive study timer already counts minutes you're active in the app. A Pomodoro block can include reading elsewhere, so it is reported on its own as blocks and minutes instead of being added to study minutes, which would double-count. A block only counts if it runs to the end. Pausing is fine, but resetting drops it. After a block, the break starts automatically; after a break, the timer waits for you.
 42. **Cheat sheets are assembled, not separately written.** Each sheet is built at build time from content the app already has: the module notes, mental models, topic titles and the first four key points of the module's interview question. Capstones use their outcome as the gist. This keeps one source of truth, so fixing a note fixes its sheet. Print styles hide the navigation, switch to black on white whatever the theme, and keep each module together on a page.
+43. **"Explain simply" notes per topic.** Each topic has a short beginner note in four parts: what it means in plain words, an everyday analogy (left out when none fits), a tiny example and one common mistake. They're written for this app in `content/topic-notes/`, one file per level, and keyed by topic id. A data test rejects unknown ids, empty sections and half-finished levels, so a level ships with all its notes or none. The module page passes only that module's notes to the client, so the full set (about 1,000 notes) stays out of the browser bundle. Notes are shipping level by level: L0 to L3 first.

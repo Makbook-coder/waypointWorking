@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ModuleTabs } from "@/components/ModuleTabs";
+import { topicNotesFor } from "@/lib/topic-notes";
 import { ProgressFor } from "@/components/ProgressFor";
 import { VisitTracker } from "@/components/VisitTracker";
 import { PhaseTag } from "@/components/ui";
@@ -71,7 +72,13 @@ export default async function ModulePage({ params }: Props) {
         </div>
       </header>
 
-      <ModuleTabs module={mod} resources={getResources(mod.id)} practice={getPractice(mod.id)} color={style.var} />
+      <ModuleTabs
+        module={mod}
+        resources={getResources(mod.id)}
+        practice={getPractice(mod.id)}
+        color={style.var}
+        topicNotes={topicNotesFor(mod.topics.map((t) => t.id))}
+      />
 
       <nav aria-label="Module navigation" className="mt-8 flex justify-between gap-4 text-sm">
         {prev ? (

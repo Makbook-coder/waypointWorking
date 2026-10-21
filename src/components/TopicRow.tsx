@@ -3,14 +3,26 @@
 import { useState } from "react";
 import { store, type Confidence } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
+import type { TopicNote } from "@/lib/topic-notes";
 import type { Topic } from "@/lib/types";
 import { topicVideo } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
+import { InlineCode } from "./InlineCode";
 import { NoteEditor } from "./NoteEditor";
 
 const CONF_LABEL: Record<Confidence, string> = { 1: "Shaky", 2: "Okay", 3: "Solid" };
 
-export function TopicRow({ topic, moduleTitle, showDescription = true }: { topic: Topic; moduleTitle: string; showDescription?: boolean }) {
+export function TopicRow({
+  topic,
+  moduleTitle,
+  showDescription = true,
+  simple,
+}: {
+  topic: Topic;
+  moduleTitle: string;
+  showDescription?: boolean;
+  simple?: TopicNote;
+}) {
   const s = useUserState();
   const p = s.topics[topic.id];
   const done = Boolean(p?.done);
@@ -36,6 +48,7 @@ export function TopicRow({ topic, moduleTitle, showDescription = true }: { topic
           {showDescription && topic.description && topic.description !== topic.title && (
             <p className="mt-0.5 text-sm text-muted">{topic.description}</p>
           )}
+          {simple && <ExplainSimply note={simple} />}
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <fieldset className="flex items-center gap-1">
               <legend className="sr-only">Confidence for {topic.title}</legend>
@@ -83,6 +96,33 @@ export function TopicRow({ topic, moduleTitle, showDescription = true }: { topic
         </div>
       </div>
     </li>
+  );
+}
+
+function ExplainSimply({ note }: { note: TopicNote }) {
+  const rows: [string, string][] = [
+    ["In plain words", note.simple],
+    ["Think of it like", note.analogy],
+    ["Example", note.example],
+    ["Watch out for", note.mistake],
+  ];
+  return (
+    <details className="group/simple mt-1.5">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted hover:text-ink [&::-webkit-details-marker]:hidden">
+        <span aria-hidden="true" className="transition-transform group-open/simple:rotate-90">▸</span>
+        Explain simply
+      </summary>
+      <dl className="mt-2 space-y-2 rounded-md border border-line bg-bg p-3 text-sm leading-relaxed">
+        {rows
+          .filter(([, text]) => text)
+          .map(([label, text]) => (
+            <div key={label}>
+              <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</dt>
+              <dd><InlineCode text={text} /></dd>
+            </div>
+          ))}
+      </dl>
+    </details>
   );
 }
 
