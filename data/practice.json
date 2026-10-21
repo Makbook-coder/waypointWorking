@@ -142,7 +142,12 @@
         "Uses a generator (yield), not a list of all batches",
         "Handles a final partial batch",
         "Validates its argument"
-      ]
+      ],
+      "hints": [
+        "Keep a list called `batch`. Append each item, and when it reaches `size` items, `yield` it and start a new empty list.",
+        "After the loop ends there may be a partial batch left over. Yield it only if it isn't empty. Check `size < 1` before the loop."
+      ],
+      "kind": "build"
     },
     {
       "id": "m0-1-code-py-env-config",
@@ -180,7 +185,50 @@
         "Fails fast when the secret is missing",
         "Converts types explicitly",
         "Has sensible defaults"
-      ]
+      ],
+      "hints": [
+        "Use `env.get(name, default)` for each setting, and convert the strings: `int(...)` for max_tokens, a set of truthy words for debug.",
+        "Check the key first: `key = env.get(\"API_KEY\", \"\")`, and `raise KeyError` if it's empty. For debug, `.strip().lower() in {\"1\", \"true\", \"yes\"}`."
+      ],
+      "kind": "build"
+    },
+    {
+      "id": "m0-1-code-debug-mutable-default",
+      "type": "coding",
+      "moduleId": "M0.1",
+      "levelId": 0,
+      "difficulty": "easy",
+      "title": "Debug: tags leak between calls",
+      "topicIds": [
+        "m0-1-mutability-scope-and-failure-modes",
+        "m0-1-unit-tests-and-debugging"
+      ],
+      "prompt": "`add_tag(tag, tags)` should return a new list with `tag` appended, and when `tags` is not given it should start from an empty list. Users report that tags from one request show up in the next. Find and fix the bug without changing the function's signature (the default can change).",
+      "starter": "def add_tag(tag, tags=[]):\n    tags.append(tag)\n    return tags\n",
+      "solution": "def add_tag(tag, tags=None):\n    tags = list(tags) if tags is not None else []\n    tags.append(tag)\n    return tags\n",
+      "tests": [
+        {
+          "name": "adds a tag",
+          "code": "assert add_tag('a') == ['a']"
+        },
+        {
+          "name": "calls don't share state",
+          "code": "add_tag('a')\nassert add_tag('b') == ['b']"
+        },
+        {
+          "name": "doesn't modify the caller's list",
+          "code": "mine = ['x']\nout = add_tag('y', mine)\nassert out == ['x', 'y'] and mine == ['x']"
+        }
+      ],
+      "checklist": [
+        "You can explain why a list default is created only once",
+        "The caller's list is never changed"
+      ],
+      "hints": [
+        "Default values are evaluated once, when the function is defined, not on each call. What happens to that one default list over many calls?",
+        "Use `None` as the default and create a fresh list inside the function. Copy the caller's list with `list(tags)` so you don't change it."
+      ],
+      "kind": "debug"
     },
     {
       "id": "m0-1-iq1",
@@ -339,7 +387,12 @@
       "checklist": [
         "Explains (in a comment) why POST is excluded",
         "Method comparison is case-insensitive"
-      ]
+      ],
+      "hints": [
+        "Two conditions must both be true: the method is idempotent and the status is retryable. Put each list in a set.",
+        "Normalize the method with `.upper()` so `get` and `GET` behave the same, then `return method.upper() in IDEMPOTENT and status in RETRYABLE`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m0-2-iq1",
@@ -354,6 +407,21 @@
         "Exponential backoff with jitter",
         "Cap the number of retries",
         "Don't retry other 4xx errors"
+      ]
+    },
+    {
+      "id": "m0-2-sc1",
+      "type": "scenario",
+      "moduleId": "M0.2",
+      "levelId": 0,
+      "difficulty": "easy",
+      "title": "The API works in Postman but not in your code",
+      "prompt": "Your Python script calls a weather API and gets a 401, but the same request works in Postman. Walk through how you find the difference.",
+      "hints": [
+        "401 means the server didn't accept your credentials",
+        "Compare the exact headers: is the API key header name and value the same?",
+        "Print the outgoing request (URL, headers, body) instead of guessing",
+        "Check the key is loaded from the environment and not empty"
       ]
     }
   ],
@@ -493,7 +561,12 @@
         "Returns all validation errors at once",
         "Uses 422 for validation, 201 for created",
         "Never trusts types from the client"
-      ]
+      ],
+      "hints": [
+        "Start with `errors = []` and check every field separately, appending a dict for each problem. Don't return early.",
+        "`title` must be a `str` whose `.strip()` is non-empty and at most 120 chars. `tags` defaults to `[]` and every element must be a `str`. Return 422 if `errors` is non-empty."
+      ],
+      "kind": "build"
     },
     {
       "id": "m0-3-iq1",
@@ -508,6 +581,21 @@
         "Auto-generated OpenAPI docs",
         "Response model enforces a stable contract",
         "Makes LLM output testable"
+      ]
+    },
+    {
+      "id": "m0-3-sc1",
+      "type": "scenario",
+      "moduleId": "M0.3",
+      "levelId": 0,
+      "difficulty": "medium",
+      "title": "Your endpoint returns 500 for bad input",
+      "prompt": "Users who send a request without a `title` get a 500 Internal Server Error from your FastAPI endpoint. What should happen instead, and how do you fix it?",
+      "hints": [
+        "Bad client input is a 4xx (422 or 400), never a 500",
+        "Validate input with a Pydantic model so FastAPI rejects it before your code runs",
+        "Return a clear error message naming the field",
+        "Add a test that sends the bad request"
       ]
     }
   ],
@@ -650,7 +738,12 @@
         "Values only ever travel in params",
         "Identifiers come from an allow-list",
         "You can say why (owner, score) beats (score, owner) here"
-      ]
+      ],
+      "hints": [
+        "Values become `%s` placeholders in the SQL and go in the `params` tuple. Only the column name is put into the string, so check it against an allow-list first.",
+        "`ORDER BY {order_by} DESC` is safe only after `if order_by not in {\"score\", \"created_at\"}: raise ValueError`. The index is the equality column first, then the range column: `(\"owner\", \"score\")`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m0-4-iq1",
@@ -1012,6 +1105,21 @@
         "Non-root user",
         "Config from env and a health check"
       ]
+    },
+    {
+      "id": "m0-7-sc1",
+      "type": "scenario",
+      "moduleId": "M0.7",
+      "levelId": 0,
+      "difficulty": "medium",
+      "title": "It runs on my machine, not in Docker",
+      "prompt": "Your app works locally but the Docker container exits immediately with `ModuleNotFoundError`. How do you debug it?",
+      "hints": [
+        "Read the container logs (`docker logs`) for the full error",
+        "Check that dependencies are installed in the image (requirements copied and installed before the code)",
+        "Check the working directory and the command the container runs",
+        "Rebuild without cache to rule out a stale layer"
+      ]
     }
   ],
   "M0.8": [
@@ -1216,6 +1324,47 @@
       ]
     },
     {
+      "id": "m1-1-code-greedy-next-token",
+      "type": "coding",
+      "moduleId": "M1.1",
+      "levelId": 1,
+      "difficulty": "easy",
+      "title": "Generate text one token at a time",
+      "topicIds": [
+        "m1-1-next-token-prediction"
+      ],
+      "prompt": "A toy language model is a dict `counts[prev][next] = how often next followed prev`. Write `generate(counts, start, max_tokens)` that starts from `start` and repeatedly appends the most likely next token (ties: alphabetically first) until it produces `\"<eos>\"` (don't include it), has added `max_tokens` tokens, or reaches a token with no known next token. Return the list of generated tokens, not including `start`. This is exactly what an LLM does, just with a much bigger table.",
+      "starter": "def generate(counts, start, max_tokens):\n    out = []\n    # your code here\n    return out\n",
+      "solution": "def generate(counts, start, max_tokens):\n    out = []\n    cur = start\n    while len(out) < max_tokens:\n        options = counts.get(cur)\n        if not options:\n            break\n        nxt = sorted(options.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]\n        if nxt == \"<eos>\":\n            break\n        out.append(nxt)\n        cur = nxt\n    return out\n",
+      "tests": [
+        {
+          "name": "picks the most likely token",
+          "code": "c = {'the': {'cat': 3, 'dog': 1}, 'cat': {'sat': 2}, 'sat': {'<eos>': 1}}\nassert generate(c, 'the', 10) == ['cat', 'sat']"
+        },
+        {
+          "name": "stops at max_tokens",
+          "code": "c = {'a': {'a': 1}}\nassert generate(c, 'a', 3) == ['a', 'a', 'a']"
+        },
+        {
+          "name": "ties go alphabetically",
+          "code": "c = {'x': {'b': 2, 'a': 2}}\nassert generate(c, 'x', 1) == ['a']"
+        },
+        {
+          "name": "stops at an unknown token",
+          "code": "c = {'hi': {'there': 1}}\nassert generate(c, 'hi', 5) == ['there']"
+        }
+      ],
+      "checklist": [
+        "You can say why greedy decoding repeats itself on the second test",
+        "You can explain how sampling would change the output"
+      ],
+      "hints": [
+        "Keep a `cur` token. In a loop, look up `counts.get(cur)`, choose the best next token, append it, and make it the new `cur`.",
+        "Sort the options with `key=lambda kv: (-kv[1], kv[0])` so the highest count comes first and ties go alphabetically. Check for `\"<eos>\"` before appending."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m1-1-iq1",
       "type": "interview",
       "moduleId": "M1.1",
@@ -1356,7 +1505,12 @@
       "checklist": [
         "Prices are per million tokens",
         "Output tokens priced separately from input"
-      ]
+      ],
+      "hints": [
+        "Prices are per million tokens, so cost = (input × price_in + output × price_out) / 1,000,000.",
+        "For the month, compute the cost of one average request, multiply by requests per day and by days, then round to 2 decimals."
+      ],
+      "kind": "build"
     },
     {
       "id": "m1-2-iq1",
@@ -1468,6 +1622,52 @@
         "You state which noun \"it\" should attend to and why",
         "You note at least one head that does not follow your expectation"
       ]
+    },
+    {
+      "id": "m1-3-code-attention-weights",
+      "type": "coding",
+      "moduleId": "M1.3",
+      "levelId": 1,
+      "difficulty": "medium",
+      "title": "Scaled dot-product attention by hand",
+      "topicIds": [
+        "m1-3-queries-keys-values-and-causal-attention",
+        "m1-3-the-intuition-behind-attention"
+      ],
+      "prompt": "Write `attend(q, keys, values, position=None)`. `q` is one query vector, `keys` and `values` are lists of vectors of the same length. Score each key with `dot(q, k) / sqrt(len(q))`, turn the scores into weights with softmax, and return `(weights, output)` where `output` is the weighted sum of the value vectors. If `position` is given, apply a causal mask: only keys at index `<= position` can be attended to (their weights are computed over just those keys; masked ones get weight 0.0).",
+      "starter": "import math\n\ndef attend(q, keys, values, position=None):\n    # your code here\n    pass\n",
+      "solution": "import math\n\ndef attend(q, keys, values, position=None):\n    scale = math.sqrt(len(q))\n    scores = [sum(a * b for a, b in zip(q, k)) / scale for k in keys]\n    allowed = [position is None or i <= position for i in range(len(keys))]\n    m = max(s for s, ok in zip(scores, allowed) if ok)\n    exps = [math.exp(s - m) if ok else 0.0 for s, ok in zip(scores, allowed)]\n    total = sum(exps)\n    weights = [e / total for e in exps]\n    dim = len(values[0])\n    output = [sum(w * v[d] for w, v in zip(weights, values)) for d in range(dim)]\n    return weights, output\n",
+      "tests": [
+        {
+          "name": "weights sum to 1",
+          "code": "w, _ = attend([1, 0], [[1, 0], [0, 1]], [[1], [2]])\nassert abs(sum(w) - 1) < 1e-9"
+        },
+        {
+          "name": "the matching key gets more weight",
+          "code": "w, _ = attend([1, 0], [[1, 0], [0, 1]], [[1], [2]])\nassert w[0] > w[1]"
+        },
+        {
+          "name": "equal scores give equal weights",
+          "code": "w, out = attend([0, 0], [[1, 0], [0, 1]], [[2, 0], [0, 2]])\nassert abs(w[0] - 0.5) < 1e-9 and all(abs(x - 1) < 1e-9 for x in out)"
+        },
+        {
+          "name": "scales by sqrt(d)",
+          "code": "import math\nw, _ = attend([2, 0], [[1, 0], [0, 0]], [[1], [0]])\ne = math.exp(2 / math.sqrt(2))\nassert abs(w[0] - e / (e + 1)) < 1e-9"
+        },
+        {
+          "name": "causal mask hides future keys",
+          "code": "w, out = attend([1, 1], [[1, 1], [5, 5], [9, 9]], [[1], [2], [3]], position=0)\nassert w == [1.0, 0.0, 0.0] and out == [1.0]"
+        }
+      ],
+      "checklist": [
+        "You can explain why the scores are divided by sqrt(d)",
+        "You can say what the causal mask is for in a decoder"
+      ],
+      "hints": [
+        "Three steps: score each key (dot product divided by `math.sqrt(len(q))`), softmax the scores into weights, then sum `weight × value` dimension by dimension.",
+        "For the mask, set the exponent of masked keys to `0.0` before normalizing, and take the max only over allowed scores. The output for dimension d is `sum(w * v[d] for w, v in zip(weights, values))`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m1-3-iq1",
@@ -1696,6 +1896,44 @@
       "doneWhen": "Explain why generating 2,000 output tokens takes far longer than 50, even with the same input."
     },
     {
+      "id": "m1-5-code-debug-latency-estimate",
+      "type": "coding",
+      "moduleId": "M1.5",
+      "levelId": 1,
+      "difficulty": "medium",
+      "title": "Debug: the latency estimate is way off",
+      "topicIds": [
+        "m1-5-prefill-vs-decode",
+        "m1-5-tokens-ttft-and-total-latency"
+      ],
+      "prompt": "`estimate(input_tokens, output_tokens, prefill_tps, decode_tps, overhead_s)` should return `(ttft, total)` in seconds. Time to first token is the network/queue overhead plus prefill (the whole input processed at `prefill_tps`). Total adds decoding the output at `decode_tps`. The current code gives answers that are far too large for long prompts. Fix it.",
+      "starter": "def estimate(input_tokens, output_tokens, prefill_tps, decode_tps, overhead_s):\n    ttft = overhead_s + input_tokens / prefill_tps\n    total = ttft + (input_tokens + output_tokens) / decode_tps\n    return round(ttft, 3), round(total, 3)\n",
+      "solution": "def estimate(input_tokens, output_tokens, prefill_tps, decode_tps, overhead_s):\n    ttft = overhead_s + input_tokens / prefill_tps\n    total = ttft + output_tokens / decode_tps\n    return round(ttft, 3), round(total, 3)\n",
+      "tests": [
+        {
+          "name": "ttft is overhead plus prefill",
+          "code": "assert estimate(2000, 100, 4000, 50, 0.2)[0] == 0.7"
+        },
+        {
+          "name": "total adds only the output decode",
+          "code": "assert estimate(2000, 100, 4000, 50, 0.2)[1] == 2.7"
+        },
+        {
+          "name": "long prompts mostly cost prefill",
+          "code": "ttft, total = estimate(100000, 10, 10000, 50, 0)\nassert ttft == 10.0 and total == 10.2"
+        }
+      ],
+      "checklist": [
+        "You can explain why prefill is much faster per token than decode",
+        "You can say which number streaming improves"
+      ],
+      "hints": [
+        "Prefill and decode are separate phases. Which tokens does the model generate one at a time during decode?",
+        "Only the output tokens are decoded. The input was already processed during prefill, so it shouldn't appear in the decode term."
+      ],
+      "kind": "debug"
+    },
+    {
       "id": "m1-5-iq1",
       "type": "interview",
       "moduleId": "M1.5",
@@ -1850,7 +2088,12 @@
         "Subtracts the max logit for numerical stability",
         "Rejects temperature <= 0",
         "top-p sorts by probability before cutting"
-      ]
+      ],
+      "hints": [
+        "Softmax: divide each logit by the temperature, take `math.exp`, then divide each by the total. Subtract the max logit first so `exp` can't overflow.",
+        "For top-p, sort tokens by probability (highest first) and keep adding until the running total reaches `p`. Then divide each kept probability by the kept total."
+      ],
+      "kind": "build"
     },
     {
       "id": "m1-6-iq1",
@@ -1865,6 +2108,21 @@
         "Higher for diversity and creativity",
         "Zero is not fully deterministic",
         "Tune one sampling knob at a time"
+      ]
+    },
+    {
+      "id": "m1-6-sc1",
+      "type": "scenario",
+      "moduleId": "M1.6",
+      "levelId": 1,
+      "difficulty": "easy",
+      "title": "Same question, different answers",
+      "prompt": "A user complains that asking the same question twice gives different answers. Explain why and what you can change.",
+      "hints": [
+        "Sampling with temperature above 0 picks different tokens each time",
+        "Lower temperature makes output more consistent, not more correct",
+        "Some variation remains even at temperature 0 on many APIs",
+        "For facts, ground the answer in sources; for formats, use structured output"
       ]
     }
   ],
@@ -2075,6 +2333,47 @@
       ]
     },
     {
+      "id": "m1-8-code-context-budget",
+      "type": "coding",
+      "moduleId": "M1.8",
+      "levelId": 1,
+      "difficulty": "easy",
+      "title": "Will it fit in the context window?",
+      "topicIds": [
+        "m1-8-what-occupies-the-context-window"
+      ],
+      "prompt": "Write `plan_context(window, parts, reserve_output)` where `parts` is a dict name → token count (system prompt, history, retrieved docs, tool definitions...). Return a dict with `used` (sum of parts), `free_for_output` (window − used, never below 0), `fits` (True if `free_for_output >= reserve_output`) and `largest` (the name of the biggest part, so you know what to cut first; ties alphabetically).",
+      "starter": "def plan_context(window, parts, reserve_output):\n    # your code here\n    return {}\n",
+      "solution": "def plan_context(window, parts, reserve_output):\n    used = sum(parts.values())\n    free = max(0, window - used)\n    largest = min(parts, key=lambda k: (-parts[k], k)) if parts else None\n    return {\"used\": used, \"free_for_output\": free, \"fits\": free >= reserve_output, \"largest\": largest}\n",
+      "tests": [
+        {
+          "name": "adds up the parts",
+          "code": "r = plan_context(8000, {'system': 500, 'history': 3000, 'docs': 4000}, 1000)\nassert r['used'] == 7500 and r['free_for_output'] == 500"
+        },
+        {
+          "name": "output needs room too",
+          "code": "r = plan_context(8000, {'system': 500, 'history': 3000, 'docs': 4000}, 1000)\nassert r['fits'] is False and r['largest'] == 'docs'"
+        },
+        {
+          "name": "never negative",
+          "code": "r = plan_context(100, {'a': 300}, 0)\nassert r['free_for_output'] == 0 and r['fits'] is True"
+        },
+        {
+          "name": "fits with room",
+          "code": "assert plan_context(128000, {'sys': 1000}, 4000)['fits'] is True"
+        }
+      ],
+      "checklist": [
+        "You remembered that the output shares the window",
+        "You can name what you'd cut first in a real app"
+      ],
+      "hints": [
+        "`used` is `sum(parts.values())`. The free space is the window minus that, but clamp it at 0 with `max`.",
+        "To find the biggest part with alphabetical ties, use `min(parts, key=lambda k: (-parts[k], k))`."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m1-8-iq1",
       "type": "interview",
       "moduleId": "M1.8",
@@ -2198,6 +2497,21 @@
         "Inconsistency and prompt sensitivity",
         "Weak exact computation",
         "Prompt injection from inputs"
+      ]
+    },
+    {
+      "id": "m1-9-sc1",
+      "type": "scenario",
+      "moduleId": "M1.9",
+      "levelId": 1,
+      "difficulty": "easy",
+      "title": "The model made up a citation",
+      "prompt": "A teammate asked a chat model for sources on a medical topic and got a paper title and DOI that don't exist. Explain to them why this happens and what to do instead.",
+      "hints": [
+        "LLMs predict plausible text; they don't look things up unless given a tool",
+        "Hallucination is most likely for specific facts like titles, numbers and links",
+        "Give the model real sources (search or RAG) and ask it to quote them",
+        "Always verify citations before using them"
       ]
     }
   ],
@@ -2550,6 +2864,21 @@
         "Cheapest model that meets the bar",
         "Abstract so you can swap later"
       ]
+    },
+    {
+      "id": "m1-12-sc1",
+      "type": "scenario",
+      "moduleId": "M1.12",
+      "levelId": 1,
+      "difficulty": "medium",
+      "title": "Pick a model for a support bot",
+      "prompt": "Your manager asks you to pick a model for a customer support bot that handles 50,000 chats a day. How do you choose?",
+      "hints": [
+        "Start from requirements: quality bar, latency, cost per chat, privacy",
+        "Shortlist two or three models (one cheap, one strong)",
+        "Test them on 30 to 50 real past tickets, not leaderboards",
+        "Estimate monthly cost from real token counts"
+      ]
     }
   ],
   "M2.1": [
@@ -2682,7 +3011,12 @@
       "checklist": [
         "Never drops the system prompt or the newest user turn",
         "Stops at the first message that doesn't fit, so history stays contiguous"
-      ]
+      ],
+      "hints": [
+        "Split the problem: pull out the system message (if it's first) and the last message. Those are always kept and their tokens count against the budget.",
+        "Walk the remaining middle messages from newest to oldest, stopping the first time one doesn't fit. Reverse what you collected so it's back in original order."
+      ],
+      "kind": "build"
     },
     {
       "id": "m2-1-iq1",
@@ -2827,7 +3161,12 @@
       "checklist": [
         "Doesn't consume the rest of the stream after stopping",
         "Handles a stop string split over two chunks"
-      ]
+      ],
+      "hints": [
+        "Keep one growing string. After adding each delta, check the whole string for `stop`, not just the new delta, because the stop text can be split across chunks.",
+        "When you find it, `return text[: text.index(stop)], True` straight away so you stop reading the stream. If the loop finishes, return `(text, False)`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m2-2-iq1",
@@ -3093,7 +3432,12 @@
         "Feedback tells the model what was wrong",
         "Bounded number of retries",
         "Validates required keys, not just JSON syntax"
-      ]
+      ],
+      "hints": [
+        "Loop `max_tries` times. In each try, call the model, `json.loads` the reply inside `try/except json.JSONDecodeError`, and check it's a dict with every required key.",
+        "Keep a `note` string that you append to the prompt on the next try, describing what went wrong. After the loop, `raise ValueError`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m2-4-iq1",
@@ -3108,6 +3452,21 @@
         "Validate with a schema in code",
         "Repair loop with the error, capped",
         "Keep schemas simple"
+      ]
+    },
+    {
+      "id": "m2-4-sc1",
+      "type": "scenario",
+      "moduleId": "M2.4",
+      "levelId": 2,
+      "difficulty": "medium",
+      "title": "The JSON breaks your parser once a day",
+      "prompt": "Your pipeline asks the model for JSON and parses it with `json.loads`. About once a day it crashes on invalid output. How do you make it reliable?",
+      "hints": [
+        "Use the provider's structured output or JSON mode with a schema if available",
+        "Validate against a schema, not just `json.loads`",
+        "On failure, retry once with the error message",
+        "Log and alert on repeated failures instead of crashing"
       ]
     }
   ],
@@ -3248,7 +3607,12 @@
         "Tool results are linked by id",
         "Errors are returned to the model, not raised",
         "Has a hard step limit"
-      ]
+      ],
+      "hints": [
+        "Keep a `messages` list starting with the user message. Each step: call `model(messages)`. If it returns text, you're done; if it returns a tool call, run it and append the result.",
+        "Look the tool up with `tools.get(name)` and wrap the call in `try/except Exception`, so a missing tool or an error becomes the tool message's content instead of a crash."
+      ],
+      "kind": "build"
     },
     {
       "id": "m2-5-iq1",
@@ -3618,7 +3982,12 @@
       "checklist": [
         "Results come back in input order",
         "Never more than `limit` in flight"
-      ]
+      ],
+      "hints": [
+        "Create `sem = asyncio.Semaphore(limit)`. Wrap each function in a small `async def` that does `async with sem: return await fn()`.",
+        "`asyncio.gather(...)` returns results in the order you passed the awaitables in, whatever order they finish in, so input order is kept for free."
+      ],
+      "kind": "build"
     },
     {
       "id": "m2-8-iq1",
@@ -3768,7 +4137,12 @@
         "Only transient errors are retried",
         "Delay grows exponentially, is capped and jittered",
         "sleep is injectable so tests don't wait"
-      ]
+      ],
+      "hints": [
+        "Loop `for attempt in range(retries + 1)`, return `fn()` on success, and catch only `TransientError`. Other exceptions should not be caught at all.",
+        "On the last attempt, `raise` instead of sleeping. Otherwise sleep for `rand() * min(cap, base * 2 ** attempt)`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m2-9-iq1",
@@ -3783,6 +4157,21 @@
         "Retries with backoff and jitter",
         "Fallback model or provider",
         "Idempotency and logging"
+      ]
+    },
+    {
+      "id": "m2-9-sc1",
+      "type": "scenario",
+      "moduleId": "M2.9",
+      "levelId": 2,
+      "difficulty": "medium",
+      "title": "A provider outage takes your app down",
+      "prompt": "Your LLM provider had a 20-minute outage and your whole app returned errors. What do you add so it degrades gracefully next time?",
+      "hints": [
+        "Timeouts on every call so requests don't hang",
+        "Retries with backoff and jitter only for transient errors",
+        "A fallback model or provider, tested ahead of time",
+        "A friendly degraded message and an alert"
       ]
     }
   ],
@@ -3886,6 +4275,44 @@
       "doneWhen": "Trace a workflow end to end and explain where its time and money went."
     },
     {
+      "id": "m2-10-code-trace-failing-step",
+      "type": "coding",
+      "moduleId": "M2.10",
+      "levelId": 2,
+      "difficulty": "medium",
+      "title": "Find the failing and the slowest step in a trace",
+      "topicIds": [
+        "m2-10-finding-the-failing-step",
+        "m2-10-interactions-as-traces"
+      ],
+      "prompt": "A trace is a list of spans `{\"id\", \"parent\", \"name\", \"start\", \"end\", \"error\"}` (`parent` is None for the root, `error` is a string or None). Write `diagnose(spans)` returning `{\"failing\": name, \"slowest\": name}`. `failing` is the deepest span with an error (the root cause, not the parent that just reported it; ties by earliest start), or None. `slowest` is the span with the longest duration that has no children (leaf work, not a wrapper), ties by earliest start.",
+      "starter": "def diagnose(spans):\n    # your code here\n    return {\"failing\": None, \"slowest\": None}\n",
+      "solution": "def diagnose(spans):\n    by_id = {s[\"id\"]: s for s in spans}\n    parents = {s[\"parent\"] for s in spans if s[\"parent\"] is not None}\n\n    def depth(s):\n        d = 0\n        while s[\"parent\"] is not None:\n            s = by_id[s[\"parent\"]]\n            d += 1\n        return d\n\n    errors = [s for s in spans if s[\"error\"]]\n    failing = min(errors, key=lambda s: (-depth(s), s[\"start\"]))[\"name\"] if errors else None\n    leaves = [s for s in spans if s[\"id\"] not in parents]\n    slowest = min(leaves, key=lambda s: (-(s[\"end\"] - s[\"start\"]), s[\"start\"]))[\"name\"] if leaves else None\n    return {\"failing\": failing, \"slowest\": slowest}\n",
+      "tests": [
+        {
+          "name": "finds the root cause",
+          "code": "spans = [\n  {'id': 1, 'parent': None, 'name': 'request', 'start': 0, 'end': 10, 'error': 'failed'},\n  {'id': 2, 'parent': 1, 'name': 'retrieve', 'start': 0, 'end': 3, 'error': None},\n  {'id': 3, 'parent': 1, 'name': 'generate', 'start': 3, 'end': 10, 'error': 'failed'},\n  {'id': 4, 'parent': 3, 'name': 'tool:search', 'start': 4, 'end': 9, 'error': 'timeout'},\n]\nassert diagnose(spans)['failing'] == 'tool:search'"
+        },
+        {
+          "name": "slowest leaf, not the wrapper",
+          "code": "spans = [\n  {'id': 1, 'parent': None, 'name': 'request', 'start': 0, 'end': 10, 'error': None},\n  {'id': 2, 'parent': 1, 'name': 'retrieve', 'start': 0, 'end': 3, 'error': None},\n  {'id': 3, 'parent': 1, 'name': 'llm', 'start': 3, 'end': 10, 'error': None},\n]\nassert diagnose(spans) == {'failing': None, 'slowest': 'llm'}"
+        },
+        {
+          "name": "a single span",
+          "code": "assert diagnose([{'id': 'a', 'parent': None, 'name': 'only', 'start': 0, 'end': 1, 'error': None}]) == {'failing': None, 'slowest': 'only'}"
+        }
+      ],
+      "checklist": [
+        "You can explain why the root span's error is not the root cause",
+        "You would log these fields for every LLM call"
+      ],
+      "hints": [
+        "Build `by_id` for lookups and a set of ids that appear as someone's parent. A span is a leaf if its id is not in that set.",
+        "Depth is how many parent hops it takes to reach the root. Among error spans, pick the one with the largest depth: `min(errors, key=lambda s: (-depth(s), s[\"start\"]))`."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m2-10-iq1",
       "type": "interview",
       "moduleId": "M2.10",
@@ -3898,6 +4325,21 @@
         "Prompt version and trace id",
         "Aggregates by feature and user",
         "Redact sensitive data"
+      ]
+    },
+    {
+      "id": "m2-10-sc1",
+      "type": "scenario",
+      "moduleId": "M2.10",
+      "levelId": 2,
+      "difficulty": "easy",
+      "title": "Costs doubled overnight",
+      "prompt": "Your LLM bill doubled from one day to the next with no traffic increase. How do you find out why?",
+      "hints": [
+        "Check per-request logs: tokens in, tokens out, model name",
+        "Look for a prompt change that added context, or a loop calling the model repeatedly",
+        "Group cost by endpoint or feature to find the culprit",
+        "Add a daily budget alert"
       ]
     }
   ],
@@ -4245,7 +4687,12 @@
       "checklist": [
         "Instructions and data are visibly separated",
         "The data cannot terminate its own block"
-      ]
+      ],
+      "hints": [
+        "You only need to neutralize the opening and closing tags inside the document. `re.sub` with `re.IGNORECASE` can do it in one go.",
+        "The pattern `<(/?document)` matches both `<document` and `</document`. Replace with `&lt;\\1` to keep the tag name but break the tag."
+      ],
+      "kind": "build"
     },
     {
       "id": "m3-1-iq1",
@@ -4392,7 +4839,12 @@
       "checklist": [
         "Every label is represented before any repeats",
         "Deterministic, so prompt caching still works"
-      ]
+      ],
+      "hints": [
+        "Group examples by label in a dict. Dicts keep insertion order, so the labels stay in order of first appearance.",
+        "Then go round-robin: take the 1st example of each label, then the 2nd of each, and so on, stopping when you have `k` (or run out of examples)."
+      ],
+      "kind": "build"
     },
     {
       "id": "m3-2-iq1",
@@ -4522,6 +4974,21 @@
         "Little gain on simple tasks",
         "Reasoning models do it already"
       ]
+    },
+    {
+      "id": "m3-3-sc1",
+      "type": "scenario",
+      "moduleId": "M3.3",
+      "levelId": 3,
+      "difficulty": "medium",
+      "title": "The model gets multi-step maths wrong",
+      "prompt": "Your model answers invoice-total questions in one shot and is often wrong by a small amount. What do you try?",
+      "hints": [
+        "Ask it to reason step by step or show its working",
+        "Break the task into steps (extract numbers, then compute)",
+        "Better: do the arithmetic in code and let the model extract values",
+        "Measure accuracy before and after"
+      ]
     }
   ],
   "M3.4": [
@@ -4635,6 +5102,21 @@
         "Per-request data in user turn",
         "Helps caching",
         "Keep untrusted data out of system"
+      ]
+    },
+    {
+      "id": "m3-4-sc1",
+      "type": "scenario",
+      "moduleId": "M3.4",
+      "levelId": 3,
+      "difficulty": "easy",
+      "title": "The assistant is too chatty",
+      "prompt": "Your assistant answers simple yes/no questions with three paragraphs. How do you fix it with the system prompt?",
+      "hints": [
+        "State the desired length and format clearly",
+        "Show one or two short examples of good answers",
+        "Tell it what to do (be brief) rather than only what not to do",
+        "Test on a set of simple and complex questions"
       ]
     }
   ],
@@ -4850,6 +5332,52 @@
       "doneWhen": "Debug prompts with a test set instead of one-off tries."
     },
     {
+      "id": "m3-6-code-prompt-ab-compare",
+      "type": "coding",
+      "moduleId": "M3.6",
+      "levelId": 3,
+      "difficulty": "medium",
+      "title": "Compare two prompt versions fairly",
+      "topicIds": [
+        "m3-6-comparing-versions-on-the-same-examples",
+        "m3-6-building-a-small-test-set"
+      ],
+      "prompt": "You ran prompt A and prompt B on the same test set. `a` and `b` are dicts example id → True/False (passed). Write `compare(a, b)` returning `{\"a_rate\", \"b_rate\", \"wins\", \"losses\", \"regressions\"}`, computed only over ids present in both: pass rates rounded to 2 decimals, `wins` = examples B passes and A fails, `losses` = the reverse, and `regressions` = sorted list of ids that A passed and B failed. If no ids are shared, raise `ValueError`.",
+      "starter": "def compare(a, b):\n    # your code here\n    pass\n",
+      "solution": "def compare(a, b):\n    ids = sorted(set(a) & set(b))\n    if not ids:\n        raise ValueError(\"no shared examples\")\n    rate = lambda d: round(sum(1 for i in ids if d[i]) / len(ids), 2)\n    regressions = [i for i in ids if a[i] and not b[i]]\n    wins = sum(1 for i in ids if b[i] and not a[i])\n    return {\"a_rate\": rate(a), \"b_rate\": rate(b), \"wins\": wins, \"losses\": len(regressions), \"regressions\": regressions}\n",
+      "tests": [
+        {
+          "name": "counts wins and losses",
+          "code": "r = compare({'1': True, '2': False, '3': True}, {'1': True, '2': True, '3': False})\nassert (r['wins'], r['losses']) == (1, 1)"
+        },
+        {
+          "name": "lists regressions",
+          "code": "r = compare({'1': True, '2': False, '3': True}, {'1': True, '2': True, '3': False})\nassert r['regressions'] == ['3']"
+        },
+        {
+          "name": "only shared ids count",
+          "code": "r = compare({'1': True, 'x': False}, {'1': True, 'y': True})\nassert r['a_rate'] == 1.0 and r['b_rate'] == 1.0"
+        },
+        {
+          "name": "rates",
+          "code": "r = compare({'1': True, '2': False, '3': False}, {'1': True, '2': True, '3': False})\nassert (r['a_rate'], r['b_rate']) == (0.33, 0.67)"
+        },
+        {
+          "name": "nothing shared",
+          "code": "try:\n    compare({'1': True}, {'2': True})\n    assert False\nexcept ValueError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "You can explain why the same examples matter",
+        "You'd look at each regression before shipping B"
+      ],
+      "hints": [
+        "First find the ids both runs share: `set(a) & set(b)`. Every number in the result is computed over just those.",
+        "A regression is `a[i] and not b[i]`; a win is the reverse. The number of losses is just the number of regressions."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m3-6-iq1",
       "type": "interview",
       "moduleId": "M3.6",
@@ -4862,6 +5390,21 @@
         "Find patterns",
         "Change one variable at a time",
         "Re-run the full eval set"
+      ]
+    },
+    {
+      "id": "m3-6-sc1",
+      "type": "scenario",
+      "moduleId": "M3.6",
+      "levelId": 3,
+      "difficulty": "medium",
+      "title": "Your prompt fix broke something else",
+      "prompt": "You changed a prompt to fix one bad answer. A week later, users report a different kind of answer got worse. How do you stop this happening again?",
+      "hints": [
+        "Keep a small test set of real examples, including the old failures",
+        "Run every prompt change against the whole set, not just the new case",
+        "Compare old and new versions on the same examples",
+        "Version your prompts so you can roll back"
       ]
     }
   ],
@@ -5108,7 +5651,12 @@
       "checklist": [
         "Case-insensitive",
         "A comment explains why this isn't a real defence on its own"
-      ]
+      ],
+      "hints": [
+        "Write one regex per signal in a dict, `{\"override\": ..., \"role\": ..., \"exfil\": ...}`, and keep the names whose pattern matches with `re.IGNORECASE`.",
+        "For override, allow a few words between the verb and the target: `\\b(ignore|disregard)\\b.{0,20}\\b(previous|prior|all|above)\\b`. For exfil, look for `https?://\\S+\\?` followed by `{` or `secret`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m3-8-iq1",
@@ -5473,7 +6021,12 @@
       "checklist": [
         "Every word appears in at least one chunk",
         "Boundary words are shared between neighbours"
-      ]
+      ],
+      "hints": [
+        "Each new chunk starts `size - overlap` words after the previous one. Loop `start` over `range(0, len(words), step)`.",
+        "Stop as soon as a chunk reaches the end of the text (`start + size >= len(words)`), otherwise the next chunk would only repeat overlap words."
+      ],
+      "kind": "build"
     },
     {
       "id": "m4-2-iq1",
@@ -5488,6 +6041,21 @@
         "Split on structure",
         "Small overlap",
         "Tune with retrieval evals"
+      ]
+    },
+    {
+      "id": "m4-2-sc1",
+      "type": "scenario",
+      "moduleId": "M4.2",
+      "levelId": 4,
+      "difficulty": "medium",
+      "title": "Answers cut off mid-table",
+      "prompt": "Your RAG bot answers questions about pricing tables with half the rows missing. What's going wrong and how do you fix it?",
+      "hints": [
+        "Fixed-size chunking split the table across chunks",
+        "Chunk by structure (keep tables and sections whole)",
+        "Add overlap or attach the table header to each chunk",
+        "Test retrieval on table questions specifically"
       ]
     }
   ],
@@ -5738,7 +6306,12 @@
       "checklist": [
         "Handles zero vectors without crashing",
         "Deterministic tie-breaking"
-      ]
+      ],
+      "hints": [
+        "Cosine = dot product divided by the product of the two vector lengths (norms). Return 0.0 if either norm is zero.",
+        "Score every doc, then sort with `key=lambda t: (-t[1], t[0])` to get score descending with id as the tiebreak, and slice `[:k]`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m4-4-iq1",
@@ -6004,7 +6577,12 @@
         "Uses IDF so rare terms count more",
         "Saturates term frequency (k1)",
         "Normalizes by document length (b)"
-      ]
+      ],
+      "hints": [
+        "Tokenize every doc once. Count document frequency (`df`) per term using a `set` of each doc's tokens, and compute the average doc length.",
+        "For each doc and query term in it: `idf × f × (k1 + 1) / (f + k1 × (1 − b + b × len(doc) / avgdl))`, where `f` is the term's count in that doc. Sum over query terms."
+      ],
+      "kind": "build"
     },
     {
       "id": "m4-6-code-rrf",
@@ -6036,7 +6614,12 @@
       "checklist": [
         "Uses ranks, not raw scores",
         "Documents missing from a list simply get no contribution"
-      ]
+      ],
+      "hints": [
+        "Keep a dict of scores. For every ranked list, loop with `enumerate(ranking, start=1)` and add `1 / (k + rank)` to that id's score.",
+        "Sort the ids with `key=lambda d: (-scores[d], d)` so higher scores come first and ties go alphabetically."
+      ],
+      "kind": "build"
     },
     {
       "id": "m4-6-iq1",
@@ -6165,7 +6748,12 @@
       "checklist": [
         "Averaged over all labeled queries",
         "Ready to compare dense, BM25 and hybrid on the same set"
-      ]
+      ],
+      "hints": [
+        "Loop over the queries in `relevant` (not in `results`). For recall@k, compare the first `k` results with the relevant set.",
+        "For MRR, find the position of the first relevant result (starting at 1) and use 1/position, or 0 if none is found. Average over queries."
+      ],
+      "kind": "build"
     },
     {
       "id": "l4-project",
@@ -6435,7 +7023,12 @@
         "Weak evidence leads to abstention",
         "Sources are labelled for citation",
         "Context size is bounded"
-      ]
+      ],
+      "hints": [
+        "Filter by `min_score`, sort the rest by score descending, then add chunks one at a time while the total text length stays within `max_chars`.",
+        "If nothing was picked, return `None`. Otherwise label each chunk `[id] text` and build a prompt that says: answer only from sources, cite ids in brackets, say \"I don't know\" otherwise."
+      ],
+      "kind": "build"
     },
     {
       "id": "m4-9-iq1",
@@ -6565,6 +7158,43 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Improve the context sent to the LLM without just retrieving more."
+    },
+    {
+      "id": "m4-10-code-debug-rerank",
+      "type": "coding",
+      "moduleId": "M4.10",
+      "levelId": 4,
+      "difficulty": "easy",
+      "title": "Debug: the reranker sends the worst chunks",
+      "topicIds": [
+        "m4-10-retrieve-many-rerank-send-the-best"
+      ],
+      "prompt": "`rerank(query, candidates, score, k)` should score every candidate with `score(query, text)` (higher is more relevant) and return the texts of the best `k`, best first. Answers got worse after adding the reranker. Fix the bug.",
+      "starter": "def rerank(query, candidates, score, k):\n    scored = [(score(query, c), c) for c in candidates]\n    scored.sort()\n    return [c for _, c in scored[:k]]\n",
+      "solution": "def rerank(query, candidates, score, k):\n    scored = [(score(query, c), c) for c in candidates]\n    scored.sort(key=lambda t: t[0], reverse=True)\n    return [c for _, c in scored[:k]]\n",
+      "tests": [
+        {
+          "name": "best first",
+          "code": "s = lambda q, t: len(set(q.split()) & set(t.split()))\nassert rerank('refund policy', ['shipping times', 'refund policy details', 'policy'], s, 2) == ['refund policy details', 'policy']"
+        },
+        {
+          "name": "keeps k",
+          "code": "assert len(rerank('a', ['a', 'b', 'c'], lambda q, t: 1.0, 2)) == 2"
+        },
+        {
+          "name": "stable for ties",
+          "code": "assert rerank('x', ['first', 'second'], lambda q, t: 0.5, 2) == ['first', 'second']"
+        }
+      ],
+      "checklist": [
+        "You can explain why sorting tuples also compared the texts",
+        "You checked the order, not just the count"
+      ],
+      "hints": [
+        "Print `scored` after sorting. Which end of the list holds the highest scores?",
+        "Sort by the score only (`key=lambda t: t[0]`) with `reverse=True`. Sorting by score alone also keeps ties in their original order."
+      ],
+      "kind": "debug"
     },
     {
       "id": "m4-10-iq1",
@@ -6824,7 +7454,12 @@
       "checklist": [
         "Flags citations to sources that don't exist",
         "Counts unsupported sentences"
-      ]
+      ],
+      "hints": [
+        "`re.findall(r\"\\[([^\\[\\]]+)\\]\", answer)` gives every id inside brackets. Use a `seen` set to drop repeats while keeping first-use order.",
+        "Split sentences with `re.split(r\"[.!?]\", answer)`, ignore empty pieces, and count the ones with no `[...]` in them."
+      ],
+      "kind": "build"
     },
     {
       "id": "m4-12-iq1",
@@ -7418,7 +8053,12 @@
       "checklist": [
         "Argument order doesn't matter",
         "Catches both tight loops and slow repetition"
-      ]
+      ],
+      "hints": [
+        "Turn each call into one comparable key: the tool name plus `json.dumps(args, sort_keys=True)`, so key order doesn't matter.",
+        "Stuck if the last `window` keys are all the same (`len(set(keys[-window:])) == 1`), or if any key's total count is greater than `window` (use `Counter`)."
+      ],
+      "kind": "build"
     },
     {
       "id": "m5-2-iq1",
@@ -7578,7 +8218,12 @@
       "checklist": [
         "Tells the model the result was truncated",
         "Drops fields the model doesn't need"
-      ]
+      ],
+      "hints": [
+        "Slice `rows[:max_rows]` and build a new dict per row with only the wanted fields: `{f: r.get(f) for f in fields}`.",
+        "`total` is the length of the full input, and `truncated` is simply `len(rows) > max_rows`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m5-3-iq1",
@@ -7865,7 +8510,12 @@
       "checklist": [
         "Supports update and delete, not just append",
         "Returns only relevant memories"
-      ]
+      ],
+      "hints": [
+        "Store `key -> (text, order)` where `order` comes from a counter that goes up on every write, so you know which memory is newest.",
+        "To recall, score each memory by the size of the set intersection of lowercase words, skip zero scores, and sort by `(-score, -order)`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m5-5-iq1",
@@ -7988,6 +8638,48 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Use multi-agent designs only when specialization justifies the complexity."
+    },
+    {
+      "id": "m5-6-code-orchestrator-workers",
+      "type": "coding",
+      "moduleId": "M5.6",
+      "levelId": 5,
+      "difficulty": "medium",
+      "title": "Orchestrator with retries and escalation",
+      "topicIds": [
+        "m5-6-orchestrator-workers",
+        "m5-6-worker-failure-and-escalation"
+      ],
+      "prompt": "Write `orchestrate(subtasks, workers, retries=1)`. `subtasks` is a list of `(worker_name, payload)`. For each, call `workers[worker_name](payload)`. If it raises, retry up to `retries` more times. Return `{\"results\": [...], \"escalated\": [...]}` where `results` holds each successful output in subtask order and `escalated` holds `(index, worker_name, error message)` for subtasks that still failed, or whose worker doesn't exist (message `\"unknown worker\"`). One failing worker must not stop the others.",
+      "starter": "def orchestrate(subtasks, workers, retries=1):\n    results, escalated = [], []\n    # your code here\n    return {\"results\": results, \"escalated\": escalated}\n",
+      "solution": "def orchestrate(subtasks, workers, retries=1):\n    results, escalated = [], []\n    for i, (name, payload) in enumerate(subtasks):\n        fn = workers.get(name)\n        if fn is None:\n            escalated.append((i, name, \"unknown worker\"))\n            continue\n        for attempt in range(retries + 1):\n            try:\n                results.append(fn(payload))\n                break\n            except Exception as e:\n                if attempt == retries:\n                    escalated.append((i, name, str(e)))\n    return {\"results\": results, \"escalated\": escalated}\n",
+      "tests": [
+        {
+          "name": "runs every worker",
+          "code": "w = {'up': str.upper, 'rev': lambda s: s[::-1]}\nassert orchestrate([('up', 'a'), ('rev', 'bc')], w)['results'] == ['A', 'cb']"
+        },
+        {
+          "name": "retries a flaky worker",
+          "code": "calls = []\ndef flaky(p):\n    calls.append(p)\n    if len(calls) < 2:\n        raise RuntimeError('busy')\n    return 'ok'\nassert orchestrate([('f', 1)], {'f': flaky}) == {'results': ['ok'], 'escalated': []}"
+        },
+        {
+          "name": "escalates after retries",
+          "code": "def bad(p):\n    raise ValueError('nope')\nr = orchestrate([('b', 1), ('ok', 2)], {'b': bad, 'ok': lambda p: p * 10})\nassert r == {'results': [20], 'escalated': [(0, 'b', 'nope')]}"
+        },
+        {
+          "name": "unknown worker",
+          "code": "assert orchestrate([('x', 1)], {})['escalated'] == [(0, 'x', 'unknown worker')]"
+        }
+      ],
+      "checklist": [
+        "A single failure never stops the run",
+        "You can explain when you'd escalate to a human instead of retrying"
+      ],
+      "hints": [
+        "Loop with `enumerate(subtasks)` so you know each index. Look up the worker with `workers.get(name)` and escalate straight away if it's missing.",
+        "Inside, loop `for attempt in range(retries + 1)`: on success append and `break`; in `except`, escalate only when `attempt == retries`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m5-6-iq1",
@@ -8372,7 +9064,12 @@
       "checklist": [
         "Limits are enforced in code, not the prompt",
         "The error says which budget ran out"
-      ]
+      ],
+      "hints": [
+        "In `__init__` save the limits, record `start = clock()`, and set steps to 0 and cost to 0.0.",
+        "In `charge`, add first, then check in order: steps, cost, time (`clock() - start`). Raise `BudgetExceeded(\"steps\")` and so on."
+      ],
+      "kind": "build"
     },
     {
       "id": "m5-9-iq1",
@@ -8387,6 +9084,21 @@
         "Loop detection",
         "Graceful stop with partial result",
         "Per-task cost monitoring"
+      ]
+    },
+    {
+      "id": "m5-9-sc1",
+      "type": "scenario",
+      "moduleId": "M5.9",
+      "levelId": 5,
+      "difficulty": "medium",
+      "title": "The agent deleted the wrong file",
+      "prompt": "Your coding agent was asked to clean up temp files and deleted a config file. What safeguards do you add?",
+      "hints": [
+        "Least privilege: limit which folders the tool can touch",
+        "Require human approval for destructive actions",
+        "Dry-run mode that shows what would change first",
+        "Log every tool call so you can trace what happened"
       ]
     }
   ],
@@ -8721,6 +9433,21 @@
         "Budget and prioritise",
         "Selection beats volume"
       ]
+    },
+    {
+      "id": "m6-1-sc1",
+      "type": "scenario",
+      "moduleId": "M6.1",
+      "levelId": 6,
+      "difficulty": "easy",
+      "title": "Quality dropped after adding more documents",
+      "prompt": "You doubled the number of retrieved documents in the prompt and answers got worse, not better. Explain why.",
+      "hints": [
+        "More context adds noise and distracts the model",
+        "Important facts in the middle of long contexts get less attention",
+        "Longer prompts also cost more and are slower",
+        "Retrieve less but better, or rerank"
+      ]
     }
   ],
   "M6.2": [
@@ -8821,6 +9548,44 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build the smallest useful context for the model's current decision."
+    },
+    {
+      "id": "m6-2-code-context-priority-fill",
+      "type": "coding",
+      "moduleId": "M6.2",
+      "levelId": 6,
+      "difficulty": "medium",
+      "title": "Fill the context by priority",
+      "topicIds": [
+        "m6-2-prioritizing-what-matters",
+        "m6-2-always-present-retrieved-or-excluded"
+      ],
+      "prompt": "Write `select(items, budget)`. Each item is `{\"id\", \"tokens\", \"priority\", \"always\"}`. Items with `always=True` are always included (even if they alone exceed the budget). Then add the rest by priority (higher first, ties by smaller tokens, then id), skipping any that don't fit in the remaining budget but continuing to try smaller ones. Return the selected ids in their original order.",
+      "starter": "def select(items, budget):\n    # your code here\n    return []\n",
+      "solution": "def select(items, budget):\n    chosen = {i[\"id\"] for i in items if i[\"always\"]}\n    used = sum(i[\"tokens\"] for i in items if i[\"always\"])\n    rest = sorted((i for i in items if not i[\"always\"]), key=lambda i: (-i[\"priority\"], i[\"tokens\"], i[\"id\"]))\n    for i in rest:\n        if used + i[\"tokens\"] <= budget:\n            chosen.add(i[\"id\"])\n            used += i[\"tokens\"]\n    return [i[\"id\"] for i in items if i[\"id\"] in chosen]\n",
+      "tests": [
+        {
+          "name": "always items first, then priority",
+          "code": "items = [\n  {'id': 'sys', 'tokens': 100, 'priority': 0, 'always': True},\n  {'id': 'old', 'tokens': 300, 'priority': 1, 'always': False},\n  {'id': 'doc', 'tokens': 300, 'priority': 5, 'always': False},\n]\nassert select(items, 450) == ['sys', 'doc']"
+        },
+        {
+          "name": "skips what doesn't fit and keeps trying",
+          "code": "items = [\n  {'id': 'big', 'tokens': 900, 'priority': 9, 'always': False},\n  {'id': 'small', 'tokens': 50, 'priority': 1, 'always': False},\n]\nassert select(items, 100) == ['small']"
+        },
+        {
+          "name": "keeps original order",
+          "code": "items = [{'id': 'a', 'tokens': 1, 'priority': 1, 'always': False}, {'id': 'b', 'tokens': 1, 'priority': 9, 'always': False}]\nassert select(items, 10) == ['a', 'b']"
+        }
+      ],
+      "checklist": [
+        "You can name what belongs in 'always' for a real assistant",
+        "Order is preserved so sources stay distinguishable"
+      ],
+      "hints": [
+        "Start with the `always` items: put their ids in a `chosen` set and count their tokens as used.",
+        "Sort the others with `key=lambda i: (-i[\"priority\"], i[\"tokens\"], i[\"id\"])` and add each one that still fits. Return ids by walking the original list."
+      ],
+      "kind": "build"
     },
     {
       "id": "m6-2-iq1",
@@ -8965,7 +9730,12 @@
         "Recent turns stay verbatim",
         "IDs survive compaction exactly",
         "Older context becomes a single summary"
-      ]
+      ],
+      "hints": [
+        "If there are no more than `keep_last` messages, return them unchanged. Otherwise split into `older` and `recent` at `len(messages) - keep_last`.",
+        "Join the older contents into one string, summarize it, and find ids with `re.findall(r\"[A-Z]{2,}-\\d+\", text)`. `dict.fromkeys(...)` removes duplicates in first-seen order."
+      ],
+      "kind": "build"
     },
     {
       "id": "m6-3-iq1",
@@ -9467,7 +10237,12 @@
       "checklist": [
         "Timestamps and user input come last",
         "Two requests share the long static prefix"
-      ]
+      ],
+      "hints": [
+        "Make two lists, one for stable parts and one for changing parts, each in the order given, and join stable + changing with `\"\\n\\n\"`.",
+        "For the shared prefix, walk both strings together with `zip` and count until the first character that differs."
+      ],
+      "kind": "build"
     },
     {
       "id": "m6-7-iq1",
@@ -9482,6 +10257,21 @@
         "Variable content last",
         "Avoid dynamic values early",
         "Monitor hit rate"
+      ]
+    },
+    {
+      "id": "m6-7-sc1",
+      "type": "scenario",
+      "moduleId": "M6.7",
+      "levelId": 6,
+      "difficulty": "medium",
+      "title": "Prompt caching isn't saving money",
+      "prompt": "You turned on prompt caching but the cache hit rate is nearly zero. What do you check?",
+      "hints": [
+        "Caches match on an exact prefix",
+        "Put stable content (instructions, tools, docs) first and changing content last",
+        "Look for a timestamp or user id near the start of the prompt",
+        "Measure the shared prefix between consecutive requests"
       ]
     }
   ],
@@ -9815,6 +10605,21 @@
         "Multiple quality dimensions",
         "Dataset-level measurement"
       ]
+    },
+    {
+      "id": "m7-1-sc1",
+      "type": "scenario",
+      "moduleId": "M7.1",
+      "levelId": 7,
+      "difficulty": "easy",
+      "title": "\"It looks good to me\"",
+      "prompt": "Your team ships prompt changes after reading three or four outputs. Convince them to build an eval set, and say what goes in it first.",
+      "hints": [
+        "Spot checks miss regressions and rare failures",
+        "Start with 20 to 50 real examples with known good answers",
+        "Include past failures and edge cases",
+        "Run it on every change and track the score over time"
+      ]
     }
   ],
   "M7.2": [
@@ -9914,6 +10719,47 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Pick the right evaluation method for a testing scenario."
+    },
+    {
+      "id": "m7-2-code-judge-agreement",
+      "type": "coding",
+      "moduleId": "M7.2",
+      "levelId": 7,
+      "difficulty": "medium",
+      "title": "Can you trust the LLM judge?",
+      "topicIds": [
+        "m7-2-programmatic-human-and-llm-as-a-judge"
+      ],
+      "prompt": "Before trusting an LLM-as-a-judge, compare it with human labels. Write `agreement(human, judge)` for two equal-length lists of booleans (pass/fail). Return `(raw, kappa)`: raw agreement (fraction of matches) and Cohen's kappa = (po − pe) / (1 − pe), where po is raw agreement and pe = P(human yes)·P(judge yes) + P(human no)·P(judge no). If pe is 1, return kappa 1.0. Round both to 3 decimals. Raise `ValueError` on empty or mismatched lists.",
+      "starter": "def agreement(human, judge):\n    # your code here\n    pass\n",
+      "solution": "def agreement(human, judge):\n    if not human or len(human) != len(judge):\n        raise ValueError(\"need two equal, non-empty label lists\")\n    n = len(human)\n    po = sum(h == j for h, j in zip(human, judge)) / n\n    ph, pj = sum(human) / n, sum(judge) / n\n    pe = ph * pj + (1 - ph) * (1 - pj)\n    kappa = 1.0 if pe == 1 else (po - pe) / (1 - pe)\n    return round(po, 3), round(kappa, 3)\n",
+      "tests": [
+        {
+          "name": "perfect agreement",
+          "code": "assert agreement([True, False, True], [True, False, True]) == (1.0, 1.0)"
+        },
+        {
+          "name": "kappa corrects for chance",
+          "code": "raw, k = agreement([True] * 9 + [False], [True] * 10)\nassert raw == 0.9 and k == 0.0"
+        },
+        {
+          "name": "typical case",
+          "code": "h = [True, True, False, False, True, False]\nj = [True, False, False, False, True, True]\nassert agreement(h, j) == (0.667, 0.333)"
+        },
+        {
+          "name": "bad input",
+          "code": "try:\n    agreement([], [])\n    assert False\nexcept ValueError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "You can explain why 90% raw agreement can still mean a useless judge",
+        "You'd look at the disagreements, not just the number"
+      ],
+      "hints": [
+        "Raw agreement is the fraction of positions where the two lists match. `sum(human)` counts the True values, so `sum(human) / n` is P(human yes).",
+        "pe is the agreement you'd expect by chance: both say yes plus both say no. Plug po and pe into `(po - pe) / (1 - pe)` and guard the `pe == 1` case."
+      ],
+      "kind": "build"
     },
     {
       "id": "m7-2-iq1",
@@ -10525,7 +11371,12 @@
       "checklist": [
         "Fails on regressions, not only absolute thresholds",
         "Report names each failing metric"
-      ]
+      ],
+      "hints": [
+        "Loop over `thresholds`, not `scores`, so a missing metric is noticed. Each problem becomes one string in a `failures` list.",
+        "Check the threshold first; only if it passes, compare with the baseline (`baseline[metric] - score > max_drop`). Format numbers with `:.2f` and return `(not failures, sorted(failures))`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m7-7-iq1",
@@ -10801,6 +11652,48 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Evaluate an agent's decisions, tool use, efficiency, recovery and security boundaries."
+    },
+    {
+      "id": "m7-9-code-trajectory-check",
+      "type": "coding",
+      "moduleId": "M7.9",
+      "levelId": 7,
+      "difficulty": "medium",
+      "title": "Grade an agent's trajectory, not just its answer",
+      "topicIds": [
+        "m7-9-tool-selection",
+        "m7-9-loops-redundancy-and-early-exit"
+      ],
+      "prompt": "Write `grade(trajectory, expected_tools, forbidden)`. `trajectory` is the list of tool names the agent called, in order. Return `{\"missing\": [...], \"forbidden_used\": [...], \"redundant\": n, \"passed\": bool}`: expected tools never called (in expected order), forbidden tools that were called (sorted, no duplicates), the number of immediate repeats (the same tool called twice in a row counts 1 per repeat), and `passed` = nothing missing, nothing forbidden and at most 1 redundant call.",
+      "starter": "def grade(trajectory, expected_tools, forbidden):\n    # your code here\n    return {}\n",
+      "solution": "def grade(trajectory, expected_tools, forbidden):\n    called = set(trajectory)\n    missing = [t for t in expected_tools if t not in called]\n    forbidden_used = sorted(called & set(forbidden))\n    redundant = sum(1 for a, b in zip(trajectory, trajectory[1:]) if a == b)\n    passed = not missing and not forbidden_used and redundant <= 1\n    return {\"missing\": missing, \"forbidden_used\": forbidden_used, \"redundant\": redundant, \"passed\": passed}\n",
+      "tests": [
+        {
+          "name": "a clean run passes",
+          "code": "assert grade(['search', 'read', 'answer'], ['search', 'answer'], ['delete'])['passed'] is True"
+        },
+        {
+          "name": "finds missing tools",
+          "code": "assert grade(['answer'], ['search', 'answer'], [])['missing'] == ['search']"
+        },
+        {
+          "name": "flags forbidden tools",
+          "code": "r = grade(['search', 'delete', 'delete'], ['search'], ['delete', 'email'])\nassert r['forbidden_used'] == ['delete'] and r['passed'] is False"
+        },
+        {
+          "name": "counts loops",
+          "code": "r = grade(['search', 'search', 'search', 'answer'], ['answer'], [])\nassert r['redundant'] == 2 and r['passed'] is False"
+        }
+      ],
+      "checklist": [
+        "You can name a case where the final answer was right but the trajectory was bad",
+        "Forbidden tools fail the run no matter what"
+      ],
+      "hints": [
+        "Turn the trajectory into a set for the missing and forbidden checks. Missing keeps the expected order, so loop over `expected_tools`.",
+        "Count repeats by pairing each call with the next one: `zip(trajectory, trajectory[1:])`, counting pairs where both are equal."
+      ],
+      "kind": "build"
     },
     {
       "id": "m7-9-iq1",
@@ -11187,6 +12080,21 @@
         "Bypassable, false positives",
         "Defence in depth"
       ]
+    },
+    {
+      "id": "m8-3-sc1",
+      "type": "scenario",
+      "moduleId": "M8.3",
+      "levelId": 8,
+      "difficulty": "medium",
+      "title": "Users bypass your content filter",
+      "prompt": "Users get your assistant to produce disallowed content by writing requests in leetspeak or another language. What do you do?",
+      "hints": [
+        "A single keyword filter is easy to evade",
+        "Use an output guardrail as well as an input one",
+        "Test with obfuscated and translated attacks",
+        "Layer defences and log blocked attempts"
+      ]
     }
   ],
   "M8.4": [
@@ -11288,6 +12196,48 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Give agents autonomy without unrestricted control over real systems."
+    },
+    {
+      "id": "m8-4-code-tool-permission-gate",
+      "type": "coding",
+      "moduleId": "M8.4",
+      "levelId": 8,
+      "difficulty": "medium",
+      "title": "A permission gate outside the model",
+      "topicIds": [
+        "m8-4-least-privilege-for-agents",
+        "m8-4-human-approval-for-irreversible-actions"
+      ],
+      "prompt": "The model can ask for any tool, so the check must live in code. Write `check(call, policy, approved=False)` where `call` is `{\"tool\", \"args\"}` and `policy` maps tool name → `\"read\"` or `\"write\"`. Return `\"allow\"` for read tools, `\"needs_approval\"` for write tools unless `approved` is True (then `\"allow\"`), and `\"deny\"` for tools not in the policy. Also deny any call whose args contain a string value with `..` or starting with `/` (path escape), whatever the tool.",
+      "starter": "def check(call, policy, approved=False):\n    # your code here\n    return \"allow\"\n",
+      "solution": "def check(call, policy, approved=False):\n    for v in call.get(\"args\", {}).values():\n        if isinstance(v, str) and (\"..\" in v or v.startswith(\"/\")):\n            return \"deny\"\n    kind = policy.get(call[\"tool\"])\n    if kind == \"read\":\n        return \"allow\"\n    if kind == \"write\":\n        return \"allow\" if approved else \"needs_approval\"\n    return \"deny\"\n",
+      "tests": [
+        {
+          "name": "reads are allowed",
+          "code": "assert check({'tool': 'search', 'args': {'q': 'x'}}, {'search': 'read'}) == 'allow'"
+        },
+        {
+          "name": "writes need approval",
+          "code": "p = {'send_email': 'write'}\nassert check({'tool': 'send_email', 'args': {}}, p) == 'needs_approval'\nassert check({'tool': 'send_email', 'args': {}}, p, approved=True) == 'allow'"
+        },
+        {
+          "name": "unknown tools are denied",
+          "code": "assert check({'tool': 'rm', 'args': {}}, {'search': 'read'}) == 'deny'"
+        },
+        {
+          "name": "path escapes are denied",
+          "code": "p = {'read_file': 'read'}\nassert check({'tool': 'read_file', 'args': {'path': '../secrets.env'}}, p) == 'deny'\nassert check({'tool': 'read_file', 'args': {'path': '/etc/passwd'}}, p) == 'deny'"
+        }
+      ],
+      "checklist": [
+        "Default is deny",
+        "You can explain why this can't be a line in the system prompt"
+      ],
+      "hints": [
+        "Check the arguments first, so a path escape is denied whatever the tool. Loop over `call.get(\"args\", {}).values()` and test only strings.",
+        "Then look up `policy.get(call[\"tool\"])`: read → allow, write → allow only if approved, anything else (including None) → deny."
+      ],
+      "kind": "build"
     },
     {
       "id": "m8-4-iq1",
@@ -11403,6 +12353,48 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Secure the knowledge layer beneath a RAG app."
+    },
+    {
+      "id": "m8-5-code-debug-tenant-filter",
+      "type": "coding",
+      "moduleId": "M8.5",
+      "levelId": 8,
+      "difficulty": "medium",
+      "title": "Debug: one customer sees another's documents",
+      "topicIds": [
+        "m8-5-document-level-permissions",
+        "m8-5-preventing-cross-tenant-leakage"
+      ],
+      "prompt": "`visible(docs, user)` filters retrieved chunks before they reach the prompt. A doc is visible only if it belongs to the user's tenant AND (it's public within the tenant OR the user is in its `allowed` list). A security review found a cross-tenant leak. Fix it.",
+      "starter": "def visible(docs, user):\n    return [d for d in docs if d[\"tenant\"] == user[\"tenant\"] or d[\"public\"] or user[\"id\"] in d[\"allowed\"]]\n",
+      "solution": "def visible(docs, user):\n    return [d for d in docs if d[\"tenant\"] == user[\"tenant\"] and (d[\"public\"] or user[\"id\"] in d[\"allowed\"])]\n",
+      "tests": [
+        {
+          "name": "own public docs",
+          "code": "u = {'id': 'u1', 'tenant': 'acme'}\nd = [{'id': 1, 'tenant': 'acme', 'public': True, 'allowed': []}]\nassert visible(d, u) == d"
+        },
+        {
+          "name": "no other tenant's public docs",
+          "code": "u = {'id': 'u1', 'tenant': 'acme'}\nd = [{'id': 2, 'tenant': 'globex', 'public': True, 'allowed': []}]\nassert visible(d, u) == []"
+        },
+        {
+          "name": "private docs need the user listed",
+          "code": "u = {'id': 'u1', 'tenant': 'acme'}\nd = [{'id': 3, 'tenant': 'acme', 'public': False, 'allowed': ['u2']}, {'id': 4, 'tenant': 'acme', 'public': False, 'allowed': ['u1']}]\nassert [x['id'] for x in visible(d, u)] == [4]"
+        },
+        {
+          "name": "allowed lists don't cross tenants",
+          "code": "u = {'id': 'u1', 'tenant': 'acme'}\nd = [{'id': 5, 'tenant': 'globex', 'public': False, 'allowed': ['u1']}]\nassert visible(d, u) == []"
+        }
+      ],
+      "checklist": [
+        "Tenant is checked first and always",
+        "You'd add a test like 'no other tenant's public docs' to CI"
+      ],
+      "hints": [
+        "Read the condition out loud. With `or` between every part, which single condition is enough to show a document from another tenant?",
+        "The tenant check must always hold: `tenant matches and (public or user allowed)`. Mind the brackets."
+      ],
+      "kind": "debug"
     },
     {
       "id": "m8-5-iq1",
@@ -11570,7 +12562,12 @@
       "checklist": [
         "Runs before anything is logged or traced",
         "Doesn't mangle ordinary numbers"
-      ]
+      ],
+      "hints": [
+        "Write one compiled regex per kind and apply them one after another with `.sub`. Emails and keys first, phones last, so digits inside a key aren't taken as a phone.",
+        "A phone is ten digits with optional spaces or dashes between them, an optional `+91` or `+1` prefix, and no digit directly before or after: `(?<!\\d)` and `(?!\\d)`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m8-6-iq1",
@@ -12306,6 +13303,52 @@
       "doneWhen": "Avoid apps built around one hard-coded model."
     },
     {
+      "id": "m9-3-code-model-cascade",
+      "type": "coding",
+      "moduleId": "M9.3",
+      "levelId": 9,
+      "difficulty": "medium",
+      "title": "A cheap-first model cascade",
+      "topicIds": [
+        "m9-3-model-cascades",
+        "m9-3-routing-on-task-cost-and-risk"
+      ],
+      "prompt": "Write `cascade(prompt, models, threshold)`. `models` is a list of `(name, cost, fn)` from cheapest to most expensive; `fn(prompt)` returns `(answer, confidence)`. Call models in order and return `{\"answer\", \"model\", \"cost\"}` from the first one whose confidence is ≥ threshold, where `cost` is the total spent on every model called. If none is confident, return the last model's answer. If a model raises, add its cost anyway and move on; if all raise, raise `RuntimeError`.",
+      "starter": "def cascade(prompt, models, threshold):\n    # your code here\n    pass\n",
+      "solution": "def cascade(prompt, models, threshold):\n    spent = 0.0\n    last = None\n    for name, cost, fn in models:\n        spent += cost\n        try:\n            answer, conf = fn(prompt)\n        except Exception:\n            continue\n        last = {\"answer\": answer, \"model\": name}\n        if conf >= threshold:\n            return {**last, \"cost\": round(spent, 6)}\n    if last is None:\n        raise RuntimeError(\"every model failed\")\n    return {**last, \"cost\": round(spent, 6)}\n",
+      "tests": [
+        {
+          "name": "stops at the first confident model",
+          "code": "m = [('small', 0.001, lambda p: ('A', 0.95)), ('big', 0.02, lambda p: ('B', 0.99))]\nassert cascade('q', m, 0.9) == {'answer': 'A', 'model': 'small', 'cost': 0.001}"
+        },
+        {
+          "name": "escalates when unsure",
+          "code": "m = [('small', 0.001, lambda p: ('A', 0.4)), ('big', 0.02, lambda p: ('B', 0.99))]\nassert cascade('q', m, 0.9) == {'answer': 'B', 'model': 'big', 'cost': 0.021}"
+        },
+        {
+          "name": "falls back to the last answer",
+          "code": "m = [('s', 1, lambda p: ('A', 0.1)), ('b', 2, lambda p: ('B', 0.2))]\nassert cascade('q', m, 0.9)['model'] == 'b'"
+        },
+        {
+          "name": "skips a failing model",
+          "code": "def boom(p):\n    raise TimeoutError()\nm = [('s', 1, boom), ('b', 2, lambda p: ('B', 0.95))]\nassert cascade('q', m, 0.9) == {'answer': 'B', 'model': 'b', 'cost': 3}"
+        },
+        {
+          "name": "all fail",
+          "code": "def boom(p):\n    raise TimeoutError()\ntry:\n    cascade('q', [('s', 1, boom)], 0.5)\n    assert False\nexcept RuntimeError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "You can say when a cascade costs more than calling the big model directly",
+        "Confidence needs calibrating against real labels"
+      ],
+      "hints": [
+        "Loop over the models in order, adding each model's cost before you call it, so failed calls are still paid for.",
+        "Remember the most recent successful answer in a variable. Return early when confidence reaches the threshold; after the loop, return the remembered one or raise if there is none."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m9-3-iq1",
       "type": "interview",
       "moduleId": "M9.3",
@@ -12623,7 +13666,12 @@
       "checklist": [
         "Threshold is tunable",
         "User-specific answers are scoped to that user"
-      ]
+      ],
+      "hints": [
+        "Store each entry as `(vector, answer, owner)`, where owner is the user for personal answers and `None` for shared ones.",
+        "In `get`, skip entries owned by someone else, compute cosine with the query vector, and keep the best one whose similarity is at least the threshold."
+      ],
+      "kind": "build"
     },
     {
       "id": "m9-5-iq1",
@@ -12803,7 +13851,12 @@
         "Stops hammering a failing dependency",
         "Recovers automatically after the cooldown",
         "Users always get the fallback, never a crash"
-      ]
+      ],
+      "hints": [
+        "Track `failures` and `opened_at` (None when closed). Work out the state from those: closed, open (cooldown not over) or half-open (cooldown over).",
+        "While open, return `fallback()` without calling `fn`. On a failure, open (set `opened_at = clock()`) if you were half-open or hit the threshold. On success, reset both."
+      ],
+      "kind": "build"
     },
     {
       "id": "m9-6-iq1",
@@ -13739,6 +14792,52 @@
       ]
     },
     {
+      "id": "m10-3-code-prompt-registry",
+      "type": "coding",
+      "moduleId": "M10.3",
+      "levelId": 10,
+      "difficulty": "medium",
+      "title": "A tiny prompt registry with labels",
+      "topicIds": [
+        "m10-3-a-prompt-registry",
+        "m10-3-rollback-by-moving-a-label"
+      ],
+      "prompt": "Implement `class Registry` with `register(name, text)` (adds a new version and returns its number, starting at 1 per name), `set_label(name, label, version)` (raise `KeyError` for an unknown version), and `get(name, label=\"production\", fallback=None)` returning `(version, text)` for the labelled version. If the name or label is unknown, return `(0, fallback)` when a fallback is given, otherwise raise `KeyError`. Rolling back is just moving the label to an older version.",
+      "starter": "class Registry:\n    def __init__(self):\n        pass\n\n    def register(self, name, text):\n        pass\n\n    def set_label(self, name, label, version):\n        pass\n\n    def get(self, name, label=\"production\", fallback=None):\n        pass\n",
+      "solution": "class Registry:\n    def __init__(self):\n        self.versions = {}\n        self.labels = {}\n\n    def register(self, name, text):\n        self.versions.setdefault(name, []).append(text)\n        return len(self.versions[name])\n\n    def set_label(self, name, label, version):\n        if not 1 <= version <= len(self.versions.get(name, [])):\n            raise KeyError(f\"{name} has no version {version}\")\n        self.labels[(name, label)] = version\n\n    def get(self, name, label=\"production\", fallback=None):\n        v = self.labels.get((name, label))\n        if v is None:\n            if fallback is not None:\n                return 0, fallback\n            raise KeyError(f\"{name}@{label}\")\n        return v, self.versions[name][v - 1]\n",
+      "tests": [
+        {
+          "name": "versions count up per name",
+          "code": "r = Registry()\nassert r.register('summarize', 'v1 text') == 1\nassert r.register('summarize', 'v2 text') == 2\nassert r.register('classify', 'x') == 1"
+        },
+        {
+          "name": "labels pick a version",
+          "code": "r = Registry()\nr.register('s', 'one'); r.register('s', 'two')\nr.set_label('s', 'production', 2)\nassert r.get('s') == (2, 'two')"
+        },
+        {
+          "name": "rollback by moving the label",
+          "code": "r = Registry()\nr.register('s', 'one'); r.register('s', 'two')\nr.set_label('s', 'production', 2)\nr.set_label('s', 'production', 1)\nassert r.get('s') == (1, 'one')"
+        },
+        {
+          "name": "fallback when the registry has nothing",
+          "code": "assert Registry().get('s', fallback='built-in') == (0, 'built-in')"
+        },
+        {
+          "name": "unknown version",
+          "code": "r = Registry()\nr.register('s', 'one')\ntry:\n    r.set_label('s', 'production', 5)\n    assert False\nexcept KeyError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "Your app keeps working when the registry is down (fallback)",
+        "Every trace records the prompt version"
+      ],
+      "hints": [
+        "Store `versions[name]` as a list of texts, so the version number is just its position + 1. Store labels in a dict keyed by `(name, label)`.",
+        "In `get`, look up the label; if it's missing, return `(0, fallback)` when there is a fallback, otherwise `raise KeyError`. Otherwise index the list with `version - 1`."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m10-3-iq1",
       "type": "interview",
       "moduleId": "M10.3",
@@ -13848,6 +14947,44 @@
         "The report names the failed metric and its threshold",
         "Reverting the prompt makes CI pass again"
       ]
+    },
+    {
+      "id": "m10-4-code-debug-flaky-eval",
+      "type": "coding",
+      "moduleId": "M10.4",
+      "levelId": 10,
+      "difficulty": "medium",
+      "title": "Debug: the release gate fails on a good model",
+      "topicIds": [
+        "m10-4-handling-non-determinism",
+        "m10-4-per-metric-thresholds"
+      ],
+      "prompt": "LLM outputs vary, so each eval case runs `runs` times. `gate(case_results, min_pass_rate)` takes a dict case id → list of booleans (one per run). A case passes when its pass rate is ≥ `min_pass_rate`, and the gate returns `(all_passed, failing_case_ids_sorted)`. Right now it blocks releases even when every case passes 4 out of 5 runs with `min_pass_rate=0.8`. Fix it.",
+      "starter": "def gate(case_results, min_pass_rate):\n    failing = []\n    for case, runs in case_results.items():\n        rate = sum(runs) // len(runs)\n        if rate <= min_pass_rate:\n            failing.append(case)\n    return (not failing, sorted(failing))\n",
+      "solution": "def gate(case_results, min_pass_rate):\n    failing = []\n    for case, runs in case_results.items():\n        rate = sum(runs) / len(runs) if runs else 0.0\n        if rate < min_pass_rate:\n            failing.append(case)\n    return (not failing, sorted(failing))\n",
+      "tests": [
+        {
+          "name": "4 of 5 passes at 0.8",
+          "code": "assert gate({'a': [True, True, True, True, False]}, 0.8) == (True, [])"
+        },
+        {
+          "name": "a weak case fails",
+          "code": "assert gate({'a': [True] * 5, 'b': [True, False, False, True, False]}, 0.8) == (False, ['b'])"
+        },
+        {
+          "name": "no runs counts as failing",
+          "code": "assert gate({'z': []}, 0.5) == (False, ['z'])"
+        }
+      ],
+      "checklist": [
+        "You found both bugs, not just one",
+        "You can explain why a single run per case makes a gate flaky"
+      ],
+      "hints": [
+        "There are two bugs. Work out by hand what `4 // 5` is in Python, then what `0.8 <= 0.8` is.",
+        "Use true division `/` for the rate and `<` for failing, so a rate exactly at the threshold passes. Guard an empty run list too."
+      ],
+      "kind": "debug"
     },
     {
       "id": "m10-4-iq1",
@@ -14419,6 +15556,48 @@
       ]
     },
     {
+      "id": "m10-9-code-error-rate-alert",
+      "type": "coding",
+      "moduleId": "M10.9",
+      "levelId": 10,
+      "difficulty": "medium",
+      "title": "An error-rate alert that doesn't cry wolf",
+      "topicIds": [
+        "m10-9-alerts-that-need-a-human",
+        "m10-9-application-metrics"
+      ],
+      "prompt": "Write `should_alert(events, now, window_s=300, threshold=0.05, min_requests=20)`. `events` is a list of `(timestamp, ok)` tuples. Look only at events with `now - window_s < timestamp <= now`. Alert (return True) only if there are at least `min_requests` of them and the error rate (share of `ok == False`) is strictly above `threshold`. A handful of failures at 3am shouldn't page anyone.",
+      "starter": "def should_alert(events, now, window_s=300, threshold=0.05, min_requests=20):\n    # your code here\n    return False\n",
+      "solution": "def should_alert(events, now, window_s=300, threshold=0.05, min_requests=20):\n    recent = [ok for t, ok in events if now - window_s < t <= now]\n    if len(recent) < min_requests:\n        return False\n    errors = sum(1 for ok in recent if not ok)\n    return errors / len(recent) > threshold\n",
+      "tests": [
+        {
+          "name": "alerts on a real spike",
+          "code": "ev = [(i, i % 5 != 0) for i in range(100)]\nassert should_alert(ev, 100) is True"
+        },
+        {
+          "name": "quiet when traffic is low",
+          "code": "ev = [(1, False), (2, False), (3, True)]\nassert should_alert(ev, 10) is False"
+        },
+        {
+          "name": "old errors don't count",
+          "code": "ev = [(i, False) for i in range(50)] + [(i, True) for i in range(400, 450)]\nassert should_alert(ev, 450) is False"
+        },
+        {
+          "name": "exactly at threshold doesn't alert",
+          "code": "ev = [(i, i >= 1) for i in range(20)]\nassert should_alert(ev, 20, threshold=0.05) is False"
+        }
+      ],
+      "checklist": [
+        "You can explain why the minimum request count matters",
+        "Your alert would name a runbook"
+      ],
+      "hints": [
+        "First keep only events inside the window: `now - window_s < t <= now`. If fewer than `min_requests` remain, don't alert.",
+        "Error rate is the number of `not ok` events divided by the number of recent events. Alert when it is strictly greater than the threshold."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m10-9-iq1",
       "type": "interview",
       "moduleId": "M10.9",
@@ -14557,6 +15736,21 @@
         "Roll back the label or image tag first",
         "Then diagnose with traces and the eval suite",
         "Write a blameless review"
+      ]
+    },
+    {
+      "id": "m10-10-sc2",
+      "type": "scenario",
+      "moduleId": "M10.10",
+      "levelId": 10,
+      "difficulty": "medium",
+      "title": "Quality dropped after a model update",
+      "prompt": "Your provider silently updated the model behind an alias and your answer quality dropped. How do you respond now, and what do you change for next time?",
+      "hints": [
+        "Roll back by pinning the previous model version if available",
+        "Confirm with your eval suite, not anecdotes",
+        "Pin exact model versions in config",
+        "Re-run evals whenever the model changes"
       ]
     }
   ],
@@ -15220,6 +16414,48 @@
       ]
     },
     {
+      "id": "m11-5-code-tenant-cost-attribution",
+      "type": "coding",
+      "moduleId": "M11.5",
+      "levelId": 11,
+      "difficulty": "medium",
+      "title": "Who spent the money?",
+      "topicIds": [
+        "m11-5-attributing-spend-per-team-or-tenant",
+        "m11-5-budgets-and-runaway-cost-alerts"
+      ],
+      "prompt": "Write `attribute(requests, prices, budgets)`. Each request is `{\"tenant\", \"model\", \"in\", \"out\"}` (token counts); `prices[model] = (price_in, price_out)` in dollars per million tokens. Return `(spend, over)` where `spend` maps tenant → total dollars rounded to 4 decimals, and `over` is a sorted list of tenants whose spend is above their entry in `budgets` (tenants with no budget are never over). Unknown models raise `KeyError`.",
+      "starter": "def attribute(requests, prices, budgets):\n    spend = {}\n    # your code here\n    return spend, []\n",
+      "solution": "def attribute(requests, prices, budgets):\n    spend = {}\n    for r in requests:\n        p_in, p_out = prices[r[\"model\"]]\n        cost = (r[\"in\"] * p_in + r[\"out\"] * p_out) / 1_000_000\n        spend[r[\"tenant\"]] = spend.get(r[\"tenant\"], 0.0) + cost\n    spend = {t: round(v, 4) for t, v in spend.items()}\n    over = sorted(t for t, v in spend.items() if t in budgets and v > budgets[t])\n    return spend, over\n",
+      "tests": [
+        {
+          "name": "sums per tenant",
+          "code": "p = {'m': (1.0, 2.0)}\nreqs = [{'tenant': 'a', 'model': 'm', 'in': 1_000_000, 'out': 0}, {'tenant': 'a', 'model': 'm', 'in': 0, 'out': 500_000}]\nassert attribute(reqs, p, {})[0] == {'a': 2.0}"
+        },
+        {
+          "name": "flags budget overruns",
+          "code": "p = {'m': (1.0, 1.0)}\nreqs = [{'tenant': 'a', 'model': 'm', 'in': 3_000_000, 'out': 0}, {'tenant': 'b', 'model': 'm', 'in': 1_000_000, 'out': 0}]\nassert attribute(reqs, p, {'a': 2.0, 'b': 5.0})[1] == ['a']"
+        },
+        {
+          "name": "no budget, never over",
+          "code": "p = {'m': (1.0, 1.0)}\nreqs = [{'tenant': 'c', 'model': 'm', 'in': 9_000_000, 'out': 0}]\nassert attribute(reqs, p, {})[1] == []"
+        },
+        {
+          "name": "unknown model",
+          "code": "try:\n    attribute([{'tenant': 'a', 'model': 'x', 'in': 1, 'out': 1}], {}, {})\n    assert False\nexcept KeyError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "Every request is tagged with a tenant in your real logs",
+        "You'd alert before the budget is gone, not after"
+      ],
+      "hints": [
+        "Loop over requests, look up the model's two prices, and add `(in × price_in + out × price_out) / 1,000,000` to that tenant's running total.",
+        "Round at the end, then a tenant is over when it has a budget and its spend is greater than it: `t in budgets and v > budgets[t]`."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m11-5-iq1",
       "type": "interview",
       "moduleId": "M11.5",
@@ -15232,6 +16468,21 @@
         "Quotas and rate limits",
         "On-demand vs provisioned",
         "Budgets and alerts"
+      ]
+    },
+    {
+      "id": "m11-5-sc1",
+      "type": "scenario",
+      "moduleId": "M11.5",
+      "levelId": 11,
+      "difficulty": "medium",
+      "title": "Hitting rate limits at launch",
+      "prompt": "On launch day your app hits the provider's tokens-per-minute quota and users see errors. What do you do in the moment and afterwards?",
+      "hints": [
+        "Queue and retry with backoff instead of failing",
+        "Serve a cheaper model for low-value traffic",
+        "Request a quota increase with real usage numbers",
+        "Load test before the next launch"
       ]
     }
   ],
@@ -15360,7 +16611,12 @@
       "checklist": [
         "Weights scale with bits per parameter",
         "KV cache grows with context length and batch size"
-      ]
+      ],
+      "hints": [
+        "Weights: parameters × bits / 8 gives bytes. With params in billions, multiply by 1e9 first, then divide by 1e9 for GB.",
+        "KV cache: 2 × layers × kv_heads × head_dim × seq_len × batch × bytes_per, divided by 1e9. Round both to 2 decimals."
+      ],
+      "kind": "build"
     },
     {
       "id": "m11-6-iq1",
@@ -15472,6 +16728,47 @@
         "Fallback latency is within your stated budget",
         "Usage is attributed per provider in the router's logs"
       ]
+    },
+    {
+      "id": "m11-7-code-debug-router-failover",
+      "type": "coding",
+      "moduleId": "M11.7",
+      "levelId": 11,
+      "difficulty": "medium",
+      "title": "Debug: the gateway never fails over",
+      "topicIds": [
+        "m11-7-routing-rules-and-automatic-failover"
+      ],
+      "prompt": "`route(prompt, providers, healthy)` should try providers in order, skipping any whose name isn't in `healthy`, and return `(provider_name, answer)` from the first call that succeeds. If every provider is skipped or fails, raise `RuntimeError`. In production, one provider outage takes the whole app down. Fix the bug.",
+      "starter": "def route(prompt, providers, healthy):\n    for name, call in providers:\n        if name not in healthy:\n            continue\n        try:\n            return name, call(prompt)\n        except Exception as e:\n            raise RuntimeError(f\"{name} failed\") from e\n    raise RuntimeError(\"no provider available\")\n",
+      "solution": "def route(prompt, providers, healthy):\n    errors = []\n    for name, call in providers:\n        if name not in healthy:\n            continue\n        try:\n            return name, call(prompt)\n        except Exception as e:\n            errors.append(f\"{name}: {e}\")\n    raise RuntimeError(\"no provider available: \" + \"; \".join(errors))\n",
+      "tests": [
+        {
+          "name": "uses the first healthy provider",
+          "code": "p = [('a', lambda x: 'A'), ('b', lambda x: 'B')]\nassert route('q', p, {'a', 'b'}) == ('a', 'A')"
+        },
+        {
+          "name": "skips unhealthy providers",
+          "code": "p = [('a', lambda x: 'A'), ('b', lambda x: 'B')]\nassert route('q', p, {'b'}) == ('b', 'B')"
+        },
+        {
+          "name": "fails over on an error",
+          "code": "def down(x):\n    raise ConnectionError('503')\np = [('a', down), ('b', lambda x: 'B')]\nassert route('q', p, {'a', 'b'}) == ('b', 'B')"
+        },
+        {
+          "name": "raises when all fail",
+          "code": "def down(x):\n    raise ConnectionError('503')\ntry:\n    route('q', [('a', down)], {'a'})\n    assert False\nexcept RuntimeError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "The final error says what each provider did",
+        "You can name one difference between providers a router can't hide"
+      ],
+      "hints": [
+        "Follow the code when the first provider raises. Does the loop ever get to the second provider?",
+        "In the `except`, record the error and let the loop continue. Raise only after the loop, once every provider has been tried."
+      ],
+      "kind": "debug"
     },
     {
       "id": "m11-7-iq1",
@@ -16040,6 +17337,48 @@
       ]
     },
     {
+      "id": "m12-2-code-image-tokens",
+      "type": "coding",
+      "moduleId": "M12.2",
+      "levelId": 12,
+      "difficulty": "medium",
+      "title": "How many tokens is this image?",
+      "topicIds": [
+        "m12-2-why-one-image-costs-many-tokens",
+        "m12-2-tiling-and-detail-settings"
+      ],
+      "prompt": "Many vision APIs bill images by tiles. Write `image_tokens(width, height, detail=\"high\")` using this common scheme: low detail costs a flat 85 tokens. For high detail: if either side is over 2048, scale the image down (keeping aspect ratio) to fit in 2048×2048; then, if the shorter side is over 768, scale down so the shorter side is 768. Count 512-pixel tiles with `ceil(w / 512) * ceil(h / 512)` and return `85 + 170 * tiles`. Check your numbers against your provider's docs, since schemes differ.",
+      "starter": "import math\n\ndef image_tokens(width, height, detail=\"high\"):\n    # your code here\n    return 0\n",
+      "solution": "import math\n\ndef image_tokens(width, height, detail=\"high\"):\n    if detail == \"low\":\n        return 85\n    w, h = float(width), float(height)\n    if max(w, h) > 2048:\n        s = 2048 / max(w, h)\n        w, h = w * s, h * s\n    if min(w, h) > 768:\n        s = 768 / min(w, h)\n        w, h = w * s, h * s\n    tiles = math.ceil(w / 512) * math.ceil(h / 512)\n    return 85 + 170 * tiles\n",
+      "tests": [
+        {
+          "name": "low detail is flat",
+          "code": "assert image_tokens(4000, 3000, 'low') == 85"
+        },
+        {
+          "name": "a 1024 square",
+          "code": "assert image_tokens(1024, 1024) == 765"
+        },
+        {
+          "name": "a tall 2048x4096",
+          "code": "assert image_tokens(2048, 4096) == 1105"
+        },
+        {
+          "name": "a small image isn't scaled up",
+          "code": "assert image_tokens(500, 300) == 255"
+        }
+      ],
+      "checklist": [
+        "You can explain why a screenshot can cost more than a page of text",
+        "You know when low detail is good enough"
+      ],
+      "hints": [
+        "Work in floats. Do the two scaling steps in order: first fit the longer side into 2048, then shrink so the shorter side is 768, each only if needed.",
+        "Scale both sides by the same factor `s` to keep the aspect ratio. Then `math.ceil(w / 512) * math.ceil(h / 512)` tiles, and `85 + 170 * tiles` tokens."
+      ],
+      "kind": "build"
+    },
+    {
       "id": "m12-2-iq1",
       "type": "interview",
       "moduleId": "M12.2",
@@ -16163,6 +17502,21 @@
         "Spatial precision",
         "Hallucinated details",
         "Pair with specialised tools"
+      ]
+    },
+    {
+      "id": "m12-3-sc1",
+      "type": "scenario",
+      "moduleId": "M12.3",
+      "levelId": 12,
+      "difficulty": "medium",
+      "title": "The vision model misreads small text",
+      "prompt": "Your invoice reader reads totals correctly on clear scans but gets small print and phone photos wrong. How do you improve it?",
+      "hints": [
+        "Downscaling destroys small text; send higher detail or crops",
+        "Crop the region of interest before sending",
+        "Use a document OCR service for text-heavy pages",
+        "Evaluate on real phone photos, not just clean scans"
       ]
     }
   ],
@@ -16643,7 +17997,12 @@
       "checklist": [
         "Word-level, not character-level",
         "Insertions can push WER above 100%"
-      ]
+      ],
+      "hints": [
+        "This is edit distance on words instead of characters. Build a table where cell (i, j) is the distance between the first i reference words and first j hypothesis words.",
+        "Each cell is the minimum of deletion (above + 1), insertion (left + 1) and substitution (diagonal + 0 or 1). Divide the final cell by the reference length."
+      ],
+      "kind": "build"
     },
     {
       "id": "m12-7-iq1",
@@ -17459,6 +18818,21 @@
         "Fine-tune only for behaviour or format",
         "Start from a measured failure"
       ]
+    },
+    {
+      "id": "m13-1-sc2",
+      "type": "scenario",
+      "moduleId": "M13.1",
+      "levelId": 13,
+      "difficulty": "medium",
+      "title": "Should we fine-tune?",
+      "prompt": "A stakeholder wants to fine-tune a model so it \"knows our product\". The product docs change every week. What do you recommend?",
+      "hints": [
+        "Fine-tuning teaches style and format, not fresh facts",
+        "Weekly-changing knowledge belongs in RAG",
+        "Try prompting and RAG first with an eval set",
+        "Fine-tune only for a measured gap that prompting can't close"
+      ]
     }
   ],
   "M13.2": [
@@ -17582,7 +18956,12 @@
       "checklist": [
         "Near-duplicates share a key, so they share a split",
         "Deterministic, so evals are reproducible"
-      ]
+      ],
+      "hints": [
+        "Every example's split must depend only on its group key, never on its position, so the same group always lands in the same place.",
+        "Compute `int(hashlib.sha256(g.encode()).hexdigest(), 16) % 100` and send the example to test when that is below `test_ratio * 100`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m13-2-iq1",
@@ -17837,7 +19216,12 @@
       "checklist": [
         "Adapter size grows linearly with rank",
         "Much smaller than the full matrix (d_out × d_in)"
-      ]
+      ],
+      "hints": [
+        "For one matrix, A has `r × d_in` numbers and B has `d_out × r`. Add those for each shape.",
+        "`sum(r * (d_in + d_out) for d_out, d_in in shapes)`. The scaling is just `alpha / r`."
+      ],
+      "kind": "build"
     },
     {
       "id": "m13-4-iq1",
@@ -17949,6 +19333,44 @@
         "Blind win rate of after vs before reported",
         "Five examples where DPO helped or hurt"
       ]
+    },
+    {
+      "id": "m13-5-code-preference-pairs",
+      "type": "coding",
+      "moduleId": "M13.5",
+      "levelId": 13,
+      "difficulty": "medium",
+      "title": "Build DPO preference pairs and check for length bias",
+      "topicIds": [
+        "m13-5-building-preference-pairs",
+        "m13-5-avoiding-length-bias"
+      ],
+      "prompt": "Write `make_pairs(rated)` where `rated` maps prompt → list of `(response, score)`. For each prompt with at least two responses, pair the highest-scored response (chosen) with the lowest-scored (rejected); skip prompts where those scores are equal. Return `(pairs, longer_share)` where `pairs` is a list of `{\"prompt\", \"chosen\", \"rejected\"}` in prompt order and `longer_share` is the fraction of pairs whose chosen response is longer than the rejected one (rounded to 2 decimals, 0.0 if no pairs). A share near 1.0 is a warning sign: the model may learn \"longer is better\".",
+      "starter": "def make_pairs(rated):\n    pairs = []\n    # your code here\n    return pairs, 0.0\n",
+      "solution": "def make_pairs(rated):\n    pairs = []\n    for prompt, responses in rated.items():\n        if len(responses) < 2:\n            continue\n        best = max(responses, key=lambda r: r[1])\n        worst = min(responses, key=lambda r: r[1])\n        if best[1] == worst[1]:\n            continue\n        pairs.append({\"prompt\": prompt, \"chosen\": best[0], \"rejected\": worst[0]})\n    if not pairs:\n        return pairs, 0.0\n    longer = sum(1 for p in pairs if len(p[\"chosen\"]) > len(p[\"rejected\"]))\n    return pairs, round(longer / len(pairs), 2)\n",
+      "tests": [
+        {
+          "name": "pairs best with worst",
+          "code": "pairs, _ = make_pairs({'p': [('ok', 3), ('great', 5), ('bad', 1)]})\nassert pairs == [{'prompt': 'p', 'chosen': 'great', 'rejected': 'bad'}]"
+        },
+        {
+          "name": "skips ties and singletons",
+          "code": "pairs, share = make_pairs({'a': [('x', 2), ('y', 2)], 'b': [('z', 5)]})\nassert pairs == [] and share == 0.0"
+        },
+        {
+          "name": "measures length bias",
+          "code": "_, share = make_pairs({'a': [('long answer', 5), ('no', 1)], 'b': [('short', 4), ('very long wrong', 2)]})\nassert share == 0.5"
+        }
+      ],
+      "checklist": [
+        "You'd look at a sample of pairs by hand",
+        "You can explain what DPO does with these pairs"
+      ],
+      "hints": [
+        "For each prompt, find the best and worst response with `max(..., key=lambda r: r[1])` and `min(...)`, and skip when their scores are equal.",
+        "After building the pairs, count how many have `len(chosen) > len(rejected)` and divide by the number of pairs."
+      ],
+      "kind": "build"
     },
     {
       "id": "m13-5-iq1",
@@ -18282,6 +19704,43 @@
         "Off-task results for all three",
         "A written adopt/reject decision"
       ]
+    },
+    {
+      "id": "m13-8-code-debug-finetune-compare",
+      "type": "coding",
+      "moduleId": "M13.8",
+      "levelId": 13,
+      "difficulty": "medium",
+      "title": "Debug: the fine-tune looks better than it is",
+      "topicIds": [
+        "m13-8-same-held-out-set-same-judge"
+      ],
+      "prompt": "`compare(baseline, tuned)` takes two dicts example id → score (0 to 1) and should report `{\"baseline\", \"tuned\", \"delta\", \"n\"}` averaged over the examples both were scored on, rounded to 3 decimals. The current code reports a big win that disappears on a closer look. Fix it.",
+      "starter": "def compare(baseline, tuned):\n    b = sum(baseline.values()) / len(baseline)\n    t = sum(tuned.values()) / len(tuned)\n    return {\"baseline\": round(b, 3), \"tuned\": round(t, 3), \"delta\": round(t - b, 3), \"n\": len(tuned)}\n",
+      "solution": "def compare(baseline, tuned):\n    ids = set(baseline) & set(tuned)\n    if not ids:\n        raise ValueError(\"no shared examples\")\n    b = sum(baseline[i] for i in ids) / len(ids)\n    t = sum(tuned[i] for i in ids) / len(ids)\n    return {\"baseline\": round(b, 3), \"tuned\": round(t, 3), \"delta\": round(t - b, 3), \"n\": len(ids)}\n",
+      "tests": [
+        {
+          "name": "same examples only",
+          "code": "base = {'1': 0.5, '2': 0.5, 'hard': 0.0}\ntuned = {'1': 0.6, '2': 0.6}\nassert compare(base, tuned) == {'baseline': 0.5, 'tuned': 0.6, 'delta': 0.1, 'n': 2}"
+        },
+        {
+          "name": "identical sets",
+          "code": "assert compare({'a': 1.0}, {'a': 0.0})['delta'] == -1.0"
+        },
+        {
+          "name": "nothing shared",
+          "code": "try:\n    compare({'a': 1.0}, {'b': 1.0})\n    assert False\nexcept ValueError:\n    pass"
+        }
+      ],
+      "checklist": [
+        "You can explain how a missing hard example inflated the result",
+        "Your write-up states n"
+      ],
+      "hints": [
+        "Look at the first test: the tuned model was never scored on the hard example. What does that do to each average?",
+        "Average both models over the ids they share (`set(baseline) & set(tuned)`), and report that count as `n`."
+      ],
+      "kind": "debug"
     },
     {
       "id": "m13-8-iq1",

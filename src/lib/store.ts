@@ -6,7 +6,7 @@ import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./revi
 import type { Difficulty, QuizItem, ScenarioItem } from "./types";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 7;
+export const SCHEMA_VERSION = 8;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -86,6 +86,23 @@ export interface FocusSession {
   moduleId: string | null;
 }
 
+/** One finished level exam. Scores are 0..100; the scenario is self-scored 1..5 (0 = skipped). */
+export interface ExamAttempt {
+  id: string;
+  levelId: number;
+  startedAt: string;
+  finishedAt: string;
+  score: number;
+  passed: boolean;
+  quiz: { correct: number; total: number };
+  coding: { itemId: string; passed: number; total: number };
+  scenario: { itemId: string; score: number };
+  wrongQuizIds: string[];
+  weakModules: string[]; // module ids to revisit
+}
+
+export const MAX_EXAMS = 100;
+
 export interface UserState {
   version: typeof SCHEMA_VERSION;
   topics: Record<string, TopicProgress>;
@@ -98,6 +115,8 @@ export interface UserState {
   focus: FocusSession[]; // finished Pomodoro focus blocks, oldest first
   scenarios: Record<string, ScenarioRecord[]>;
   generated: Record<string, GeneratedItem[]>; // moduleId -> AI-generated practice, oldest first
+  exams: ExamAttempt[]; // finished level exams, oldest first
+  rubrics: Record<string, number>; // "<projectId>#<criterion>" -> self-review score 1..4
   bookmarks: Record<ItemKey, string>; // key -> addedAt
   notes: Record<ItemKey, Note>;
   reviews: Record<string, ReviewEntry>; // topicId -> next review
@@ -123,6 +142,8 @@ export function emptyState(): UserState {
     focus: [],
     scenarios: {},
     generated: {},
+    exams: [],
+    rubrics: {},
     bookmarks: {},
     notes: {},
     reviews: {},
@@ -176,6 +197,8 @@ const migrateV4 = (v4: Json): Json => ({ ...v4, version: 5 });
 const migrateV5 = (v5: Json): Json => ({ ...v5, version: 6 });
 /** v7 added generated and the optional `ai` flag on scores; defaults come from sanitize. */
 const migrateV6 = (v6: Json): Json => ({ ...v6, version: 7 });
+/** v8 added exams and rubrics; defaults come from sanitize. */
+const migrateV7 = (v7: Json): Json => ({ ...v7, version: 8 });
 
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
@@ -184,6 +207,7 @@ const MIGRATIONS: Record<number, (s: Json) => Json> = {
   4: migrateV4,
   5: migrateV5,
   6: migrateV6,
+  7: migrateV7,
 };
 
 export function migrate(raw: unknown): Json {
@@ -280,6 +304,29 @@ export function sanitize(s: Json): UserState {
       const list = x.map(sanitizeGenerated).filter((g): g is GeneratedItem => g !== undefined).slice(-MAX_GENERATED_PER_MODULE);
       return list.length ? list : undefined;
     }),
+    exams: (Array.isArray(s.exams) ? s.exams : [])
+      .filter((e): e is Json => isObj(e) && typeof e.finishedAt === "string" && Number.isInteger(e.levelId))
+      .map((e) => {
+        const q = isObj(e.quiz) ? e.quiz : {};
+        const c = isObj(e.coding) ? e.coding : {};
+        const sc = isObj(e.scenario) ? e.scenario : {};
+        const score = Math.max(0, Math.min(100, Math.round(num(e.score))));
+        return {
+          id: str(e.id, `exam-${e.finishedAt}`),
+          levelId: e.levelId as number,
+          startedAt: str(e.startedAt),
+          finishedAt: e.finishedAt as string,
+          score,
+          passed: e.passed === true,
+          quiz: { correct: Math.max(0, Math.round(num(q.correct))), total: Math.max(0, Math.round(num(q.total))) },
+          coding: { itemId: str(c.itemId), passed: Math.max(0, Math.round(num(c.passed))), total: Math.max(0, Math.round(num(c.total))) },
+          scenario: { itemId: str(sc.itemId), score: Math.max(0, Math.min(5, Math.round(num(sc.score)))) },
+          wrongQuizIds: strs(e.wrongQuizIds),
+          weakModules: strs(e.weakModules),
+        };
+      })
+      .slice(-MAX_EXAMS),
+    rubrics: mapValues(s.rubrics, (x) => (typeof x === "number" && Number.isInteger(x) && x >= 1 && x <= 4 ? x : undefined)),
     bookmarks: mapValues(s.bookmarks, (x) => (typeof x === "string" ? x : undefined)),
     notes: mapValues(s.notes, (x) =>
       isObj(x) && typeof x.text === "string" ? { text: x.text, updatedAt: str(x.updatedAt) } : undefined,
@@ -574,6 +621,29 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
         else delete generated[moduleId];
         return { ...s, generated };
       }, { active: false });
+    },
+    /**
+     * Save a finished level exam. Topics from modules you got wrong are due for review tomorrow
+     * (or keep an earlier due date), whether or not you had marked them done.
+     */
+    recordExam(attempt: Omit<ExamAttempt, "id" | "finishedAt">, weakTopicIds: string[] = []) {
+      update((s) => {
+        const finishedAt = stamp();
+        const exam: ExamAttempt = { ...attempt, id: `exam-${finishedAt}`, finishedAt };
+        const reviews = { ...s.reviews };
+        for (const t of weakTopicIds) reviews[t] = applyLapse(reviews[t], today());
+        return { ...s, exams: [...s.exams, exam].slice(-MAX_EXAMS), reviews };
+      });
+    },
+    /** Self-review a capstone against one rubric criterion (1..4). Null clears it. */
+    setRubric(projectId: string, index: number, score: number | null) {
+      update((s) => {
+        const rubrics = { ...s.rubrics };
+        const key = `${projectId}#${index}`;
+        if (score === null) delete rubrics[key];
+        else rubrics[key] = Math.max(1, Math.min(4, Math.round(score)));
+        return { ...s, rubrics };
+      });
     },
     toggleBookmark(key: ItemKey) {
       update((s) => {

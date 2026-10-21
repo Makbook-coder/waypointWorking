@@ -4,10 +4,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import practiceJson from "../data/practice.json";
-import { CODING_TASKS } from "../content/coding/tasks";
+import { CODING_TASKS as BASE_TASKS } from "../content/coding/tasks";
+import { EXTRA_CODING_TASKS } from "../content/coding/tasks-extra";
 import { PY_HARNESS, passedAll, type RunResult } from "@/lib/coding";
 import type { CodingItem, PracticeMap } from "@/lib/types";
 
+const CODING_TASKS = [...BASE_TASKS, ...EXTRA_CODING_TASKS];
 const coding = Object.values(practiceJson as unknown as PracticeMap)
   .flat()
   .filter((p): p is CodingItem => p.type === "coding");

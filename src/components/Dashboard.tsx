@@ -55,6 +55,20 @@ export function Dashboard() {
         </div>
       </header>
 
+      <nav aria-label="Hands-on practice" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          ["/start", "Start here", "Setup, a Python warm-up and how to study"],
+          ["/labs", "Guided labs", "Build something step by step, one per level"],
+          ["/exam", "Level exams", "30-minute mixed check, pass mark 70%"],
+          ["/readiness", "Readiness", "Your practice record and biggest gaps"],
+        ].map(([href, title, text]) => (
+          <Link key={href} href={href} className="rounded-lg border border-line bg-surface p-4 hover:border-strong-line">
+            <span className="font-semibold">{title} →</span>
+            <span className="mt-0.5 block text-sm text-muted">{text}</span>
+          </Link>
+        ))}
+      </nav>
+
       <Card>
         <SectionTitle>Continue where you left off</SectionTitle>
         {hydrated && s.lastVisited ? (

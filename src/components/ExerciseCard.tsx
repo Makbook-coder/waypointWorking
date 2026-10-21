@@ -3,7 +3,9 @@
 import { store } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
 import type { ExerciseItem } from "@/lib/types";
+import { buildLadder } from "@/lib/hints";
 import { BookmarkButton } from "./BookmarkButton";
+import { StuckLadder } from "./StuckLadder";
 import { Badge } from "./ui";
 
 export function ExerciseCard({ item, context }: { item: ExerciseItem; context?: string }) {
@@ -29,6 +31,7 @@ export function ExerciseCard({ item, context }: { item: ExerciseItem; context?: 
           <li key={a}>{a}</li>
         ))}
       </ul>
+      <StuckLadder rungs={buildLadder(item)} resetKey={item.id} />
       <div className="mt-3 flex items-center gap-2">
         <input id={id} type="checkbox" checked={done} onChange={(e) => store.setExerciseDone(item.id, e.target.checked)} className="h-5 w-5 cursor-pointer accent-[var(--ink)]" />
         <label htmlFor={id} className="cursor-pointer text-sm">

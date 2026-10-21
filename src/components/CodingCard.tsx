@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { passedAll, type RunResult } from "@/lib/coding";
+import { downloadText, toPythonFile } from "@/lib/download";
 import { getTopic } from "@/lib/data";
 import { runPython, type RunnerStatus } from "@/lib/py-runner";
 import { store } from "@/lib/store";
@@ -9,11 +10,13 @@ import type { CodingItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
 import { AICodeHints } from "./AIKit";
 import { BookmarkButton } from "./BookmarkButton";
+import { CodeEditor } from "./CodeEditor";
 import { InlineCode } from "./InlineCode";
+import { StuckLadder } from "./StuckLadder";
+import { TestResults } from "./TestResults";
 import { Badge, buttonClass, ghostButtonClass } from "./ui";
 
 const SAVE_DELAY_MS = 600;
-const INDENT = "    ";
 
 /** A Python task with an editor, in-browser tests, a hidden reference solution and a short checklist. */
 export function CodingCard({ item, context }: { item: CodingItem; context?: string }) {
@@ -22,8 +25,6 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
   const [code, setCode] = useState(record?.code ?? item.starter);
   const [status, setStatus] = useState<RunnerStatus>("idle");
   const [result, setResult] = useState<RunResult | null>(null);
-  const [showSolution, setShowSolution] = useState(false);
-  const escaped = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const uid = useId();
 
@@ -45,31 +46,6 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
     saveTimer.current = setTimeout(() => store.saveCode(item.id, next === item.starter ? "" : next), SAVE_DELAY_MS);
   }
 
-  // Tab indents. Press Esc first to let Tab move focus out of the editor.
-  function onKey(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Escape") {
-      escaped.current = true;
-      return;
-    }
-    if (e.key === "Tab" && !escaped.current) {
-      e.preventDefault();
-      const el = e.currentTarget;
-      const { selectionStart: a, selectionEnd: b, value } = el;
-      if (e.shiftKey) {
-        const lineStart = value.lastIndexOf("\n", a - 1) + 1;
-        if (value.startsWith(INDENT, lineStart)) {
-          edit(value.slice(0, lineStart) + value.slice(lineStart + INDENT.length));
-          requestAnimationFrame(() => el.setSelectionRange(Math.max(lineStart, a - INDENT.length), Math.max(lineStart, b - INDENT.length)));
-        }
-        return;
-      }
-      edit(value.slice(0, a) + INDENT + value.slice(b));
-      requestAnimationFrame(() => el.setSelectionRange(a + INDENT.length, a + INDENT.length));
-      return;
-    }
-    escaped.current = false;
-  }
-
   async function run() {
     const r = await runPython(code, item.tests, setStatus);
     setResult(r);
@@ -77,16 +53,14 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
   }
 
   const passed = Boolean(record?.passedAt);
-  const okCount = result?.results.filter((t) => t.ok).length ?? 0;
   const topics = item.topicIds.map((id) => getTopic(id)?.topic.title).filter(Boolean);
-  const lines = Math.min(24, Math.max(8, code.split("\n").length + 1));
 
   return (
     <article className="rounded-lg border border-line bg-surface p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <Badge>coding</Badge>
+            <Badge>{item.kind === "debug" ? "debug this" : "coding"}</Badge>
             <Badge>{item.difficulty}</Badge>
             {passed && <Badge title="All tests passed">✓ passed</Badge>}
             {context && <span className="text-xs text-muted">{context}</span>}
@@ -102,20 +76,9 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
       </p>
 
       <label htmlFor={`${uid}-code`} className="mt-3 block text-xs font-semibold uppercase tracking-wider text-muted">
-        Your code (Python)
+        {item.kind === "debug" ? "Broken code to fix (Python)" : "Your code (Python)"}
       </label>
-      <textarea
-        id={`${uid}-code`}
-        value={code}
-        onChange={(e) => edit(e.target.value)}
-        onKeyDown={onKey}
-        rows={lines}
-        spellCheck={false}
-        autoCapitalize="off"
-        autoCorrect="off"
-        aria-describedby={`${uid}-hint`}
-        className="mt-1 w-full resize-y rounded-md border border-line bg-surface-2 p-3 font-mono text-[13px] leading-relaxed text-ink"
-      />
+      <CodeEditor id={`${uid}-code`} value={code} onChange={edit} describedBy={`${uid}-hint`} />
       <p id={`${uid}-hint`} className="mt-1 text-xs text-muted">
         Tab indents. Press Esc, then Tab, to leave the editor. Your draft saves in this browser.
       </p>
@@ -135,8 +98,8 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
         >
           Reset to starter
         </button>
-        <button type="button" className={ghostButtonClass} aria-expanded={showSolution} onClick={() => setShowSolution((v) => !v)}>
-          {showSolution ? "Hide solution" : "Show solution"}
+        <button type="button" className={ghostButtonClass} onClick={() => downloadText(`${item.id}.py`, toPythonFile(code, item.tests, `Waypoint: ${item.title}`))}>
+          Download .py
         </button>
       </div>
       <div className="mt-3">
@@ -144,49 +107,25 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
       </div>
       {status === "loading" && <p className="mt-2 text-xs text-muted">The first run downloads the Python runtime (about 14 MB), then it is cached.</p>}
 
-      <div aria-live="polite">
-        {result && (
-          <div className="mt-3 rounded-md border border-line p-3 text-sm">
-            {result.fatal ? (
-              <p className="text-bad">{result.fatal}</p>
-            ) : (
-              <>
-                <p className="num font-semibold">
-                  {okCount}/{result.results.length} tests passed{passedAll(result) ? " ✓" : ""}
-                </p>
-                <ul className="mt-2 space-y-1">
-                  {result.results.map((t) => (
-                    <li key={t.name} className="flex gap-2">
-                      <span aria-hidden="true">{t.ok ? "✓" : "✗"}</span>
-                      <span>
-                        <span className="sr-only">{t.ok ? "Passed: " : "Failed: "}</span>
-                        {t.name}
-                        {t.error && <code className="mt-0.5 block break-words font-mono text-xs text-muted">{t.error}</code>}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            {result.stdout && (
-              <>
-                <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-muted">Printed output</p>
-                <pre className="mt-1 max-h-48 overflow-auto rounded bg-surface-2 p-2 font-mono text-xs">{result.stdout}</pre>
-              </>
-            )}
-          </div>
-        )}
-      </div>
+      <TestResults result={result} />
 
-      {showSolution && (
-        <div className="mt-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted">Reference solution</p>
-          <pre className="mt-1 overflow-auto rounded-md border border-line bg-surface-2 p-3 font-mono text-[13px] leading-relaxed">{item.solution}</pre>
-          <button type="button" className={`${ghostButtonClass} mt-2`} onClick={() => edit(item.solution)}>
-            Copy into editor
-          </button>
-        </div>
-      )}
+      <StuckLadder
+        resetKey={item.id}
+        rungs={[
+          { label: "Hint 1", text: item.hints[0] },
+          { label: "Hint 2", text: item.hints[1] },
+          { label: "Solution", text: "" },
+        ]}
+        last={
+          <>
+            <span className="text-muted">Read it line by line, then close it and write it yourself.</span>
+            <pre className="mt-1 overflow-auto rounded-md border border-line bg-surface p-3 font-mono text-[13px] leading-relaxed">{item.solution}</pre>
+            <button type="button" className={`${ghostButtonClass} mt-2`} onClick={() => edit(item.solution)}>
+              Copy into editor
+            </button>
+          </>
+        }
+      />
 
       <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted">Before you call it done</p>
       <ul className="mt-1 space-y-1.5">
