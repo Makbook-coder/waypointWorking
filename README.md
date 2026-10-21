@@ -6,7 +6,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 - **Roadmap (`/roadmap`)**: a transit-style map with seven colored lines, one per phase. Each level card shows progress, interview and job weight badges, and prerequisite hints. The hints never lock anything.
 - **Level (`/level/[id]`)**: modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
 - **Module (`/module/[id]`)**: four tabs.
-  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), then topics. Each topic has an "Explain simply" note for beginners and can be marked done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
+  - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), a "Picture it" diagram of how the module's main pieces fit, a worked example you step through one line at a time followed by a similar "Your turn" problem with two hints, then topics. Each topic has an "Explain simply" note for beginners and can be marked done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
   - **Practice**: a quiz runner, Python coding tasks that run in the browser, a mini project or exercise, an interview question, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
@@ -242,6 +242,7 @@ content/interview/  authored interview questions, model answers and key points
 content/notes/      authored "Understand it" study notes, one per non-capstone module
 content/topic-notes/ authored beginner "Explain simply" notes, one per topic
 content/glossary/   authored plain-word glossary terms, each tied to the module that teaches it
+content/explainers/ authored diagram, worked example and "your turn" problem per non-capstone module
 data/               generated JSON (roadmap, resources, practice) + data/raw snapshots
 scripts/            scrape.ts, build-resources.ts, build-practice.ts, copy-pyodide.mjs
 public/py-worker.js Web Worker that runs coding tests in Pyodide
@@ -340,3 +341,4 @@ These decisions were made while building v1, without stopping to ask:
 52. **Capstones are judged with a saved self-review rubric.** Four shared criteria (works end to end, evidence not vibes, handles failure, you can explain it) plus two per level, on a 1 to 4 scale. Milestone ticks reuse `projectChecks`. Scores go in `rubrics`.
 53. **Readiness is a weighted guide, and says so.** Per level: exam 30, mocks 20 (L15 only), quizzes 15, coding 15, labs 15, scenarios 10, project 10, topics 5, normalised to what that level has. Levels are weighted by the target role's importance. The page and the README both say that practice improves readiness but guarantees nothing.
 54. **Glossary terms are found, not tagged.** Notes stay plain sentences; `src/lib/glossary.ts` builds one matcher from every term and spelling and finds them at render time, longest phrase first. Acronyms and mixed-case names (RAG, LoRA, LangChain) must match their capitals so ordinary words never light up, hyphenated words count as one word so "agent" doesn't fire inside "multi-agent", and code spans are skipped. Only the first mention per note is underlined. The definition card is positioned against the viewport so it stays on screen on a phone, and a data test rejects duplicate spellings and unknown modules.
+55. **Diagrams are data, drawn with HTML.** Each module's "Picture it" diagram is a short list of steps (`Label :: detail`, with `|` for side-by-side options) and a shape: flow, loop or hub. One component draws all 151, as boxes and arrows that run across on wide screens and down on phones, so they are real text (searchable, readable by screen readers, themed and printable) rather than 151 hand-drawn images. Worked examples reveal one step at a time so you can predict the next line before you see it, and each ends with a similar problem whose hints and answer use the same hint ladder as practice. Only the current module's explainer is sent to the browser.
