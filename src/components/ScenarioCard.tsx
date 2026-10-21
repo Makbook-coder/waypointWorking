@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { store } from "@/lib/store";
+import { useEffect, useId, useState } from "react";
+import { gradeAnswer, type Grade } from "@/lib/ai/tasks";
+import { useAIRequest } from "@/lib/ai/use-ai";
+import { MAX_ANSWER_LENGTH, store } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
 import type { ScenarioItem } from "@/lib/types";
+import { AIBadge, AIErrorNote, AIGradeResult, AISetupHint } from "./AIKit";
 import { BookmarkButton } from "./BookmarkButton";
 import { Badge, ghostButtonClass } from "./ui";
 
@@ -20,18 +23,50 @@ function useCountdown(seconds: number | null) {
 
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
-/** An open-ended scenario. In interview mode it has a timer; hints stay hidden until asked for. */
-export function ScenarioCard({ item, context, timerSeconds = null }: { item: ScenarioItem; context?: string; timerSeconds?: number | null }) {
+/**
+ * An open-ended scenario. In interview mode it has a timer; hints stay hidden until asked for.
+ * With an AI provider set up, a written answer can be graded against the hints.
+ */
+export function ScenarioCard({
+  item,
+  context,
+  timerSeconds = null,
+  generated = false,
+  onRemove,
+}: {
+  item: ScenarioItem;
+  context?: string;
+  timerSeconds?: number | null;
+  generated?: boolean; // written by the AI tutor
+  onRemove?: () => void;
+}) {
   const history = useUserState().scenarios[item.id] ?? [];
   const last = history[history.length - 1];
+  const uid = useId();
+  const ai = useAIRequest();
   const [showHints, setShowHints] = useState(false);
   const [started, setStarted] = useState(timerSeconds === null);
+  const [answer, setAnswer] = useState("");
+  const [grade, setGrade] = useState<Grade | null>(null);
+  const [savedAI, setSavedAI] = useState(false);
   const left = useCountdown(started ? timerSeconds : null);
 
   useEffect(() => {
     setShowHints(false);
     setStarted(timerSeconds === null);
+    setAnswer("");
+    setGrade(null);
+    setSavedAI(false);
   }, [item.id, timerSeconds]);
+
+  async function gradeIt() {
+    const g = await ai.run((p, signal) => gradeAnswer(p, { kind: "scenario", question: `${item.title}\n${item.prompt}`, keyPoints: item.hints, answer }, signal));
+    if (g) {
+      setGrade(g);
+      setSavedAI(false);
+      setShowHints(true);
+    }
+  }
 
   return (
     <article className="rounded-lg border border-line bg-surface p-4">
@@ -40,11 +75,20 @@ export function ScenarioCard({ item, context, timerSeconds = null }: { item: Sce
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <Badge>scenario</Badge>
             <Badge>{item.difficulty}</Badge>
+            {generated && <AIBadge />}
             {context && <span className="text-xs text-muted">{context}</span>}
           </div>
           <h3 className="font-semibold">{item.title}</h3>
         </div>
-        <BookmarkButton itemKey={`practice:${item.id}`} label={item.title} compact />
+        {generated ? (
+          onRemove && (
+            <button type="button" className="shrink-0 text-xs text-muted underline underline-offset-2 hover:text-ink" onClick={onRemove}>
+              Remove
+            </button>
+          )
+        ) : (
+          <BookmarkButton itemKey={`practice:${item.id}`} label={item.title} compact />
+        )}
       </div>
 
       {timerSeconds !== null && (
@@ -63,6 +107,40 @@ export function ScenarioCard({ item, context, timerSeconds = null }: { item: Sce
       )}
 
       <p className="mt-3 text-sm leading-relaxed">{item.prompt}</p>
+
+      <label htmlFor={`${uid}-a`} className="mt-3 block text-xs font-semibold uppercase tracking-wider text-muted">
+        Your answer (optional)
+      </label>
+      <textarea
+        id={`${uid}-a`}
+        value={answer}
+        onChange={(e) => setAnswer(e.target.value.slice(0, MAX_ANSWER_LENGTH))}
+        rows={3}
+        placeholder="Sketch your approach: what you'd ask, decide and measure."
+        className="mt-1 w-full resize-y rounded-md border border-line bg-surface-2 p-3 text-sm text-ink placeholder:text-muted"
+      />
+      {ai.configured ? (
+        <button type="button" className={`${ghostButtonClass} mt-2`} disabled={ai.loading || answer.trim().length < 20} onClick={gradeIt}>
+          {ai.loading ? "Grading…" : grade ? "Grade again" : "Grade my answer with AI"}
+        </button>
+      ) : (
+        <div className="mt-2">
+          <AISetupHint>Get your written answer graded</AISetupHint>
+        </div>
+      )}
+      <AIErrorNote error={ai.error} />
+      {grade && (
+        <div className="mt-3">
+          <AIGradeResult
+            grade={grade}
+            saved={savedAI}
+            onSave={(n) => {
+              store.recordScenario(item.id, n, { ai: true });
+              setSavedAI(true);
+            }}
+          />
+        </div>
+      )}
 
       <button type="button" aria-expanded={showHints} className="mt-3 text-sm underline underline-offset-2" onClick={() => setShowHints((h) => !h)}>
         {showHints ? "Hide" : "Show"} what a strong answer covers

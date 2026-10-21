@@ -7,6 +7,7 @@ import { runPython, type RunnerStatus } from "@/lib/py-runner";
 import { store } from "@/lib/store";
 import type { CodingItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
+import { AICodeHints } from "./AIKit";
 import { BookmarkButton } from "./BookmarkButton";
 import { InlineCode } from "./InlineCode";
 import { Badge, buttonClass, ghostButtonClass } from "./ui";
@@ -138,6 +139,9 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
           {showSolution ? "Hide solution" : "Show solution"}
         </button>
       </div>
+      <div className="mt-3">
+        <AICodeHints input={{ title: item.title, prompt: item.prompt, tests: item.tests, code, results: result ? summarize(result) : undefined }} />
+      </div>
       {status === "loading" && <p className="mt-2 text-xs text-muted">The first run downloads the Python runtime (about 14 MB), then it is cached.</p>}
 
       <div aria-live="polite">
@@ -201,4 +205,11 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
       </ul>
     </article>
   );
+}
+
+/** One line about the last run, for the AI hint request. */
+function summarize(r: RunResult): string {
+  if (r.fatal) return `It didn't run: ${r.fatal}`;
+  const failed = r.results.filter((t) => !t.ok).map((t) => `${t.name}${t.error ? `: ${t.error}` : ""}`);
+  return `${r.results.length - failed.length}/${r.results.length} tests passed.${failed.length ? ` Failed: ${failed.join("; ")}` : ""}`;
 }

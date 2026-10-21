@@ -26,7 +26,8 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
   - Quiz accuracy, weak modules and shaky topics.
   - A "what to study next" list.
   - A daily study log and 21 milestone badges.
-- **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme, target role and optional cloud sync).
+- **Optional AI tutor**: connect a free Gemini key (or a local Ollama model) in Settings to get AI grading of written answers, an "Ask tutor" chat on every topic and module, extra AI-written quiz questions and scenarios, hints on your coding drafts, and an AI interviewer that asks follow-up questions. See [Optional AI tutor](#optional-ai-tutor). Everything else works without it.
+- **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme, target role, AI tutor and optional cloud sync).
 
 ## Setup
 
@@ -97,15 +98,17 @@ The source for practice items is `content/practice/*.ts`, written in a compact t
 
 ```ts
 UserState {
-  version: 5,
+  version: 7,
   topics:        Record<topicId, { done, doneAt?, confidence?: 1|2|3 }>,
   quiz:          Record<quizId, { attempts, correct, lastCorrect, lastAt }>,
   exercises:     Record<exerciseId, completedAt>,
   projectChecks: Record<"<itemId>#<index>", checkedAt>,     // level projects, mini-project steps, coding checklists
   coding:        Record<codingId, { code?, passedAt? }>,     // draft and first full pass
-  interview:     Record<questionId, { score: 1..5, at, answer? }[]>, // last 10 self-scored attempts
+  interview:     Record<questionId, { score: 1..5, at, answer?, ai?: true }[]>, // last 10 attempts; ai = scored by the AI tutor
   mocks:         { id, startedAt, finishedAt, secondsPerQuestion, itemIds[], scores[] }[], // last 50; score 0 = skipped
-  scenarios:     Record<scenarioId, { score: 1..5, at }[]>,
+  focus:         { at, minutes, moduleId }[],               // finished Pomodoro blocks, last 500
+  scenarios:     Record<scenarioId, { score: 1..5, at, ai?: true }[]>,
+  generated:     Record<moduleId, (QuizItem | ScenarioItem)[]>, // AI-written practice, last 60 per module
   bookmarks:     Record<"<kind>:<id>", addedAt>,          // kind: topic | module | level | practice | resource
   notes:         Record<"<kind>:<id>", { text, updatedAt }>,
   reviews:       Record<topicId, { step: 0..3, due: "YYYY-MM-DD" }>,
@@ -159,6 +162,49 @@ How it works:
 
 The persistence boundary inside the store is still the `StorageAdapter` (`read()` / `write()`), if you'd rather replace localStorage outright.
 
+## Optional AI tutor
+
+The AI features are **off until you add a provider** in Settings → AI tutor. There is no server: the browser calls the provider directly, so nothing is proxied or logged by this app.
+
+### Get a free Gemini key
+
+1. Go to [Google AI Studio → API keys](https://aistudio.google.com/apikey) and sign in with a Google account.
+2. Click **Create API key**. The free tier needs no credit card.
+3. In Waypoint, open **Settings → AI tutor**, keep **Google Gemini** selected, paste the key, press **Save**, then **Test connection**.
+
+The default model is `gemini-flash-latest`, an alias Google keeps pointed at its newest Flash model, which is what the free tier covers. You can type another model name, such as `gemini-2.5-flash-lite`, in the Model field.
+
+### Other providers
+
+- **Ollama (fully local, free):** install [Ollama](https://ollama.com), run `ollama pull llama3.2`, then start it so the browser may call it: `OLLAMA_ORIGINS=* ollama serve` (or set it to your site's address). Pick **Ollama** in Settings. The default URL is `http://localhost:11434/v1`. Nothing leaves your computer. Smaller local models grade less reliably.
+- **Any OpenAI-compatible API:** enter a base URL (the part before `/chat/completions`), a model and a key. This works with services that allow browser (CORS) requests, for example Groq (`https://api.groq.com/openai/v1`), OpenRouter (`https://openrouter.ai/api/v1`) or LM Studio. Many of them have free tiers.
+
+### What it does
+
+| Where | Feature |
+| --- | --- |
+| Interview questions (module Practice tab, `/interview`, company questions) | **Grade my answer with AI**: a 1 to 5 score using the same scale as self-scoring, what worked, what to improve, and a comparison with the model answer. It ticks the key points you covered. **Save AI score** adds it to your score history (marked `ai`), or you can still pick your own score. |
+| Scenarios | Write an answer and have it graded against what a strong answer covers. |
+| Every topic row and every module's Learn tab | **Ask tutor**: a short chat that explains in beginner language. The prompt includes that topic's or module's own notes so answers match the course. Chats aren't saved. |
+| Module Practice tab | **Generate 5 quiz questions / 2 interview scenarios** for that module. They're checked (4 distinct options, a valid answer, no repeats of existing questions), saved in your progress (so they're exported and synced), marked **AI**, and removable. |
+| Coding tasks | **Get a hint from AI**: reviews your draft and your last test run, and gives up to three hints without the solution. The reference solution is never sent, and any code block longer than four lines in the reply is hidden. |
+| Mock interview | **AI interviewer** (on by default when AI is set up): after your answer it asks up to three follow-up questions, and grading then takes the whole exchange into account. Any interview card also has **Practice follow-ups**. |
+
+### Privacy
+
+- The key is stored in this browser's localStorage under its own key (`aet:ai`). It is **not** part of `aet:state`, so it never appears in a JSON export or in cloud sync. **Forget key** removes it.
+- When you use an AI feature, what you typed (your answer, code or question) and the relevant course notes are sent to the provider you chose, and nothing else. No progress data, notes or bookmarks are sent.
+- Google's terms allow it to use **free-tier** Gemini API traffic to improve its products, and humans may review it. Don't paste anything private. Use Ollama if you want everything to stay on your machine.
+- A key in localStorage can be read by anyone with access to the browser profile, or by a script running on the page. Use **Forget key** on shared computers.
+
+### Limits
+
+- Free tiers allow only a handful of requests per minute and a daily cap, and Google changes the numbers from time to time. When you hit one, the app says so (with the wait time when the provider gives it) and nothing is lost. Wait a minute and try again.
+- Requests time out after 60 seconds and can be cancelled.
+- AI grading and AI-written questions can be wrong. Self-scoring stays available everywhere, and AI items are labeled.
+
+The code lives in `src/lib/ai/`: `config.ts` (settings storage), `provider.ts` (Gemini and OpenAI-compatible clients, error handling), `tasks.ts` (prompts and response parsing for each feature) and `use-ai.ts` (React hooks). Tests use a mocked `fetch` and a mocked provider (`tests/ai.test.ts`).
+
 ## Project layout
 
 ```
@@ -174,6 +220,7 @@ src/app/            routes (App Router)
 src/components/     UI; client components are marked "use client"
 src/lib/            store, review scheduler, progress, focus ranking, Pomodoro timer, search, data access
 src/lib/sync/       optional Supabase sync (engine, remote, browser client)
+src/lib/ai/         optional AI tutor (settings, provider clients, prompts and parsers)
 supabase/schema.sql table and row-level-security policies for sync
 tests/              Vitest
 ```
@@ -253,3 +300,4 @@ These decisions were made while building v1, without stopping to ask:
 41. **Focus blocks and study minutes stay separate.** The passive study timer already counts minutes you're active in the app. A Pomodoro block can include reading elsewhere, so it is reported on its own as blocks and minutes instead of being added to study minutes, which would double-count. A block only counts if it runs to the end. Pausing is fine, but resetting drops it. After a block, the break starts automatically; after a break, the timer waits for you.
 42. **Cheat sheets are assembled, not separately written.** Each sheet is built at build time from content the app already has: the module notes, mental models, topic titles and the first four key points of the module's interview question. Capstones use their outcome as the gist. This keeps one source of truth, so fixing a note fixes its sheet. Print styles hide the navigation, switch to black on white whatever the theme, and keep each module together on a page.
 43. **"Explain simply" notes per topic.** Each topic has a short beginner note in four parts: what it means in plain words, an everyday analogy (left out when none fits), a tiny example and one common mistake. They're written for this app in `content/topic-notes/`, one file per level, and keyed by topic id. A data test rejects unknown ids, empty sections and half-finished levels, so a level ships with all its notes or none. The module page passes only that module's notes to the client, so the full set (about 1,000 notes) stays out of the browser bundle. Every topic in L0 to L15 has one.
+44. **AI tutor is bring-your-own-key, called from the browser.** A server proxy would need hosting and would hold a shared key, so instead each learner pastes their own free key, stored in a separate localStorage key so exports and sync never carry it. Gemini is the default because its free tier needs no card. Ollama and any OpenAI-compatible URL share one client. Prompts put learner text inside tags and tell the model to treat it as material, never instructions. Replies that must be structured (grades, generated questions) are requested as JSON, then validated and clamped, so a bad reply becomes a friendly "try again" rather than broken state. AI scores go into the existing history with an `ai` flag (schema v7), and the learner chooses whether to save them.

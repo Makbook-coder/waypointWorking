@@ -18,6 +18,8 @@ import { ProjectChecklist } from "./ProjectChecklist";
 import { QuizRunner } from "./QuizRunner";
 import { ScenarioCard } from "./ScenarioCard";
 import { TopicRow } from "./TopicRow";
+import { GeneratedPractice } from "./GeneratedPractice";
+import { TutorPanel } from "./TutorPanel";
 import { Badge, EmptyState, SectionTitle } from "./ui";
 
 const TABS = ["learn", "resources", "practice", "notes"] as const;
@@ -139,12 +141,26 @@ function LearnPanel({ mod, color, videos, topicNotes }: { mod: Module; color: st
             </ul>
           </div>
         )}
+        <div className="rounded-lg border border-line bg-surface p-4" style={{ borderLeft: `4px solid ${color}` }}>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Ask a tutor</p>
+          <TutorPanel compact context={moduleTutorContext(mod, note)} />
+        </div>
         {mod.mentalModel && <Callout title="Mental model" color={color} text={mod.mentalModel} />}
         {mod.outcome && <Callout title="Outcome" color={color} text={mod.outcome} />}
         {mod.tryIt && <Callout title="Try it" color={color} text={mod.tryIt} />}
       </aside>
     </div>
   );
+}
+
+function moduleTutorContext(mod: Module, note: ModuleNote | undefined) {
+  const facts = [
+    ...(note ? [`What it is: ${note.what}`, `Why it matters: ${note.why}`, `Example: ${note.example}`, `Common mistakes: ${note.mistakes.join("; ")}`] : []),
+    mod.mentalModel ? `Mental model: ${mod.mentalModel}` : "",
+    mod.outcome ? `Outcome: ${mod.outcome}` : "",
+    `Topics: ${mod.topics.map((t) => t.title).join("; ")}`,
+  ];
+  return { title: `module ${mod.id} ${mod.title}`, facts: facts.filter(Boolean) };
 }
 
 function UnderstandIt({ note, color }: { note: ModuleNote; color: string }) {
@@ -292,6 +308,7 @@ function PracticePanel({ mod, practice, sourced, quizzes, color }: { mod: Module
           <ProjectChecklist project={p} color={color} />
         </section>
       ))}
+      <GeneratedPractice mod={mod} existing={[...quizzes.map((q) => q.question), ...scenarios.map((x) => x.title)]} />
     </div>
   );
 }

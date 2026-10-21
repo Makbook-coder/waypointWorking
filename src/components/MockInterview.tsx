@@ -9,6 +9,8 @@ import { interviewSummary, mockAverage, pickMockQuestions } from "@/lib/intervie
 import { store } from "@/lib/store";
 import type { InterviewItem } from "@/lib/types";
 import { useHydrated, useUserState } from "@/lib/use-store";
+import { useAIConfigured } from "@/lib/ai/use-ai";
+import { AISetupHint } from "./AIKit";
 import { InterviewCard } from "./InterviewCard";
 import { Card, EmptyState, SectionTitle, buttonClass, ghostButtonClass, inputClass } from "./ui";
 
@@ -21,7 +23,7 @@ const ctx = (moduleId: string) => {
 const fmtAvg = (n: number | null) => (n === null ? "–" : n.toFixed(1));
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
-type Run = { items: InterviewItem[]; scores: (number | null)[]; index: number; startedAt: string; seconds: number };
+type Run = { items: InterviewItem[]; scores: (number | null)[]; index: number; startedAt: string; seconds: number; aiInterviewer: boolean };
 
 export function MockInterview() {
   const s = useUserState();
@@ -30,6 +32,8 @@ export function MockInterview() {
   const [company, setCompany] = useState("all");
   const [count, setCount] = useState(5);
   const [seconds, setSeconds] = useState(180);
+  const aiReady = useAIConfigured();
+  const [aiInterviewer, setAIInterviewer] = useState(true);
   const [run, setRun] = useState<Run | null>(null);
   const [finished, setFinished] = useState<Run | null>(null);
 
@@ -42,7 +46,7 @@ export function MockInterview() {
   function start() {
     setFinished(null);
     const items = pickMockQuestions(pool, s, count);
-    setRun({ items, scores: items.map(() => null), index: 0, startedAt: new Date().toISOString(), seconds });
+    setRun({ items, scores: items.map(() => null), index: 0, startedAt: new Date().toISOString(), seconds, aiInterviewer: aiReady && aiInterviewer });
   }
 
   function advance(r: Run) {
@@ -75,6 +79,7 @@ export function MockInterview() {
           item={q}
           context={ctx(q.moduleId)}
           timerSeconds={run.seconds || undefined}
+          aiInterviewer={run.aiInterviewer}
           onScored={(n) => setRun((r) => (r ? { ...r, scores: r.scores.map((x, i) => (i === r.index ? n : x)) } : r))}
         />
         <div className="flex flex-wrap gap-2">
@@ -158,6 +163,19 @@ export function MockInterview() {
               <option value={0}>No timer</option>
             </select>
           </Field>
+          <div className="sm:col-span-2 lg:col-span-4">
+            {aiReady ? (
+              <label className="flex items-start gap-2 text-sm">
+                <input type="checkbox" checked={aiInterviewer} onChange={(e) => setAIInterviewer(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--ink)]" />
+                <span>
+                  AI interviewer
+                  <span className="block text-xs text-muted">After you answer, the AI asks follow-up questions, then you can have it grade the whole exchange.</span>
+                </span>
+              </label>
+            ) : (
+              <AISetupHint>Want an AI interviewer that asks follow-ups and grades your answers</AISetupHint>
+            )}
+          </div>
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-4">
             <button type="submit" className={buttonClass} disabled={pool.length === 0}>
               Start · {Math.min(count, pool.length)} questions
