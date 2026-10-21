@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/practice", label: "Practice" },
   { href: "/interview", label: "Interview" },
   { href: "/flashcards", label: "Flashcards" },
+  { href: "/glossary", label: "Glossary" },
   { href: "/plan", label: "Plan" },
   { href: "/progress", label: "Progress" },
   { href: "/bookmarks", label: "Bookmarks" },
