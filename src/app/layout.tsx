@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
+import { StudyTimer } from "@/components/StudyTimer";
 import { ThemeController } from "@/components/ThemeController";
 import { STORAGE_KEY } from "@/lib/store";
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <ThemeController />
+        <StudyTimer />
         <SiteHeader />
         <main id="main" className="mx-auto w-full max-w-6xl px-4 pb-24 pt-6 sm:px-6">
           {children}

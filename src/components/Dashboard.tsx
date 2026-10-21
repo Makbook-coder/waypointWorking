@@ -116,7 +116,7 @@ export function Dashboard() {
         </Card>
 
         <Card>
-          <SectionTitle>Due for review today</SectionTitle>
+          <SectionTitle action={<Link href="/flashcards" className="text-sm underline underline-offset-2">Flashcards</Link>}>Due for review today</SectionTitle>
           {!hydrated ? null : due.length === 0 ? (
             <EmptyState>Nothing due. Topics you mark done come back after 1, 3, 7 and 21 days.</EmptyState>
           ) : (

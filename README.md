@@ -11,6 +11,18 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
   - **Practice**: a quiz runner, exercises, scenarios and the level project.
   - **Notes**: Markdown with autosave and a preview.
 - **Practice (`/practice`)**: filter by level, type, difficulty, not attempted or wrong answers. There is a Random 10 quiz mode and an interview mode, which serves timed scenarios with a self-score from 1 to 5.
+- **Flashcards (`/flashcards`)**: one card per topic. There are three decks:
+  - **Due today**: driven by the spaced-review schedule.
+  - **Shaky topics**: topics you rated 1.
+  - **A module**: every topic in one module.
+
+  The keyboard shortcuts are Space to flip, 1 for forgot and 2 for remembered.
+- **Weekly plan (`/plan`)**: pick your hours per week, and the remaining modules are spread across dated weeks, with an estimated finish date.
+- **Progress (`/progress`)**:
+  - Focused study time for today, this week and in total, plus a 14-day chart.
+  - Quiz accuracy, weak modules and shaky topics.
+  - A "what to study next" list.
+  - A daily study log and 21 milestone badges.
 - **Other pages**: `/bookmarks`, `/search` (client-side fuzzy search over topics, modules, your notes and resources) and `/settings` (export, import, reset, theme and target role).
 
 ## Setup
@@ -79,7 +91,7 @@ The source for practice items is `content/practice/*.ts`, written in a compact t
 
 ```ts
 UserState {
-  version: 2,
+  version: 3,
   topics:        Record<topicId, { done, doneAt?, confidence?: 1|2|3 }>,
   quiz:          Record<quizId, { attempts, correct, lastCorrect, lastAt }>,
   exercises:     Record<exerciseId, completedAt>,
@@ -90,7 +102,9 @@ UserState {
   reviews:       Record<topicId, { step: 0..3, due: "YYYY-MM-DD" }>,
   activity:      "YYYY-MM-DD"[],                          // distinct active days, used for the streak
   lastVisited:   { href, title, at } | null,
-  settings:      { theme: "system"|"light"|"dark", targetRole: "none"|"ai-engineer"|"genai-ds" }
+  studyMinutes:  Record<"YYYY-MM-DD", minutes>,          // focused time per day
+  log:           Record<"YYYY-MM-DD", { text, updatedAt }>, // study log, one entry per day
+  settings:      { theme: "system"|"light"|"dark", targetRole: "none"|"ai-engineer"|"genai-ds", weeklyHours: 1..80 }
 }
 ```
 
@@ -200,3 +214,15 @@ These decisions were made while building v1, without stopping to ask:
 16. **Schema v2 with a v1 migration.** v1 is the simple flat format (`completed[]`, `bookmarks[]`, `notes{}`). It is kept as the reference migration so the migration path is exercised by tests from day one.
 17. **No external fonts.** The app uses system font stacks, so builds don't depend on reaching a font CDN. The visual identity comes from the transit-map motif, the phase colors and monospace ids.
 18. **Bundling.** The data JSON is imported at build time. Roadmap data and content data (resources and practice) are split, so the roadmap and settings pages don't ship the practice bank.
+19. **Flashcards reuse the review schedule.** A flashcard is a topic: the front shows the topic title and the back shows its description plus the module's mental model. Nothing new is stored for cards.
+    - In the Due deck, the answer goes through the same `reviewTopic` call as the dashboard.
+    - In the Shaky and Module decks, "Forgot" rates the topic 1 (Shaky), and "Remembered" lifts a Shaky topic to 2. These decks don't change the review schedule.
+20. **The weekly plan** assumes 1.5 hours per roadmap session, which covers watching plus practice. Modules listed with 0 sessions still get at least 1 hour.
+    - Remaining time is scaled by each module's unfinished topics.
+    - Modules are scheduled in roadmap order (L0 to L15). This order already respects the prerequisites.
+    - A module can span two weeks, and weeks start on Monday.
+    - The default pace is 6 hours a week, adjustable from 1 to 40 on the page and up to 80 if stored.
+21. **Study time** goes up by one minute for each minute the tab is visible, as long as there was a click, key press or scroll in the last 3 minutes. It's an honest estimate of focused time, not a stopwatch. Logging minutes doesn't count as streak activity on its own; writing in the study log does.
+22. **Weak spots** are judged on each question's most recent answer. A module counts as weak when at least two of its questions have been tried and fewer than 60% are currently right.
+23. **Badges** are calculated from existing progress and never stored, so they can't drift out of sync. Streak badges use your longest run ever, not just the current one.
+24. **Schema v3.** It adds `studyMinutes`, `log` and `settings.weeklyHours`. The v2 to v3 migration only bumps the version, and `sanitize` fills in the defaults.

@@ -38,7 +38,7 @@ describe("loadState", () => {
     expect(s.topics).toEqual({ good: { done: true, confidence: 2 }, conf: { done: false } });
     expect(s.reviews).toEqual({ good: { step: 1, due: "2026-03-12" } });
     expect(s.activity).toEqual(["2026-03-01"]);
-    expect(s.settings).toEqual({ theme: "system", targetRole: "genai-ds" });
+    expect(s.settings).toEqual({ theme: "system", targetRole: "genai-ds", weeklyHours: 6 });
     expect(s.lastVisited).toBeNull();
     expect(s.bookmarks).toEqual({});
   });
@@ -61,7 +61,7 @@ describe("migrations", () => {
   });
 
   it("treats unversioned data as v1", () => {
-    expect(migrate({ completed: ["a"] }).version).toBe(2);
+    expect(migrate({ completed: ["a"] }).version).toBe(SCHEMA_VERSION);
   });
 });
 

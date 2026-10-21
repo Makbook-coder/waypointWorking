@@ -8,6 +8,9 @@ const LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/practice", label: "Practice" },
+  { href: "/flashcards", label: "Flashcards" },
+  { href: "/plan", label: "Plan" },
+  { href: "/progress", label: "Progress" },
   { href: "/bookmarks", label: "Bookmarks" },
   { href: "/search", label: "Search" },
   { href: "/settings", label: "Settings" },
@@ -25,14 +28,14 @@ export function SiteHeader() {
           <Logo />
           <span>Waypoint</span>
         </Link>
-        <nav aria-label="Main" className="ml-auto hidden md:block">
+        <nav aria-label="Main" className="ml-auto hidden lg:block">
           <ul className="flex items-center gap-1">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}
                   aria-current={active(l.href) ? "page" : undefined}
-                  className="rounded-md px-3 py-1.5 text-sm text-muted hover:bg-surface-2 hover:text-ink aria-[current=page]:bg-ink aria-[current=page]:text-bg"
+                  className="rounded-md px-2.5 py-1.5 text-sm text-muted hover:bg-surface-2 hover:text-ink aria-[current=page]:bg-ink aria-[current=page]:text-bg"
                 >
                   {l.label}
                 </Link>
@@ -42,7 +45,7 @@ export function SiteHeader() {
         </nav>
         <button
           type="button"
-          className="ml-auto rounded-md border border-line px-3 py-1.5 text-sm md:hidden"
+          className="ml-auto rounded-md border border-line px-3 py-1.5 text-sm lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((o) => !o)}
@@ -51,8 +54,8 @@ export function SiteHeader() {
         </button>
       </div>
       {open && (
-        <nav id="mobile-nav" aria-label="Main" className="border-t border-line md:hidden">
-          <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-1 px-4 py-2">
+        <nav id="mobile-nav" aria-label="Main" className="border-t border-line lg:hidden">
+          <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-1 px-4 py-2 sm:grid-cols-3">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <Link
