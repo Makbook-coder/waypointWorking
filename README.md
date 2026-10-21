@@ -4,7 +4,7 @@ A personal tracker for a 16-level AI engineering curriculum (L0 to L15, seven ph
 
 - **Dashboard (`/`)**: shows overall and per-phase progress, where you left off, your daily streak, reviews due today, a recommended focus list and your bookmarks.
 - **Roadmap (`/roadmap`)**: a transit-style map with seven colored lines, one per phase. Each level card shows progress, interview and job weight badges, and prerequisite hints. The hints never lock anything.
-- **Level (`/level/[id]`)**: modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
+- **Level (`/level/[id]`)**: the five most common beginner mistakes for that level (each opens to show how to spot it and how to fix it), modules with topic checkboxes, the level outcome, the project checklist with its definition of done, and level notes.
 - **Module (`/module/[id]`)**: four tabs.
   - **Learn**: an "Understand it" note (what it is, why it matters, a tiny example, common mistakes), then topics. Each topic has an "Explain simply" note for beginners and can be marked done, confidence 1 to 3, a note, a bookmark and a YouTube search link on each, plus the module's verified videos.
   - **Resources**
@@ -235,6 +235,7 @@ The code lives in `src/lib/ai/`: `config.ts` (settings storage), `provider.ts` (
 content/practice/   authored quizzes, exercises, scenarios, project definitions of done
 content/coding/     authored Python coding tasks (starter, solution, tests, hints)
 content/labs/       guided labs, one evolving Python file per lab, verified step by step
+content/mistakes.ts five common beginner mistakes per level, with how to spot and fix each
 content/capstones.ts milestones and rubric criteria for each level project
 docs/               practice-plan.md (the practice audit and plan)
 content/interview/  authored interview questions, model answers and key points
@@ -337,3 +338,4 @@ These decisions were made while building v1, without stopping to ask:
 51. **No exam for L14 and L15.** L14 is the portfolio capstone and L15 is interview prep, which the mock interviews and the L15 scenarios already test.
 52. **Capstones are judged with a saved self-review rubric.** Four shared criteria (works end to end, evidence not vibes, handles failure, you can explain it) plus two per level, on a 1 to 4 scale. Milestone ticks reuse `projectChecks`. Scores go in `rubrics`.
 53. **Readiness is a weighted guide, and says so.** Per level: exam 30, mocks 20 (L15 only), quizzes 15, coding 15, labs 15, scenarios 10, project 10, topics 5, normalised to what that level has. Levels are weighted by the target role's importance. The page and the README both say that practice improves readiness but guarantees nothing.
+56. **Mistakes are per level, with a symptom.** The module notes already list mistakes in passing; the level page adds the five that trip beginners up most, each with "how to spot it" written as something you can observe in your own work (a log line, a symptom, a test result), because naming a mistake doesn't help if you can't tell you're making it. Each links to the module that teaches the fix. A data test requires exactly five per level.
