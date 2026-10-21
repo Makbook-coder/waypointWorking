@@ -7,6 +7,13 @@ import { TOPIC_NOTES_L5 } from "./l5";
 import { TOPIC_NOTES_L6 } from "./l6";
 import { TOPIC_NOTES_L7 } from "./l7";
 import { TOPIC_NOTES_L8 } from "./l8";
+import { TOPIC_NOTES_L9 } from "./l9";
+import { TOPIC_NOTES_L10 } from "./l10";
+import { TOPIC_NOTES_L11 } from "./l11";
+import { TOPIC_NOTES_L12 } from "./l12";
+import { TOPIC_NOTES_L13 } from "./l13";
+import { TOPIC_NOTES_L14 } from "./l14";
+import { TOPIC_NOTES_L15 } from "./l15";
 import type { TopicNoteSrc } from "./types";
 
 export const TOPIC_NOTE_SOURCES: TopicNoteSrc[] = [
@@ -19,4 +26,11 @@ export const TOPIC_NOTE_SOURCES: TopicNoteSrc[] = [
   ...TOPIC_NOTES_L6,
   ...TOPIC_NOTES_L7,
   ...TOPIC_NOTES_L8,
+  ...TOPIC_NOTES_L9,
+  ...TOPIC_NOTES_L10,
+  ...TOPIC_NOTES_L11,
+  ...TOPIC_NOTES_L12,
+  ...TOPIC_NOTES_L13,
+  ...TOPIC_NOTES_L14,
+  ...TOPIC_NOTES_L15,
 ];
