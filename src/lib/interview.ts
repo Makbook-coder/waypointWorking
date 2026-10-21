@@ -11,7 +11,7 @@ export const lastScore = (s: UserState, id: string): number | null => {
  * Order for a mock: weak answers (last score 1-2) first, then questions never answered,
  * then the rest by rising score. Ties are broken by `rand`, so each mock differs.
  */
-export function pickMockQuestions(items: InterviewItem[], s: UserState, count: number, rand: () => number = Math.random): InterviewItem[] {
+export function pickMockQuestions<T extends InterviewItem>(items: T[], s: UserState, count: number, rand: () => number = Math.random): T[] {
   const UNSEEN = 2.5;
   return items
     .map((it) => ({ it, key: lastScore(s, it.id) ?? UNSEEN, tie: rand() }))

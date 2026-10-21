@@ -1,0 +1,1062 @@
+{
+ "generatedAt": "2026-10-21",
+ "note": "System-design prompts for GenAI interviews. A company is listed only where the cited source says that company asked it; the outlines are our own study notes.",
+ "prompts": [
+  {
+   "id": "sd-batching",
+   "title": "Batching for LLM inference",
+   "prompt": "Design an inference batching system for one GPU that serves up to 100 synchronous requests per batch.",
+   "difficulty": "hard",
+   "companies": [
+    "Anthropic"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M9.4"
+   ],
+   "mustCover": [
+    "Batch formation rule: size cap plus max wait",
+    "Why continuous batching beats static batching",
+    "KV-cache memory as the real limit on batch size",
+    "Queueing, backpressure and admission control",
+    "Metrics: time in queue, batch fill, p99 latency"
+   ],
+   "outline": [
+    "Clarify load, latency target and request length distribution",
+    "Describe the queue and the batch-forming rule (size or deadline)",
+    "Explain static versus continuous batching and pick one",
+    "Bound memory: tokens per batch and KV-cache budget",
+    "Handle failures of one request without killing the batch",
+    "Expose metrics and tune the wait time against the latency target"
+   ],
+   "followUps": [
+    "What changes when requests have very different lengths?",
+    "How do you keep interactive users from waiting behind bulk jobs?",
+    "How would you scale beyond one GPU?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-model-api",
+   "title": "API for hosted models",
+   "prompt": "Design the API developers use to access a family of hosted language models.",
+   "difficulty": "medium",
+   "companies": [
+    "Anthropic"
+   ],
+   "source": {
+    "url": "https://jobright.ai/blog/anthropic-technical-interview-questions-complete-guide-2026/",
+    "title": "Anthropic technical interview questions guide (Jobright)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M9.3"
+   ],
+   "mustCover": [
+    "Stable request and response contract with streaming",
+    "API keys, scopes, quotas and rate limits",
+    "Usage metering and billing hooks",
+    "Idempotency and error semantics",
+    "Model versioning and deprecation policy"
+   ],
+   "outline": [
+    "Clarify users, scale and the features needed on day one",
+    "Define the request, response and streaming format",
+    "Add authentication, per-key limits and quotas",
+    "Describe routing to serving clusters, batching and failover",
+    "Cover metering, logging and privacy",
+    "Explain versioning and how changes are rolled out"
+   ],
+   "followUps": [
+    "How do you add a new model without breaking clients?",
+    "How do you stop one customer starving the rest?",
+    "What do you log, and what do you never log?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-safety-layer",
+   "title": "LLM API with a safety layer",
+   "prompt": "Design an API for an LLM with a safety layer. Discuss batching against latency, and how to update the safety layer without downtime.",
+   "difficulty": "hard",
+   "companies": [
+    "Anthropic"
+   ],
+   "source": {
+    "url": "https://jobright.ai/blog/anthropic-technical-interview-questions-complete-guide-2026/",
+    "title": "Anthropic technical interview questions guide (Jobright)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M8.3",
+    "M9.6"
+   ],
+   "mustCover": [
+    "Separate input and output safety stages",
+    "Latency hiding: parallel or streamed checks",
+    "Versioned safety models with shadow testing",
+    "Zero-downtime rollout and rollback",
+    "Measuring false positives and false negatives"
+   ],
+   "outline": [
+    "Define what the safety layer must catch and the latency budget",
+    "Place input and output checks around the model",
+    "Show how checks run in parallel or on streamed chunks",
+    "Describe blue-green or canary rollout of the new safety model",
+    "Explain shadow traffic to compare old and new decisions",
+    "Describe monitoring and the appeal path for wrong blocks"
+   ],
+   "followUps": [
+    "What if the safety model is slower than the main model?",
+    "How do you handle a streaming response that becomes unsafe midway?",
+    "Who signs off on threshold changes?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-gpu-credits",
+   "title": "GPU scheduling with credits",
+   "prompt": "Design a GPU scheduling system that uses credits. Cover preemption, preventing monopolisation and node failures.",
+   "difficulty": "hard",
+   "companies": [
+    "Anthropic"
+   ],
+   "source": {
+    "url": "https://jobright.ai/blog/anthropic-technical-interview-questions-complete-guide-2026/",
+    "title": "Anthropic technical interview questions guide (Jobright)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M11.5"
+   ],
+   "mustCover": [
+    "Credit accounting as an auditable event log",
+    "Fair sharing and limits per user or team",
+    "Preemption rules and checkpointing",
+    "Failure handling and rescheduling",
+    "Queue ordering and priorities"
+   ],
+   "outline": [
+    "Clarify job types, durations and fairness goals",
+    "Model credits: grants, reservations, charges, expiry",
+    "Design the scheduler and queue ordering",
+    "Define preemption and when jobs checkpoint",
+    "Handle node failures and job retries",
+    "Add observability and abuse protection"
+   ],
+   "followUps": [
+    "How do you stop a user from hoarding credits?",
+    "What happens to credits on a preempted job?",
+    "How would you test the scheduler?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-chatgpt",
+   "title": "A ChatGPT-style assistant",
+   "prompt": "Design ChatGPT: a chat assistant with streamed answers and saved conversation history for a very large user base.",
+   "difficulty": "medium",
+   "companies": [
+    "OpenAI"
+   ],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M9.9",
+    "M9.1"
+   ],
+   "mustCover": [
+    "Streaming responses and conversation storage",
+    "Gateway with authentication and rate limits",
+    "Serving tier with batching and capacity planning",
+    "Moderation and abuse handling",
+    "Graceful degradation when capacity is short"
+   ],
+   "outline": [
+    "Ask about features, scale and latency targets",
+    "Sketch client, gateway, conversation service and model tier",
+    "Explain streaming and how history is stored",
+    "Cover safety checks and abuse limits",
+    "Discuss capacity, caching and regional scaling",
+    "Close with trade-offs between latency, cost and quality"
+   ],
+   "followUps": [
+    "How do you handle a viral spike?",
+    "How do you protect user privacy in stored chats?",
+    "How would you add file uploads?"
+   ],
+   "seniority": "mid"
+  },
+  {
+   "id": "sd-enterprise-search",
+   "title": "LLM enterprise search",
+   "prompt": "Design an LLM-powered enterprise search system.",
+   "difficulty": "hard",
+   "companies": [
+    "OpenAI"
+   ],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M15.6",
+    "M9.2"
+   ],
+   "mustCover": [
+    "Permission-aware retrieval",
+    "Connectors and incremental sync",
+    "Hybrid search plus reranking",
+    "Cited answers and abstention",
+    "Evaluation of retrieval and answers"
+   ],
+   "outline": [
+    "Clarify sources, users and security requirements",
+    "Describe ingestion, chunking, metadata and ACLs",
+    "Describe indexing and hybrid retrieval with reranking",
+    "Show query flow with server-side permission filters",
+    "Generate cited answers and handle no-answer cases",
+    "Define evaluation, monitoring and freshness"
+   ],
+   "followUps": [
+    "How do you stop leaking restricted documents?",
+    "How do you keep the index fresh?",
+    "How do you measure answer quality?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-playground",
+   "title": "A prompt playground",
+   "prompt": "Design a playground where developers test prompts, run multi-turn conversations, manage threads and call a model API.",
+   "difficulty": "medium",
+   "companies": [
+    "OpenAI"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M2.1",
+    "M9.9"
+   ],
+   "mustCover": [
+    "Thread and message data model",
+    "Replaying context because the API is stateless",
+    "Streaming into the UI",
+    "Parameter controls and saved prompts",
+    "Quotas and cost visibility"
+   ],
+   "outline": [
+    "Clarify users and the actions they need",
+    "Define the thread, message and settings schema",
+    "Describe the API layer that replays context and streams output",
+    "Add saved prompts, forking and comparison",
+    "Add quotas, cost display and access control",
+    "Discuss sharing and versioning"
+   ],
+   "followUps": [
+    "How do you compare two prompts side by side?",
+    "How do you handle very long threads?",
+    "How would you add team sharing?"
+   ],
+   "seniority": "mid"
+  },
+  {
+   "id": "sd-rag-millions",
+   "title": "RAG for millions of documents",
+   "prompt": "A customer has millions of internal documents and wants a RAG assistant. Design it.",
+   "difficulty": "hard",
+   "companies": [
+    "OpenAI"
+   ],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/openai-interview-questions",
+    "title": "OpenAI interview questions by role (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "Forward deployed engineer",
+   "moduleIds": [
+    "M15.2",
+    "M4.15"
+   ],
+   "mustCover": [
+    "Corpus analysis and question types first",
+    "Resilient incremental ingestion",
+    "Scalable vector index with hybrid search",
+    "Golden-set evaluation",
+    "Permissions, monitoring and re-indexing"
+   ],
+   "outline": [
+    "Interview the customer about documents, users and questions",
+    "Design ingestion: parse, clean, chunk, dedupe, metadata",
+    "Choose storage and retrieval: hybrid search and reranking",
+    "Describe the answer generation and citation flow",
+    "Build the evaluation set from real questions",
+    "Cover permissions, monitoring and operating costs"
+   ],
+   "followUps": [
+    "Which documents break your parser?",
+    "How do you handle updates and deletions?",
+    "How do you prove it works before launch?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-vpc-healthcare",
+   "title": "VPC-deployed RAG for healthcare",
+   "prompt": "Design a RAG system for a healthcare customer that must run inside their private network under HIPAA-style constraints.",
+   "difficulty": "hard",
+   "companies": [],
+   "source": {
+    "url": "https://www.aced.io/blog/forward-deployed-engineer-interview-the-definitive-2026-guide-fde",
+    "title": "Forward Deployed Engineer interview guide (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Forward deployed engineer",
+   "moduleIds": [
+    "M11.3",
+    "M8.6"
+   ],
+   "mustCover": [
+    "Private networking and no public egress",
+    "Data minimisation and redaction",
+    "Access control and audit logging",
+    "Model hosting choice and data-retention terms",
+    "Evaluation without exposing patient data"
+   ],
+   "outline": [
+    "Clarify data types, users and regulations",
+    "Place all components inside the private network",
+    "Choose model access that supports private connectivity and zero retention",
+    "Add redaction, encryption and per-user access control",
+    "Log access for audit without logging sensitive content",
+    "Plan evaluation on de-identified data"
+   ],
+   "followUps": [
+    "What if the best model is not available in your region?",
+    "How do you handle a clinician asking about another patient?",
+    "How do you test safely?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-support-agent",
+   "title": "Customer support agent",
+   "prompt": "Design an agentic AI system for customer support at a streaming service.",
+   "difficulty": "hard",
+   "companies": [
+    "Sierra"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Agent engineer",
+   "moduleIds": [
+    "M15.3",
+    "M5.9"
+   ],
+   "mustCover": [
+    "Tools with narrow permissions",
+    "Policy grounding and abstention",
+    "Escalation to humans with context",
+    "Evaluation and observability",
+    "Cost and latency controls"
+   ],
+   "outline": [
+    "Clarify the top issues and what the agent may do alone",
+    "Define tools: account lookup, billing, plan changes",
+    "Ground policy answers in verified documents",
+    "Add guardrails, confirmations and escalation",
+    "Define metrics: resolution, escalation, satisfaction, cost",
+    "Plan the test set and rollout"
+   ],
+   "followUps": [
+    "How do you stop a refund being promised wrongly?",
+    "How do you handle an angry user?",
+    "How do you measure containment honestly?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-claims-agent",
+   "title": "Insurance-claims agent",
+   "prompt": "Design an insurance-claims agent that uses RAG and controls token cost.",
+   "difficulty": "hard",
+   "companies": [
+    "Scale AI"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Machine learning engineer",
+   "moduleIds": [
+    "M15.3",
+    "M9.4"
+   ],
+   "mustCover": [
+    "Stepwise workflow with human approval",
+    "Narrow retrieval with metadata filters",
+    "Model routing and caching",
+    "Token budgets per claim",
+    "Evaluation against past decisions"
+   ],
+   "outline": [
+    "Clarify claim types, volumes and decision authority",
+    "Split into intake, retrieval, assessment and draft decision",
+    "Design retrieval of policy clauses with filters and reranking",
+    "Control cost: small models, caching, caps",
+    "Add audit trail and human review",
+    "Evaluate on historical claims"
+   ],
+   "followUps": [
+    "Where is the largest token spend?",
+    "How do you handle a fraudulent claim?",
+    "What must always go to a human?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-cancellation-agent",
+   "title": "Subscription-cancellation agent",
+   "prompt": "Design an agentic service for a subscription-cancellation flow.",
+   "difficulty": "medium",
+   "companies": [
+    "Sierra"
+   ],
+   "source": {
+    "url": "https://www.aced.io/guides/sierra-agent-engineer-interview",
+    "title": "Sierra Agent Engineer interview guide (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Agent engineer",
+   "moduleIds": [
+    "M5.1",
+    "M5.9"
+   ],
+   "mustCover": [
+    "Authentication before account actions",
+    "Explicit flow state so steps are not skipped",
+    "Limited tools and confirmations",
+    "Retention offers handled by rules",
+    "Logging and complaint metrics"
+   ],
+   "outline": [
+    "Define the flow and what the agent may do alone",
+    "Authenticate the user and fetch the plan",
+    "Describe the state machine and tools",
+    "Add offers, confirmation and error handling",
+    "Define handoff to a human",
+    "Measure completion, retention and complaints"
+   ],
+   "followUps": [
+    "What if the user asks something off-topic?",
+    "How do you prevent cancelling the wrong account?",
+    "How do you test the flow?"
+   ],
+   "seniority": "mid"
+  },
+  {
+   "id": "sd-doc-pipeline",
+   "title": "Document processing for LLMs",
+   "prompt": "Design a document processing pipeline that ingests and indexes large volumes of mixed documents for LLM use.",
+   "difficulty": "hard",
+   "companies": [
+    "Databricks"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Forward deployed engineer",
+   "moduleIds": [
+    "M4.1",
+    "M12.4"
+   ],
+   "mustCover": [
+    "Format-specific parsing including scans",
+    "Deduplication and versioning",
+    "Chunking and metadata",
+    "Batch plus incremental processing",
+    "Quality checks and monitoring"
+   ],
+   "outline": [
+    "Clarify formats, volume and freshness needs",
+    "Design ingestion and parsing with OCR where needed",
+    "Clean, dedupe and chunk with metadata",
+    "Choose storage and indexing",
+    "Handle updates and reprocessing",
+    "Monitor failures and measure extraction quality"
+   ],
+   "followUps": [
+    "How do you handle tables and charts?",
+    "How do you reprocess after a parser fix?",
+    "How do you control cost?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-experiment-platform",
+   "title": "ML experiment tracking platform",
+   "prompt": "Design an ML experiment tracking and analysis platform.",
+   "difficulty": "medium",
+   "companies": [
+    "Google"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Machine learning engineer",
+   "moduleIds": [
+    "M10.3"
+   ],
+   "mustCover": [
+    "Run metadata: parameters, code version, data version",
+    "Artifact storage and lineage",
+    "Comparison and visualisation",
+    "Scale of metrics ingestion",
+    "Access control and reproducibility"
+   ],
+   "outline": [
+    "Clarify users and the number of runs and metrics",
+    "Define the data model for runs, metrics and artifacts",
+    "Design ingestion API and storage",
+    "Describe querying and comparison UI",
+    "Handle lineage and reproducibility",
+    "Cover permissions and retention"
+   ],
+   "followUps": [
+    "How do you store millions of metric points?",
+    "How do you link a deployed model to its run?",
+    "How do you support LLM prompt versions?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-voice-app",
+   "title": "Real-time voice AI application",
+   "prompt": "Design a real-time voice AI application.",
+   "difficulty": "hard",
+   "companies": [],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M12.8"
+   ],
+   "mustCover": [
+    "Latency budget by stage",
+    "Streaming recognition and endpointing",
+    "Barge-in handling",
+    "Tool calls and holding phrases",
+    "Fallback to a human"
+   ],
+   "outline": [
+    "Clarify use case, languages and latency target",
+    "Choose cascade or speech-to-speech and justify it",
+    "Describe the streaming pipeline and endpointing",
+    "Design interruption handling",
+    "Add tools, state and fallback",
+    "Plan monitoring and testing with real audio"
+   ],
+   "followUps": [
+    "How do you handle noisy phone lines?",
+    "How do you cut cost per minute?",
+    "What do you log for debugging?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-multimodal-upload",
+   "title": "Multimodal upload for a chat app",
+   "prompt": "Design a file uploader for an AI chat application that accepts large multimodal files and feeds them into the model's context.",
+   "difficulty": "hard",
+   "companies": [
+    "xAI"
+   ],
+   "source": {
+    "url": "https://www.tryexponent.com/blog/ai-engineer-interview-questions",
+    "title": "45+ AI Engineer Interview Questions & Answers (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Software engineer",
+   "moduleIds": [
+    "M12.2",
+    "M6.1"
+   ],
+   "mustCover": [
+    "Resumable direct-to-storage uploads",
+    "Asynchronous validation and processing",
+    "Deciding what goes into context versus retrieval",
+    "Context and token budgets for images",
+    "Security scanning and limits"
+   ],
+   "outline": [
+    "Clarify file types, sizes and latency expectations",
+    "Describe direct upload to object storage with chunks",
+    "Process asynchronously: scan, extract, resize",
+    "Decide in-context versus retrieved content",
+    "Handle failures and progress display",
+    "Cover limits, privacy and cost"
+   ],
+   "followUps": [
+    "What if a video is two hours long?",
+    "How do you stop malicious files?",
+    "How do you show progress?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-on-device",
+   "title": "Small on-device language model",
+   "prompt": "Design a small language model that runs on a phone while staying polite.",
+   "difficulty": "hard",
+   "companies": [
+    "Google"
+   ],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "Machine learning engineer",
+   "moduleIds": [
+    "M12.12",
+    "M13.7"
+   ],
+   "mustCover": [
+    "Model size and quantisation to fit memory and power",
+    "Distillation or fine-tuning for tone",
+    "Latency and battery measurements",
+    "Safety checks that fit on device",
+    "Server fallback for hard requests"
+   ],
+   "outline": [
+    "Clarify device targets and tasks",
+    "Choose or distil a small model",
+    "Quantise and benchmark on target hardware",
+    "Tune for tone and add a light output check",
+    "Define when to fall back to a server",
+    "Plan updates and evaluation"
+   ],
+   "followUps": [
+    "How do you update the model safely?",
+    "How do you evaluate tone?",
+    "What do you do on low-end phones?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-content-moderation",
+   "title": "Content policy detection",
+   "prompt": "Design a system that detects policy-violating or offensive content in model inputs and outputs.",
+   "difficulty": "medium",
+   "companies": [],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "Machine learning engineer",
+   "moduleIds": [
+    "M8.3"
+   ],
+   "mustCover": [
+    "Policy and category definitions",
+    "Fast filter plus slower review for borderline cases",
+    "Thresholds by cost of error",
+    "Labelled evaluation and drift",
+    "Appeals and human review"
+   ],
+   "outline": [
+    "Clarify policy and where checks run",
+    "Design fast classifiers and rules",
+    "Add a slower model check for borderline cases",
+    "Set thresholds per category",
+    "Build labelled evaluation data and monitoring",
+    "Provide appeals and reviewer tooling"
+   ],
+   "followUps": [
+    "How do you handle new abuse patterns?",
+    "What is your false-positive budget?",
+    "How do you handle multiple languages?"
+   ],
+   "seniority": "mid"
+  },
+  {
+   "id": "sd-payslips",
+   "title": "Document intake with verification",
+   "prompt": "Design a system that handles thousands of monthly uploads of payslips, IDs and references, with extraction, inconsistency checks, rejection and LLM provider downtime. This prompt is reported by candidates without a company named.",
+   "difficulty": "hard",
+   "companies": [],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "AI engineer",
+   "moduleIds": [
+    "M12.4",
+    "M2.9"
+   ],
+   "mustCover": [
+    "Classification then schema-based extraction",
+    "Rule-based and cross-document consistency checks",
+    "Human review for low confidence",
+    "Queue with retries and provider fallback",
+    "Auditable reasons for rejections"
+   ],
+   "outline": [
+    "Clarify volume, document types and accept or reject rules",
+    "Classify and extract with a schema",
+    "Validate within and across documents",
+    "Route doubtful cases to humans",
+    "Design the queue, retries and fallback for provider outages",
+    "Define metrics and audit logging"
+   ],
+   "followUps": [
+    "How do you detect forged documents?",
+    "What happens during a provider outage?",
+    "How do you measure extraction accuracy?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-claims-pipeline",
+   "title": "Multimodal claims pipeline",
+   "prompt": "Design a generative AI pipeline that processes emails, PDFs and images for insurance claims. This prompt is reported by candidates without a company named.",
+   "difficulty": "hard",
+   "companies": [],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "AI engineer",
+   "moduleIds": [
+    "M12.13",
+    "M4.1"
+   ],
+   "mustCover": [
+    "Common representation across channels",
+    "Structured extraction and policy checks",
+    "Human approval and audit trail",
+    "Privacy controls",
+    "Evaluation per modality"
+   ],
+   "outline": [
+    "Clarify channels, volumes and decisions",
+    "Normalise inputs into text plus page images",
+    "Extract structured claim data with a schema",
+    "Check against policy and history",
+    "Add approval, audit and privacy controls",
+    "Evaluate by modality and monitor drift"
+   ],
+   "followUps": [
+    "How do you handle photos of damage?",
+    "How do you deduplicate repeated submissions?",
+    "Where is a human always required?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-recommender",
+   "title": "Conversational recommender",
+   "prompt": "Design a conversational recommender that combines chat, retrieval and database layers. This prompt is reported by candidates without a company named.",
+   "difficulty": "medium",
+   "companies": [],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "AI engineer",
+   "moduleIds": [
+    "M15.2",
+    "M9.2"
+   ],
+   "mustCover": [
+    "Separate conversation, retrieval and data layers",
+    "Constrained queries against real inventory",
+    "Ranking with business rules",
+    "Handling out-of-stock items",
+    "Evaluation of relevance and conversion"
+   ],
+   "outline": [
+    "Clarify catalogue, users and goals",
+    "Separate the conversation manager from retrieval and data",
+    "Use the model to understand intent and make constrained queries",
+    "Rank with business rules and personalisation",
+    "Handle edge cases such as no results",
+    "Define evaluation and experiments"
+   ],
+   "followUps": [
+    "How do you avoid recommending unavailable items?",
+    "How do you handle cold start?",
+    "How do you measure success?"
+   ],
+   "seniority": "mid"
+  },
+  {
+   "id": "sd-training-infra",
+   "title": "Distributed LLM training environment",
+   "prompt": "Design a distributed training environment for a very large language model.",
+   "difficulty": "hard",
+   "companies": [
+    "NVIDIA"
+   ],
+   "source": {
+    "url": "https://www.aced.io/blog/nvidia-interview-process",
+    "title": "NVIDIA interview process and top questions (Aced, formerly Exponent)",
+    "kind": "interview-guide"
+   },
+   "role": "Machine learning engineer",
+   "moduleIds": [
+    "M13.4"
+   ],
+   "mustCover": [
+    "Data, tensor and pipeline parallelism trade-offs",
+    "Checkpointing and fault tolerance",
+    "Data loading throughput",
+    "Monitoring utilisation and failures",
+    "Cost and scheduling"
+   ],
+   "outline": [
+    "Clarify model size, data and time budget",
+    "Choose parallelism strategies and justify them",
+    "Design the data pipeline and storage",
+    "Plan checkpointing and recovery",
+    "Describe monitoring and debugging",
+    "Discuss cost and scheduling"
+   ],
+   "followUps": [
+    "What happens when a node fails mid-run?",
+    "How do you find the bottleneck?",
+    "How do you validate the run is healthy?"
+   ],
+   "seniority": "staff"
+  },
+  {
+   "id": "sd-agent-system",
+   "title": "General agent system",
+   "prompt": "Architect an AI agent system covering the agent loop, tool interfaces, memory, orchestration and safety.",
+   "difficulty": "hard",
+   "companies": [
+    "Salesforce"
+   ],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "AI engineer",
+   "moduleIds": [
+    "M5.1",
+    "M5.9",
+    "M8.4"
+   ],
+   "mustCover": [
+    "Agent loop with step and cost limits",
+    "Well-described tools with narrow permissions",
+    "Short-term and long-term memory",
+    "Orchestration and retries",
+    "Safety: approvals, sandboxing, audit"
+   ],
+   "outline": [
+    "Clarify the tasks and acceptable autonomy",
+    "Describe the loop and stop conditions",
+    "Define the tool interface and permissions",
+    "Design memory and state persistence",
+    "Add approvals, sandboxing and logging",
+    "Define evaluation of trajectories and outcomes"
+   ],
+   "followUps": [
+    "When would you not use an agent?",
+    "How do you debug a bad trajectory?",
+    "How do you control cost?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-math-model",
+   "title": "Math-solving model",
+   "prompt": "Design a model that solves math problems, covering data collection, fine-tuning, post-training and evaluation.",
+   "difficulty": "hard",
+   "companies": [
+    "Cohere"
+   ],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "Machine learning engineer",
+   "moduleIds": [
+    "M13.5",
+    "M13.6"
+   ],
+   "mustCover": [
+    "Data sources and quality control",
+    "Supervised fine-tuning on reasoning traces",
+    "Reward design for checkable answers",
+    "Held-out evaluation and contamination checks",
+    "Cost of iteration"
+   ],
+   "outline": [
+    "Define the problem types and success metric",
+    "Collect and verify problems and solutions",
+    "Run supervised fine-tuning",
+    "Apply preference or reward-based post-training with verifiable rewards",
+    "Evaluate on held-out and contamination-checked sets",
+    "Plan iteration and deployment"
+   ],
+   "followUps": [
+    "How do you avoid reward hacking?",
+    "How do you check for benchmark leakage?",
+    "When is a tool such as a calculator better?"
+   ],
+   "seniority": "staff"
+  },
+  {
+   "id": "sd-llm-gateway",
+   "title": "LLM gateway for many providers",
+   "prompt": "Design one normalised API in front of many LLM providers that differ in schema, authentication, rate limits and error formats. This list is illustrative and does not claim the company asked it.",
+   "difficulty": "hard",
+   "companies": [],
+   "source": {
+    "url": "https://www.techinterview.org/companies/openrouter-interview-guide/",
+    "title": "OpenRouter interview guide, illustrative questions (techinterview.org)",
+    "kind": "question-list"
+   },
+   "role": "Platform engineer",
+   "moduleIds": [
+    "M11.7",
+    "M9.3"
+   ],
+   "mustCover": [
+    "Canonical schema with provider adapters",
+    "Routing on price, latency and health",
+    "Failover with retries and idempotency",
+    "Streaming proxying",
+    "Accurate metering and billing"
+   ],
+   "outline": [
+    "Clarify providers, traffic and feature parity",
+    "Define the canonical request, response and error model",
+    "Design adapters and routing rules",
+    "Add health checks, circuit breakers and failover",
+    "Design streaming and timeout handling",
+    "Design metering with idempotent usage records"
+   ],
+   "followUps": [
+    "What provider differences cannot be hidden?",
+    "How do you avoid double-counting usage?",
+    "How do you debug a stalled stream?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-traffic-spikes",
+   "title": "Surviving traffic spikes",
+   "prompt": "Design a generative AI system that handles traffic spikes without overwhelming the model provider. This prompt is reported without a company named.",
+   "difficulty": "medium",
+   "companies": [],
+   "source": {
+    "url": "https://igotanoffer.com/en/advice/generative-ai-system-design-interview",
+    "title": "Generative AI system design interview guide (IGotAnOffer)",
+    "kind": "interview-guide"
+   },
+   "role": "AI engineer",
+   "moduleIds": [
+    "M9.6",
+    "M11.5"
+   ],
+   "mustCover": [
+    "Queues and rate limiting in front of the provider",
+    "Prioritisation and load shedding",
+    "Caching and fallback models",
+    "Circuit breakers",
+    "Autoscaling the parts you control"
+   ],
+   "outline": [
+    "Clarify traffic patterns and tolerance for delay",
+    "Put a queue and rate limiter in front of the provider",
+    "Define priorities and shedding rules",
+    "Add caching and fallback models",
+    "Use circuit breakers and graceful degradation",
+    "Define alerts and capacity planning"
+   ],
+   "followUps": [
+    "Which requests do you drop first?",
+    "How do you test spikes safely?",
+    "How do you set provider quotas?"
+   ],
+   "seniority": "senior"
+  },
+  {
+   "id": "sd-research-agent",
+   "title": "Deep research agent",
+   "prompt": "Design a research agent that answers a broad question with cited sources. This prompt is based on a public engineering write-up, not on a reported interview.",
+   "difficulty": "hard",
+   "companies": [],
+   "source": {
+    "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+    "title": "How we built our multi-agent research system (Anthropic engineering)",
+    "kind": "engineering-blog"
+   },
+   "role": "AI engineer",
+   "moduleIds": [
+    "M12.11",
+    "M5.6"
+   ],
+   "mustCover": [
+    "Lead agent plus parallel sub-agents with clear briefs",
+    "Condensed findings and a citation step",
+    "Effort-scaling rules",
+    "Checkpointing and tracing",
+    "Evaluation rubric and token cost"
+   ],
+   "outline": [
+    "Clarify question types and acceptable cost",
+    "Describe lead and sub-agents and their briefs",
+    "Explain how findings are condensed and cited",
+    "Add effort rules, stopping rules and budgets",
+    "Design checkpointing, retries and tracing",
+    "Define a rubric-based evaluation"
+   ],
+   "followUps": [
+    "When is multi-agent not worth the cost?",
+    "How do you stop duplicate work?",
+    "How do you evaluate without one right answer?"
+   ],
+   "seniority": "senior"
+  }
+ ]
+}

@@ -5,7 +5,7 @@ import { gradeAnswer, type Grade } from "@/lib/ai/tasks";
 import { useAIRequest } from "@/lib/ai/use-ai";
 import { SCORE_LABELS, suggestScore } from "@/lib/interview";
 import { store } from "@/lib/store";
-import type { SourcedInterviewItem } from "@/lib/sourced";
+import { SCENARIO_SOURCE_KINDS, type SourcedInterviewItem } from "@/lib/sourced";
 import type { InterviewItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
 import { AIErrorNote, AIGradeResult, AISetupHint } from "./AIKit";
@@ -158,7 +158,7 @@ export function InterviewCard({
           </div>
           {sourced && (
             <p className="text-xs text-muted">
-              Source:{" "}
+              {SCENARIO_SOURCE_KINDS.includes(sourced.source.kind) ? "Based on" : "Source"}:{" "}
               <a href={sourced.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">
                 {sourced.source.title}
               </a>

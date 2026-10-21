@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import roadmapJson from "../data/roadmap.json";
-import { companyCounts, filterSourced, sourcedItems, sourcedStats, validateSourced, type SourcedInterviewItem } from "@/lib/sourced";
+import { companyCounts, drillCompanies, filterSourced, sourcedItems, sourcedStats, validateSourced, type SourcedInterviewItem } from "@/lib/sourced";
 import type { Roadmap } from "@/lib/types";
 
 const levelsList = (roadmapJson as unknown as Roadmap).phases.flatMap((p) => p.levels);
@@ -14,8 +14,8 @@ describe("interview-sourced.json", () => {
   });
 
   it("is a large, varied set", () => {
-    expect(sourcedItems.length).toBeGreaterThanOrEqual(300);
-    expect(companyCounts(sourcedItems).length).toBeGreaterThanOrEqual(30);
+    expect(sourcedItems.length).toBeGreaterThanOrEqual(600);
+    expect(companyCounts(sourcedItems).length).toBeGreaterThanOrEqual(50);
     for (const d of ["easy", "medium", "hard"]) expect(sourcedItems.some((i) => i.difficulty === d), d).toBe(true);
     for (const f of ["question", "scenario"]) expect(sourcedItems.some((i) => i.format === f), f).toBe(true);
   });
@@ -28,7 +28,30 @@ describe("interview-sourced.json", () => {
 
   it("only cites https sources from known public hosts", () => {
     const hosts = new Set(sourcedItems.map((i) => new URL(i.source.url).hostname));
-    for (const h of hosts) expect(["github.com", "www.aced.io", "www.tryexponent.com", "www.geeksforgeeks.org", "www.jointaro.com", "interviewing.io"], h).toContain(h);
+    const allowed = [
+      "github.com", "www.aced.io", "www.tryexponent.com", "www.geeksforgeeks.org", "www.jointaro.com", "interviewing.io",
+      "igotanoffer.com", "jobright.ai", "gaijineer.co", "www.linkjob.ai", "www.topgenaijobs.com", "startup.jobs", "thecuriousmak.substack.com",
+      "cloudsoftsol.com", "www.hirist.tech", "www.techinterview.org", "www.analyticsvidhya.com", "www.datainterview.com", "www.datacamp.com", "credmark.ai",
+      "www.anthropic.com", "openai.com", "invariantlabs.ai", "www.evidentlyai.com", "vibegraveyard.ai", "codenotary.com", "hamel.dev",
+    ];
+    for (const h of hosts) expect(allowed, h).toContain(h);
+  });
+
+  it("covers every module with at least one item and almost all with two", () => {
+    const perModule = new Map<string, number>();
+    for (const it of sourcedItems) perModule.set(it.moduleId, (perModule.get(it.moduleId) ?? 0) + 1);
+    const none = modules.filter((m) => !perModule.get(m.id)).map((m) => m.id);
+    expect(none).toEqual([]);
+    expect(sourcedStats(sourcedItems, modules.map((m) => m.id)).thinModules.length).toBeLessThanOrEqual(3);
+  });
+
+  it("never attaches a company to postmortem or engineering-blog items, which describe systems rather than questions asked", () => {
+    for (const it of sourcedItems.filter((i) => i.source.kind === "postmortem" || i.source.kind === "engineering-blog")) expect(it.companies, it.id).toEqual([]);
+  });
+
+  it("has well over a hundred items with a company and many scenarios", () => {
+    expect(sourcedItems.filter((i) => i.companies.length > 0).length).toBeGreaterThanOrEqual(250);
+    expect(sourcedItems.filter((i) => i.format === "scenario").length).toBeGreaterThanOrEqual(200);
   });
 });
 
@@ -74,5 +97,17 @@ describe("filtering and stats", () => {
     expect(s.items).toBe(sourcedItems.length);
     expect(Object.values(s.perLevel).reduce((a, b) => a + b, 0)).toBe(sourcedItems.length);
     expect(s.thinModules.every((id) => sourcedItems.filter((i) => i.moduleId === id).length < 2)).toBe(true);
+  });
+});
+
+describe("drillCompanies", () => {
+  it("lists only companies with enough questions, with their hard count", () => {
+    const list = drillCompanies(sourcedItems, 8);
+    expect(list.length).toBeGreaterThan(5);
+    for (const c of list) {
+      expect(c.count).toBeGreaterThanOrEqual(8);
+      expect(c.hard).toBeLessThanOrEqual(c.count);
+      expect(filterSourced(sourcedItems, { company: c.company }).length).toBe(c.count);
+    }
   });
 });

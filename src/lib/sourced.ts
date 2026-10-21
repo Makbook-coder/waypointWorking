@@ -3,7 +3,10 @@
 import sourcedJson from "../../data/interview-sourced.json";
 import type { InterviewItem } from "./types";
 
-export type SourceKind = "question-list" | "question-bank" | "interview-guide" | "interview-experience";
+export type SourceKind = "question-list" | "question-bank" | "interview-guide" | "interview-experience" | "postmortem" | "engineering-blog";
+
+/** Kinds that describe a real system or incident rather than a question someone was asked. */
+export const SCENARIO_SOURCE_KINDS: SourceKind[] = ["postmortem", "engineering-blog"];
 
 export interface InterviewSource {
   url: string;
@@ -32,6 +35,13 @@ export function companyCounts(items: SourcedInterviewItem[]): { company: string;
   const m = new Map<string, number>();
   for (const it of items) for (const c of it.companies) m.set(c, (m.get(c) ?? 0) + 1);
   return [...m].map(([company, count]) => ({ company, count })).sort((a, b) => b.count - a.count || a.company.localeCompare(b.company));
+}
+
+/** Companies with enough questions for a drill, most questions first. */
+export function drillCompanies(items: SourcedInterviewItem[], min = 5): { company: string; count: number; hard: number }[] {
+  return companyCounts(items)
+    .filter((c) => c.count >= min)
+    .map((c) => ({ ...c, hard: items.filter((it) => it.companies.includes(c.company) && it.difficulty === "hard").length }));
 }
 
 export interface SourcedFilter {
