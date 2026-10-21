@@ -19,7 +19,7 @@ export interface Provider {
   complete(req: CompleteRequest): Promise<string>;
 }
 
-export type AIErrorKind = "not-configured" | "auth" | "rate-limit" | "network" | "timeout" | "blocked" | "bad-response" | "aborted";
+export type AIErrorKind = "not-configured" | "auth" | "rate-limit" | "network" | "timeout" | "blocked" | "model" | "bad-response" | "aborted";
 
 export class AIError extends Error {
   constructor(
@@ -50,6 +50,8 @@ export function describeAIError(e: unknown): string {
       return "The AI took too long to answer. Try again.";
     case "blocked":
       return "The provider declined to answer this one. Try rephrasing.";
+    case "model":
+      return "The provider doesn't recognise that model, or your key can't use it. Pick another model in Settings.";
     case "aborted":
       return "Cancelled.";
     default:
@@ -81,7 +83,8 @@ function errorMessage(body: unknown): string {
   return "";
 }
 
-async function post(fetchFn: Fetch, url: string, headers: Record<string, string>, body: unknown, signal?: AbortSignal): Promise<unknown> {
+/** POST `body` as JSON, or GET when there is no body. Maps failures to AIError. */
+async function request(fetchFn: Fetch, url: string, headers: Record<string, string>, body: unknown, signal?: AbortSignal): Promise<unknown> {
   const ctrl = new AbortController();
   let timedOut = false;
   const timer = setTimeout(() => {
@@ -92,7 +95,12 @@ async function post(fetchFn: Fetch, url: string, headers: Record<string, string>
   signal?.addEventListener("abort", onAbort);
   let res: Response;
   try {
-    res = await fetchFn(url, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body), signal: ctrl.signal });
+    res = await fetchFn(
+      url,
+      body === undefined
+        ? { method: "GET", headers, signal: ctrl.signal }
+        : { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body), signal: ctrl.signal },
+    );
   } catch {
     if (timedOut) throw new AIError("timeout", "Timed out");
     if (signal?.aborted) throw new AIError("aborted", "Cancelled");
@@ -111,6 +119,7 @@ async function post(fetchFn: Fetch, url: string, headers: Record<string, string>
   const msg = errorMessage(json);
   if (res.status === 429) throw new AIError("rate-limit", msg || "Rate limited", retryAfter(res, json));
   if (res.status === 401 || res.status === 403 || /api key/i.test(msg)) throw new AIError("auth", msg || "Unauthorized");
+  if (res.status === 404 || /model.*(not found|does not exist)/i.test(msg)) throw new AIError("model", msg || "Model not found");
   throw new AIError("bad-response", msg ? `The provider said: ${msg}` : `The provider answered with HTTP ${res.status}.`);
 }
 
@@ -123,7 +132,7 @@ export function geminiProvider(s: AISettings, fetchFn: Fetch = globalFetch): Pro
         contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
         generationConfig: { temperature, ...(json ? { responseMimeType: "application/json" } : {}) },
       };
-      const data = (await post(fetchFn, url, { "x-goog-api-key": s.apiKey }, body, signal)) as {
+      const data = (await request(fetchFn, url, { "x-goog-api-key": s.apiKey }, body, signal)) as {
         promptFeedback?: { blockReason?: string };
         candidates?: { finishReason?: string; content?: { parts?: { text?: string }[] } }[];
       } | null;
@@ -149,7 +158,7 @@ export function openAICompatibleProvider(s: AISettings, fetchFn: Fetch = globalF
         messages: [{ role: "system", content: system + (json ? "\nReply with a single JSON object and nothing else." : "") }, ...messages],
       };
       const headers: Record<string, string> = s.apiKey ? { authorization: `Bearer ${s.apiKey}` } : {};
-      const data = (await post(fetchFn, `${s.baseUrl}/chat/completions`, headers, body, signal)) as {
+      const data = (await request(fetchFn, `${s.baseUrl}/chat/completions`, headers, body, signal)) as {
         choices?: { message?: { content?: string }; finish_reason?: string }[];
       } | null;
       const choice = data?.choices?.[0];
@@ -165,4 +174,33 @@ export function openAICompatibleProvider(s: AISettings, fetchFn: Fetch = globalF
 
 export function createProvider(s: AISettings, fetchFn?: Fetch): Provider {
   return s.provider === "gemini" ? geminiProvider(s, fetchFn) : openAICompatibleProvider(s, fetchFn);
+}
+
+export interface ModelInfo {
+  id: string; // what goes in the Model field
+  label: string;
+}
+
+const flashFirst = (a: ModelInfo, b: ModelInfo) => Number(b.id.includes("flash")) - Number(a.id.includes("flash")) || a.id.localeCompare(b.id);
+
+/** The models this key (or local server) can use for chat, for the Settings picker. */
+export async function listModels(s: AISettings, fetchFn: Fetch = globalFetch, signal?: AbortSignal): Promise<ModelInfo[]> {
+  if (s.provider === "gemini") {
+    const data = (await request(fetchFn, `${s.baseUrl}/models?pageSize=1000`, { "x-goog-api-key": s.apiKey }, undefined, signal)) as {
+      models?: { name?: string; displayName?: string; supportedGenerationMethods?: string[] }[];
+    } | null;
+    return (data?.models ?? [])
+      .filter((m) => typeof m.name === "string" && (m.supportedGenerationMethods ?? []).includes("generateContent"))
+      .map((m) => {
+        const id = m.name!.replace(/^models\//, "");
+        return { id, label: m.displayName && m.displayName !== id ? `${id} · ${m.displayName}` : id };
+      })
+      .sort(flashFirst);
+  }
+  const headers: Record<string, string> = s.apiKey ? { authorization: `Bearer ${s.apiKey}` } : {};
+  const data = (await request(fetchFn, `${s.baseUrl}/models`, headers, undefined, signal)) as { data?: { id?: string }[] } | null;
+  return (data?.data ?? [])
+    .filter((m): m is { id: string } => typeof m.id === "string" && m.id !== "")
+    .map((m) => ({ id: m.id, label: m.id }))
+    .sort((a, b) => a.id.localeCompare(b.id));
 }

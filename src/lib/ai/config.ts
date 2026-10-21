@@ -28,6 +28,31 @@ export const PRESETS: Record<ProviderId, ProviderPreset> = {
   openai: { id: "openai", label: "Any OpenAI-compatible API", model: "", baseUrl: "", needsKey: false },
 };
 
+/**
+ * Model ids offered in the Settings picker. Any other id can be typed in, and "Fetch my models" lists
+ * exactly what the key can use. Google's free tier covers the Flash models; Pro needs billing.
+ */
+export const MODEL_SUGGESTIONS: Record<ProviderId, { id: string; note: string }[]> = {
+  gemini: [
+    { id: "gemini-flash-latest", note: "newest Flash, free tier (default)" },
+    { id: "gemini-flash-lite-latest", note: "newest Flash-Lite, fastest, higher free limits" },
+    { id: "gemini-2.5-flash", note: "pinned Flash version" },
+    { id: "gemini-2.5-flash-lite", note: "pinned Flash-Lite version" },
+    { id: "gemini-2.5-pro", note: "strongest, usually needs billing" },
+  ],
+  ollama: [
+    { id: "llama3.2", note: "small, runs on most laptops" },
+    { id: "qwen2.5:7b", note: "good at JSON grading" },
+    { id: "gemma3", note: "Google's open model" },
+    { id: "mistral", note: "general purpose" },
+  ],
+  openai: [
+    { id: "llama-3.1-8b-instant", note: "Groq, free tier" },
+    { id: "meta-llama/llama-3.3-70b-instruct:free", note: "OpenRouter, free" },
+    { id: "gpt-4o-mini", note: "OpenAI, paid" },
+  ],
+};
+
 export const defaultAISettings = (): AISettings => ({ provider: "gemini", apiKey: "", model: PRESETS.gemini.model, baseUrl: PRESETS.gemini.baseUrl });
 
 const MAX_FIELD = 500;

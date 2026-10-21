@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { aiSettings, isConfigured, PRESETS, type AISettings, type ProviderId } from "@/lib/ai/config";
-import { createProvider, describeAIError } from "@/lib/ai/provider";
+import { aiSettings, isConfigured, MODEL_SUGGESTIONS, PRESETS, type AISettings, type ProviderId } from "@/lib/ai/config";
+import { createProvider, describeAIError, listModels, type ModelInfo } from "@/lib/ai/provider";
 import { useAISettings } from "@/lib/ai/use-ai";
 import { useHydrated } from "@/lib/use-store";
 import { Card, SectionTitle, buttonClass, ghostButtonClass, inputClass } from "./ui";
@@ -16,6 +16,8 @@ export function AISettingsPanel() {
   const [showKey, setShowKey] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [testing, setTesting] = useState(false);
+  const [models, setModels] = useState<ModelInfo[] | null>(null);
+  const [fetching, setFetching] = useState(false);
 
   // Pick up the stored settings once the browser has loaded them.
   useEffect(() => setDraft(saved), [saved]);
@@ -31,6 +33,24 @@ export function AISettingsPanel() {
     const p = PRESETS[id];
     setDraft({ provider: id, apiKey: id === saved.provider ? saved.apiKey : "", model: id === saved.provider ? saved.model : p.model, baseUrl: id === saved.provider ? saved.baseUrl : p.baseUrl });
     setStatus(null);
+    setModels(null);
+  }
+
+  async function fetchModels() {
+    setFetching(true);
+    setStatus(null);
+    try {
+      const list = await listModels(draft);
+      setModels(list);
+      if (list.length === 0) setStatus({ ok: false, text: "The provider returned no chat models for this key." });
+      else if (!list.some((m) => m.id === draft.model)) setStatus({ ok: false, text: `Found ${list.length} models, but not “${draft.model}”. Pick one from the list.` });
+      else setStatus({ ok: true, text: `Found ${list.length} models. “${draft.model}” is available.` });
+    } catch (e) {
+      setModels(null);
+      setStatus({ ok: false, text: describeAIError(e) });
+    } finally {
+      setFetching(false);
+    }
   }
 
   function save() {
@@ -43,7 +63,7 @@ export function AISettingsPanel() {
     setStatus(null);
     try {
       const reply = await createProvider(draft).complete({ system: "Reply with the single word: ready", messages: [{ role: "user", content: "Are you there?" }], temperature: 0 });
-      setStatus({ ok: true, text: `Connected. The model replied: “${reply.slice(0, 60)}”.${dirty ? " Press Save to use these settings." : ""}` });
+      setStatus({ ok: true, text: `Connected to ${draft.model}. It replied: “${reply.slice(0, 60)}”.${dirty ? " Press Save to use these settings." : ""}` });
     } catch (e) {
       setStatus({ ok: false, text: describeAIError(e) });
     } finally {
@@ -122,10 +142,50 @@ export function AISettingsPanel() {
             </button>
           </span>
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Model
-          <input className={`${inputClass} font-mono`} value={draft.model} onChange={(e) => set({ model: e.target.value })} placeholder={preset.model || "model name"} spellCheck={false} autoComplete="off" />
-        </label>
+        <div className="flex flex-col gap-1 text-sm sm:col-span-2">
+          <label htmlFor={`${uid}-model`}>Model</label>
+          <div className="flex flex-wrap gap-2">
+            <input
+              id={`${uid}-model`}
+              list={`${uid}-models`}
+              className={`${inputClass} min-w-0 flex-1 font-mono`}
+              value={draft.model}
+              onChange={(e) => set({ model: e.target.value })}
+              placeholder={preset.model || "model name"}
+              spellCheck={false}
+              autoComplete="off"
+              aria-describedby={`${uid}-model-hint`}
+            />
+            <datalist id={`${uid}-models`}>
+              {(models ?? MODEL_SUGGESTIONS[draft.provider]).map((m) => (
+                <option key={m.id} value={m.id}>
+                  {"note" in m ? m.note : m.label}
+                </option>
+              ))}
+            </datalist>
+            <button type="button" className={ghostButtonClass} onClick={fetchModels} disabled={!hydrated || fetching || !isConfigured(draft)}>
+              {fetching ? "Fetching…" : "Fetch my models"}
+            </button>
+          </div>
+          <p id={`${uid}-model-hint`} className="text-xs text-muted">
+            Type any model id, or pick one. “Fetch my models” lists exactly what this key can use.
+          </p>
+          <div className="mt-1 flex flex-wrap gap-1.5" role="group" aria-label="Model suggestions">
+            {(models ? models.slice(0, 24) : MODEL_SUGGESTIONS[draft.provider]).map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                aria-pressed={draft.model === m.id}
+                title={"note" in m ? m.note : m.label}
+                onClick={() => set({ model: m.id })}
+                className="rounded-full border border-line px-2.5 py-1 font-mono text-xs text-muted hover:border-strong-line hover:text-ink aria-pressed:border-strong-line aria-pressed:bg-ink aria-pressed:text-bg"
+              >
+                {m.id}
+              </button>
+            ))}
+            {models && models.length > 24 && <span className="self-center text-xs text-muted">+{models.length - 24} more in the field&apos;s dropdown</span>}
+          </div>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
