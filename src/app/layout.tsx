@@ -43,7 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main id="main" className="mx-auto w-full max-w-6xl px-4 pb-24 pt-6 sm:px-6">
           {children}
         </main>
-        <footer className="mx-auto max-w-6xl px-4 pb-10 text-xs text-muted sm:px-6">
+        <footer className="mx-auto max-w-6xl print:hidden px-4 pb-10 text-xs text-muted sm:px-6">
           Progress is stored in this browser only. Export it from Settings to keep a backup.
         </footer>
       </body>
