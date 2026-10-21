@@ -1,6 +1,6 @@
 // The single home of all user state. Everything the learner does is read and written
 // through this module, so swapping localStorage for a backend (e.g. Supabase) means
-// replacing the StorageAdapter below and nothing else. See README "Swapping storage".
+// replacing the StorageAdapter below and nothing else. See README "Optional Supabase sync".
 import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
 

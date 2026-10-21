@@ -144,7 +144,7 @@ export function CodingCard({ item, context }: { item: CodingItem; context?: stri
         {result && (
           <div className="mt-3 rounded-md border border-line p-3 text-sm">
             {result.fatal ? (
-              <p className="text-red-700 dark:text-red-400">{result.fatal}</p>
+              <p className="text-bad">{result.fatal}</p>
             ) : (
               <>
                 <p className="num font-semibold">
