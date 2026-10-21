@@ -249,3 +249,39 @@ describe("coding records (v4)", () => {
     expect(s.coding.ok.code!.length).toBe(20_000);
   });
 });
+
+describe("interview records (v5)", () => {
+  it("migrates v4 data and adds empty interview and mocks", () => {
+    const s = loadState(JSON.stringify({ version: 4, coding: { t: { code: "x" } } }));
+    expect(s.version).toBe(SCHEMA_VERSION);
+    expect(s.coding.t.code).toBe("x");
+    expect(s.interview).toEqual({});
+    expect(s.mocks).toEqual([]);
+  });
+
+  it("records self-scores with optional answers and keeps the last 10", () => {
+    const { store } = setup();
+    store.recordInterview("q", 9, "  my answer  ");
+    expect(store.getState().interview.q[0]).toMatchObject({ score: 5, answer: "my answer" });
+    store.recordInterview("q", 0);
+    expect(store.getState().interview.q[1].score).toBe(1);
+    expect(store.getState().interview.q[1].answer).toBeUndefined();
+    for (let i = 0; i < 12; i++) store.recordInterview("q", 3);
+    expect(store.getState().interview.q.length).toBe(10);
+    expect(store.getState().activity).toEqual(["2026-03-10"]);
+  });
+
+  it("saves mock sessions and sanitizes bad ones", () => {
+    const { store } = setup();
+    store.saveMock({ startedAt: "2026-03-10T08:50:00Z", secondsPerQuestion: 180, itemIds: ["a", "b"], scores: [4, 0] });
+    const m = store.getState().mocks[0];
+    expect(m.id).toMatch(/^mock-/);
+    expect(m.scores).toEqual([4, 0]);
+    const s = loadState(
+      JSON.stringify({ version: 5, mocks: [{ itemIds: ["a"], scores: [1, 2] }, { itemIds: ["a"], scores: [9] }, "x"], interview: { q: [{ score: 7 }], r: "no" } }),
+    );
+    expect(s.mocks.length).toBe(1);
+    expect(s.mocks[0].scores).toEqual([5]);
+    expect(s.interview).toEqual({});
+  });
+});

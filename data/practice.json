@@ -181,6 +181,21 @@
         "Converts types explicitly",
         "Has sensible defaults"
       ]
+    },
+    {
+      "id": "m0-1-iq1",
+      "type": "interview",
+      "moduleId": "M0.1",
+      "levelId": 0,
+      "difficulty": "easy",
+      "question": "When would you use a generator instead of building a list in Python, and what is the catch?",
+      "answer": "Use a generator when the data is large, streamed or only needed once, such as reading a big file or batching documents for an embedding API. It yields items lazily, so memory stays flat and work starts immediately. The catch is that it can only be iterated once, has no length, and errors surface when it is consumed rather than when it is created.",
+      "keyPoints": [
+        "Lazy evaluation keeps memory flat",
+        "Good for streams, big files and batching",
+        "Single pass only, no len()",
+        "Errors appear at consumption time"
+      ]
     }
   ],
   "M0.2": [
@@ -325,6 +340,21 @@
         "Explains (in a comment) why POST is excluded",
         "Method comparison is case-insensitive"
       ]
+    },
+    {
+      "id": "m0-2-iq1",
+      "type": "interview",
+      "moduleId": "M0.2",
+      "levelId": 0,
+      "difficulty": "medium",
+      "question": "An upstream LLM API returns HTTP 429 and sometimes 503. How should your client handle each?",
+      "answer": "Both are retryable, but carefully. 429 means you are rate limited: honour the Retry-After header if present, otherwise back off exponentially with jitter, and consider lowering concurrency. 503 is a transient server problem: retry with backoff a small number of times, then fail over or return a clear error. Never retry 4xx errors like 400 or 401, because repeating a bad request just wastes quota.",
+      "keyPoints": [
+        "Honour Retry-After on 429",
+        "Exponential backoff with jitter",
+        "Cap the number of retries",
+        "Don't retry other 4xx errors"
+      ]
     }
   ],
   "M0.3": [
@@ -463,6 +493,21 @@
         "Returns all validation errors at once",
         "Uses 422 for validation, 201 for created",
         "Never trusts types from the client"
+      ]
+    },
+    {
+      "id": "m0-3-iq1",
+      "type": "interview",
+      "moduleId": "M0.3",
+      "levelId": 0,
+      "difficulty": "medium",
+      "question": "Why put Pydantic models on the request and response of a FastAPI endpoint that wraps an LLM?",
+      "answer": "Request models reject malformed input before you spend tokens on it and document the API automatically through OpenAPI. Response models guarantee the shape your clients receive even when the model output is messy, because you validate and coerce it first. Together they turn 'whatever the LLM said' into a typed contract that can be tested.",
+      "keyPoints": [
+        "Validates input before spending tokens",
+        "Auto-generated OpenAPI docs",
+        "Response model enforces a stable contract",
+        "Makes LLM output testable"
       ]
     }
   ],
@@ -606,6 +651,21 @@
         "Identifiers come from an allow-list",
         "You can say why (owner, score) beats (score, owner) here"
       ]
+    },
+    {
+      "id": "m0-4-iq1",
+      "type": "interview",
+      "moduleId": "M0.4",
+      "levelId": 0,
+      "difficulty": "medium",
+      "question": "A query that filters by user_id and sorts by created_at is slow. What do you check and change?",
+      "answer": "Run EXPLAIN ANALYZE to see whether it is doing a sequential scan and a separate sort. Add a composite index on (user_id, created_at) so the database can filter and return rows already ordered. Check that the query is parameterized and selects only needed columns, and confirm with EXPLAIN that the new index is actually used.",
+      "keyPoints": [
+        "Use EXPLAIN / EXPLAIN ANALYZE",
+        "Composite index matching filter then sort",
+        "Select only needed columns",
+        "Verify the plan changed"
+      ]
     }
   ],
   "M0.5": [
@@ -708,6 +768,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Hand your repo to another developer who can understand, run and contribute without you."
+    },
+    {
+      "id": "m0-5-iq1",
+      "type": "interview",
+      "moduleId": "M0.5",
+      "levelId": 0,
+      "difficulty": "easy",
+      "question": "How do you keep a feature branch healthy on a team that merges to main many times a day?",
+      "answer": "Keep the branch small and short-lived, and pull main in often so conflicts stay small. Open a pull request early so CI and reviewers see the change. Write commit messages that explain why, and never rewrite history on a branch someone else is working on.",
+      "keyPoints": [
+        "Small, short-lived branches",
+        "Integrate main often",
+        "Early PR so CI runs",
+        "Don't rewrite shared history"
+      ]
     }
   ],
   "M0.6": [
@@ -804,6 +879,21 @@
         "The command/skill, subagent, MCP server and hook are each configured and used at least once",
         "The test suite passes locally",
         "A NOTES.md lists at least one mistake the agent made and how you fixed it"
+      ]
+    },
+    {
+      "id": "m0-6-iq1",
+      "type": "interview",
+      "moduleId": "M0.6",
+      "levelId": 0,
+      "difficulty": "medium",
+      "question": "How do you use an AI coding assistant without lowering code quality?",
+      "answer": "Treat its output like a pull request from a fast but junior colleague. Give it precise context and constraints, ask for small changes, and read every line. Keep tests and linters as the gate, and be extra careful with security-sensitive code, dependencies it invents and code you couldn't explain yourself.",
+      "keyPoints": [
+        "Small, well-specified asks",
+        "Review every line",
+        "Tests and linters are the gate",
+        "Watch for hallucinated APIs and packages"
       ]
     }
   ],
@@ -907,6 +997,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Containerize and deploy a local service, and debug it when production behaves differently."
+    },
+    {
+      "id": "m0-7-iq1",
+      "type": "interview",
+      "moduleId": "M0.7",
+      "levelId": 0,
+      "difficulty": "medium",
+      "question": "What makes a Docker image for a Python API production-ready?",
+      "answer": "Start from a slim, pinned base image and install locked dependencies in a layer that caches well. Use a multi-stage build so compilers and build tools don't ship. Run as a non-root user, read configuration and secrets from the environment, expose a health check, and keep the image small so deploys and cold starts are fast.",
+      "keyPoints": [
+        "Pinned slim base and locked deps",
+        "Multi-stage build",
+        "Non-root user",
+        "Config from env and a health check"
+      ]
     }
   ],
   "M0.8": [
@@ -1109,6 +1214,21 @@
         "Your next-word guess is recorded before the runs",
         "Two sentences explain why outputs varied (or did not)"
       ]
+    },
+    {
+      "id": "m1-1-iq1",
+      "type": "interview",
+      "moduleId": "M1.1",
+      "levelId": 1,
+      "difficulty": "easy",
+      "question": "Explain what an LLM is to a product manager in under a minute.",
+      "answer": "An LLM is a model trained on a huge amount of text to predict the next token given everything before it. By doing that one step repeatedly it can write, summarise, answer and transform text. It doesn't look facts up or reason the way people do; it produces likely continuations, which is why it can be fluent and still wrong.",
+      "keyPoints": [
+        "Next-token prediction",
+        "Generates by repeating that step",
+        "No built-in lookup of facts",
+        "Fluent but can be confidently wrong"
+      ]
     }
   ],
   "M1.2": [
@@ -1237,6 +1357,21 @@
         "Prices are per million tokens",
         "Output tokens priced separately from input"
       ]
+    },
+    {
+      "id": "m1-2-iq1",
+      "type": "interview",
+      "moduleId": "M1.2",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "Why does tokenization matter for cost and behaviour?",
+      "answer": "You pay and are limited per token, not per word, so the same text costs different amounts in different languages, code or JSON. Tokenization also explains odd behaviour: models struggle to count letters or reverse strings because they see subword pieces, not characters. Measuring real token counts with the provider's tokenizer is the only reliable way to budget.",
+      "keyPoints": [
+        "Billing and limits are per token",
+        "Ratios differ by language and format",
+        "Explains character-level weaknesses",
+        "Measure with the real tokenizer"
+      ]
     }
   ],
   "M1.3": [
@@ -1333,6 +1468,21 @@
         "You state which noun \"it\" should attend to and why",
         "You note at least one head that does not follow your expectation"
       ]
+    },
+    {
+      "id": "m1-3-iq1",
+      "type": "interview",
+      "moduleId": "M1.3",
+      "levelId": 1,
+      "difficulty": "hard",
+      "question": "What does self-attention do, in plain terms?",
+      "answer": "For each token, attention computes how relevant every other token in the context is, using query and key vectors, and then mixes their value vectors weighted by that relevance. This lets the representation of a word depend on its context, for example which noun 'it' refers to. Stacking many layers and heads lets the model build up increasingly abstract relationships.",
+      "keyPoints": [
+        "Queries, keys and values",
+        "Weighted mix of other tokens",
+        "Context-dependent representations",
+        "Multiple heads and layers"
+      ]
     }
   ],
   "M1.4": [
@@ -1428,6 +1578,21 @@
         "Side-by-side outputs for all five prompts",
         "Each pair is labelled with the behavioural difference",
         "A short conclusion on what instruction tuning changed"
+      ]
+    },
+    {
+      "id": "m1-4-iq1",
+      "type": "interview",
+      "moduleId": "M1.4",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "Walk through the main stages of how a chat model is trained.",
+      "answer": "Pretraining teaches next-token prediction on a very large text corpus, which gives broad knowledge and language ability. Supervised fine-tuning on instruction and response examples teaches it to follow instructions. Preference tuning such as RLHF or DPO then shapes it toward responses people prefer, including helpfulness and safety behaviour.",
+      "keyPoints": [
+        "Pretraining on large corpora",
+        "Instruction / supervised fine-tuning",
+        "Preference tuning (RLHF, DPO)",
+        "Each stage changes behaviour, not just knowledge"
       ]
     }
   ],
@@ -1529,6 +1694,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Explain why generating 2,000 output tokens takes far longer than 50, even with the same input."
+    },
+    {
+      "id": "m1-5-iq1",
+      "type": "interview",
+      "moduleId": "M1.5",
+      "levelId": 1,
+      "difficulty": "hard",
+      "question": "Why is the first token slower than the following ones, and what is the KV cache?",
+      "answer": "Generating the first token requires a prefill pass over the whole prompt, so time to first token grows with prompt length. After that, each new token only needs one forward step because the keys and values for earlier tokens are stored in the KV cache. That cache costs GPU memory proportional to context length and batch size, which is a main limit on serving throughput.",
+      "keyPoints": [
+        "Prefill vs decode phases",
+        "TTFT depends on prompt length",
+        "KV cache avoids recomputation",
+        "KV cache memory limits batch size and context"
+      ]
     }
   ],
   "M1.6": [
@@ -1671,6 +1851,21 @@
         "Rejects temperature <= 0",
         "top-p sorts by probability before cutting"
       ]
+    },
+    {
+      "id": "m1-6-iq1",
+      "type": "interview",
+      "moduleId": "M1.6",
+      "levelId": 1,
+      "difficulty": "easy",
+      "question": "When would you set temperature to 0, and when higher?",
+      "answer": "Use a low or zero temperature for extraction, classification, code and anything you want to be repeatable. Use a moderate temperature for brainstorming, creative writing or generating diverse candidates. Even at zero, outputs are not guaranteed to be identical across runs, so don't rely on temperature for determinism in tests.",
+      "keyPoints": [
+        "Low for factual, structured tasks",
+        "Higher for diversity and creativity",
+        "Zero is not fully deterministic",
+        "Tune one sampling knob at a time"
+      ]
     }
   ],
   "M1.7": [
@@ -1766,6 +1961,21 @@
         "Accuracy, mean latency and total cost recorded for both",
         "At least one problem where the fast model is good enough is identified",
         "A one-paragraph rule for when to pay for reasoning"
+      ]
+    },
+    {
+      "id": "m1-7-iq1",
+      "type": "interview",
+      "moduleId": "M1.7",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "What are reasoning models and when are they worth the extra cost?",
+      "answer": "Reasoning models spend extra tokens thinking before they answer, which is test-time compute. They help on multi-step problems such as maths, code, planning and tricky analysis. They are slower and more expensive, so for simple lookups, formatting or high-volume classification a standard model is usually the better choice.",
+      "keyPoints": [
+        "Spend more compute at inference",
+        "Help on multi-step problems",
+        "Higher latency and cost",
+        "Use a cheaper model for simple tasks"
       ]
     }
   ],
@@ -1863,6 +2073,21 @@
         "Total input tokens per run recorded",
         "One practical takeaway for prompt layout"
       ]
+    },
+    {
+      "id": "m1-8-iq1",
+      "type": "interview",
+      "moduleId": "M1.8",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "A model has a 200k-token context window. Why not put everything in it?",
+      "answer": "Cost and latency grow with every token you send. Quality also degrades: models attend unevenly to long contexts and often miss details buried in the middle. Irrelevant content can distract the model. It's usually better to select and order the most relevant context and keep the window for what matters.",
+      "keyPoints": [
+        "Cost and latency scale with tokens",
+        "Lost-in-the-middle effects",
+        "Irrelevant context distracts",
+        "Select and order context deliberately"
+      ]
     }
   ],
   "M1.9": [
@@ -1958,6 +2183,21 @@
         "All 10 questions and answers recorded",
         "Each answer is marked correct, hallucinated, abstained or clarified",
         "You identify which category produced the most confident wrong answers"
+      ]
+    },
+    {
+      "id": "m1-9-iq1",
+      "type": "interview",
+      "moduleId": "M1.9",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "What are the most common LLM failure modes you design around?",
+      "answer": "Hallucinated facts and citations, inconsistent outputs across runs, sensitivity to prompt wording, weak arithmetic and counting, outdated knowledge, and following instructions hidden in untrusted input. You design around them with grounding, validation, tools for exact work, evaluations, and treating model output as untrusted.",
+      "keyPoints": [
+        "Hallucination",
+        "Inconsistency and prompt sensitivity",
+        "Weak exact computation",
+        "Prompt injection from inputs"
       ]
     }
   ],
@@ -2062,6 +2302,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Compare two models on architecture, capability and deployment, not leaderboard rank alone."
+    },
+    {
+      "id": "m1-10-iq1",
+      "type": "interview",
+      "moduleId": "M1.10",
+      "levelId": 1,
+      "difficulty": "easy",
+      "question": "How do open-weight and closed API models differ for a team choosing one?",
+      "answer": "Closed API models are usually strongest out of the box and need no infrastructure, but you depend on the vendor's pricing, data terms and changes. Open-weight models can be self-hosted, fine-tuned and kept inside your network, but you own serving, scaling and updates. Many teams use both, routing by task.",
+      "keyPoints": [
+        "Closed: strong, no infra, vendor dependence",
+        "Open: control, privacy, fine-tuning",
+        "Open means owning serving",
+        "Hybrid routing is common"
+      ]
     }
   ],
   "M1.11": [
@@ -2157,6 +2412,21 @@
         "Published scores and your scores shown side by side",
         "Same prompt and settings used for every model",
         "You state whether the leaderboard ranking held for your task"
+      ]
+    },
+    {
+      "id": "m1-11-iq1",
+      "type": "interview",
+      "moduleId": "M1.11",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "Why shouldn't you pick a model from a leaderboard alone?",
+      "answer": "Public benchmarks may be contaminated by training data, saturated, or measure skills unrelated to your task. Leaderboard scores ignore your latency, cost and format requirements. The reliable approach is a small evaluation set built from your own data and failure cases, run against a few shortlisted models.",
+      "keyPoints": [
+        "Contamination and saturation",
+        "Benchmarks may not match your task",
+        "Ignores cost and latency",
+        "Build your own eval set"
       ]
     }
   ],
@@ -2265,6 +2535,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Select models from application requirements and measured performance, not popularity."
+    },
+    {
+      "id": "m1-12-iq1",
+      "type": "interview",
+      "moduleId": "M1.12",
+      "levelId": 1,
+      "difficulty": "medium",
+      "question": "How would you choose a model for a new feature?",
+      "answer": "Start from requirements: quality bar, latency budget, cost per request, context length, modality, and data or hosting constraints. Shortlist a few models, run them on a task-specific eval set, and pick the cheapest one that clears the bar. Keep the choice behind an abstraction so you can switch as models change.",
+      "keyPoints": [
+        "Start from requirements",
+        "Shortlist and evaluate on your data",
+        "Cheapest model that meets the bar",
+        "Abstract so you can swap later"
+      ]
     }
   ],
   "M2.1": [
@@ -2398,6 +2683,21 @@
         "Never drops the system prompt or the newest user turn",
         "Stops at the first message that doesn't fit, so history stays contiguous"
       ]
+    },
+    {
+      "id": "m2-1-iq1",
+      "type": "interview",
+      "moduleId": "M2.1",
+      "levelId": 2,
+      "difficulty": "easy",
+      "question": "LLM APIs are stateless. How do you build a multi-turn chat on top of them?",
+      "answer": "You store the conversation yourself and send the relevant history with each request, typically as a list of role-tagged messages. As the conversation grows you trim, summarise or select earlier turns to stay within the context budget, always keeping the system prompt and the latest user message.",
+      "keyPoints": [
+        "Client keeps the history",
+        "Send messages with roles each call",
+        "Trim or summarise as it grows",
+        "Keep system prompt and latest turn"
+      ]
     }
   ],
   "M2.2": [
@@ -2528,6 +2828,21 @@
         "Doesn't consume the rest of the stream after stopping",
         "Handles a stop string split over two chunks"
       ]
+    },
+    {
+      "id": "m2-2-iq1",
+      "type": "interview",
+      "moduleId": "M2.2",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "What changes in your backend when you stream LLM responses to a browser?",
+      "answer": "You forward chunks as they arrive, usually over server-sent events, instead of waiting for the full response. You accumulate the text for logging and post-processing, handle client disconnects by cancelling the upstream request, and deal with errors that happen mid-stream. Validation of structured output has to wait until the stream finishes.",
+      "keyPoints": [
+        "Forward chunks via SSE or similar",
+        "Accumulate for logs and validation",
+        "Cancel upstream on disconnect",
+        "Handle mid-stream errors"
+      ]
     }
   ],
   "M2.3": [
@@ -2629,6 +2944,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build the same small pipeline with a raw SDK and with LangChain and explain the trade-offs."
+    },
+    {
+      "id": "m2-3-iq1",
+      "type": "interview",
+      "moduleId": "M2.3",
+      "levelId": 2,
+      "difficulty": "easy",
+      "question": "What does a framework like LangChain give you, and when would you skip it?",
+      "answer": "It provides standard interfaces for models, prompts, retrievers and tools, plus composition and integrations, which speeds up prototypes and swapping providers. For a small, stable app the extra abstraction can make debugging harder, so calling the provider SDK directly is often simpler. The right choice depends on how many integrations you need.",
+      "keyPoints": [
+        "Standard interfaces and integrations",
+        "Fast prototyping and provider swaps",
+        "Abstraction can hide behaviour",
+        "Plain SDK is fine for simple apps"
+      ]
     }
   ],
   "M2.4": [
@@ -2763,6 +3093,21 @@
         "Feedback tells the model what was wrong",
         "Bounded number of retries",
         "Validates required keys, not just JSON syntax"
+      ]
+    },
+    {
+      "id": "m2-4-iq1",
+      "type": "interview",
+      "moduleId": "M2.4",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "How do you reliably get valid JSON out of an LLM?",
+      "answer": "Use the provider's structured output or JSON schema mode when available. Always validate the result against a schema in your code, and on failure retry with the validation error included in the prompt, with a cap on attempts. Keep the schema simple and give field descriptions, because complex nested schemas fail more often.",
+      "keyPoints": [
+        "Use native structured outputs",
+        "Validate with a schema in code",
+        "Repair loop with the error, capped",
+        "Keep schemas simple"
       ]
     }
   ],
@@ -2904,6 +3249,21 @@
         "Errors are returned to the model, not raised",
         "Has a hard step limit"
       ]
+    },
+    {
+      "id": "m2-5-iq1",
+      "type": "interview",
+      "moduleId": "M2.5",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "Describe the tool-calling loop between your code and the model.",
+      "answer": "You send the conversation plus tool definitions. The model either answers or returns a tool call with arguments. Your code validates the arguments, executes the tool, and sends the result back as a tool message, then calls the model again. This repeats until the model gives a final answer or you hit a step limit.",
+      "keyPoints": [
+        "Model proposes, your code executes",
+        "Validate arguments before running",
+        "Return results as tool messages",
+        "Step limit to stop loops"
+      ]
     }
   ],
   "M2.6": [
@@ -3004,6 +3364,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Design a tool set the model selects correctly and that is safe to execute."
+    },
+    {
+      "id": "m2-6-iq1",
+      "type": "interview",
+      "moduleId": "M2.6",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "What makes a tool easy for a model to use correctly?",
+      "answer": "A clear name and description that say when to use it, a small number of well-typed parameters with descriptions and enums where possible, and outputs that are concise and informative. Errors should be returned as useful messages the model can act on. Fewer, well-separated tools beat many overlapping ones.",
+      "keyPoints": [
+        "Clear name and when-to-use description",
+        "Few typed parameters, enums",
+        "Concise outputs",
+        "Actionable error messages"
+      ]
     }
   ],
   "M2.7": [
@@ -3104,6 +3479,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build a multi-step workflow whose control flow lives in your code."
+    },
+    {
+      "id": "m2-7-iq1",
+      "type": "interview",
+      "moduleId": "M2.7",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "When would you build a fixed multi-step workflow instead of a free-running agent?",
+      "answer": "When the steps are known in advance, such as classify, retrieve, draft and check. A workflow is cheaper, faster, easier to test and more predictable. Agents are worth it only when the path genuinely depends on intermediate results and can't be enumerated.",
+      "keyPoints": [
+        "Known steps favour workflows",
+        "Workflows are predictable and testable",
+        "Agents for open-ended paths",
+        "Start with the simplest design"
+      ]
     }
   ],
   "M2.8": [
@@ -3228,6 +3618,21 @@
       "checklist": [
         "Results come back in input order",
         "Never more than `limit` in flight"
+      ]
+    },
+    {
+      "id": "m2-8-iq1",
+      "type": "interview",
+      "moduleId": "M2.8",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "You need to classify 100,000 documents with an LLM. How do you run it?",
+      "answer": "Run requests concurrently with a bounded limit, such as an asyncio semaphore, sized to the provider's rate limits. Add retries with backoff, checkpoint results so a crash doesn't restart everything, and consider the provider's batch API for lower cost when latency doesn't matter.",
+      "keyPoints": [
+        "Bounded concurrency",
+        "Respect rate limits with backoff",
+        "Checkpoint progress",
+        "Batch API for cheaper offline work"
       ]
     }
   ],
@@ -3364,6 +3769,21 @@
         "Delay grows exponentially, is capped and jittered",
         "sleep is injectable so tests don't wait"
       ]
+    },
+    {
+      "id": "m2-9-iq1",
+      "type": "interview",
+      "moduleId": "M2.9",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "How do you make an LLM call robust in production?",
+      "answer": "Set timeouts, retry transient errors with exponential backoff and jitter, and cap retries. Have a fallback such as a secondary model or provider, or a graceful degraded response. Make operations idempotent where possible and log every failure with enough context to debug.",
+      "keyPoints": [
+        "Timeouts on every call",
+        "Retries with backoff and jitter",
+        "Fallback model or provider",
+        "Idempotency and logging"
+      ]
     }
   ],
   "M2.10": [
@@ -3464,6 +3884,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Trace a workflow end to end and explain where its time and money went."
+    },
+    {
+      "id": "m2-10-iq1",
+      "type": "interview",
+      "moduleId": "M2.10",
+      "levelId": 2,
+      "difficulty": "medium",
+      "question": "What would you log and track for LLM usage?",
+      "answer": "Per request: model, prompt version, input and output tokens, latency, cost, errors and a trace id, plus user or feature tags. Aggregate cost per feature and per user, latency percentiles and error rates, and alert on spikes. Be careful to redact personal data from logged prompts.",
+      "keyPoints": [
+        "Tokens, cost and latency per call",
+        "Prompt version and trace id",
+        "Aggregates by feature and user",
+        "Redact sensitive data"
+      ]
     }
   ],
   "M2.11": [
@@ -3566,6 +4001,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Choose an orchestration approach based on the application, not habit."
+    },
+    {
+      "id": "m2-11-iq1",
+      "type": "interview",
+      "moduleId": "M2.11",
+      "levelId": 2,
+      "difficulty": "easy",
+      "question": "How do you choose between orchestration frameworks such as LlamaIndex, LangGraph or none?",
+      "answer": "Match the framework to the problem: LlamaIndex is strong for data loading and retrieval, LangGraph for stateful agent graphs, and plain code for simple pipelines. Consider team familiarity, debuggability, lock-in and how active the project is. Prototype the hardest part before committing.",
+      "keyPoints": [
+        "Match framework to the problem",
+        "Retrieval vs agent graphs vs plain code",
+        "Debuggability and lock-in",
+        "Prototype the hardest part first"
+      ]
     }
   ],
   "M2.12": [
@@ -3796,6 +4246,21 @@
         "Instructions and data are visibly separated",
         "The data cannot terminate its own block"
       ]
+    },
+    {
+      "id": "m3-1-iq1",
+      "type": "interview",
+      "moduleId": "M3.1",
+      "levelId": 3,
+      "difficulty": "easy",
+      "question": "What are the parts of a well-structured prompt?",
+      "answer": "A role or task statement, the relevant context, clear instructions and constraints, examples if needed, and the required output format. Separate untrusted input from instructions with clear delimiters, and put the most important instructions where they won't be lost.",
+      "keyPoints": [
+        "Task and role",
+        "Context and constraints",
+        "Examples when helpful",
+        "Output format and delimiters"
+      ]
     }
   ],
   "M3.2": [
@@ -3928,6 +4393,21 @@
         "Every label is represented before any repeats",
         "Deterministic, so prompt caching still works"
       ]
+    },
+    {
+      "id": "m3-2-iq1",
+      "type": "interview",
+      "moduleId": "M3.2",
+      "levelId": 3,
+      "difficulty": "medium",
+      "question": "How do you choose few-shot examples?",
+      "answer": "Pick examples that are representative of real inputs, cover the tricky edge cases, and show the exact output format. Keep them diverse so the model doesn't copy surface patterns, and balance labels for classification. Measure whether they help, because they also cost tokens.",
+      "keyPoints": [
+        "Representative and diverse",
+        "Cover edge cases",
+        "Show the exact format",
+        "Balance labels and measure the gain"
+      ]
     }
   ],
   "M3.3": [
@@ -4027,6 +4507,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Use reasoning prompts only where they pay off."
+    },
+    {
+      "id": "m3-3-iq1",
+      "type": "interview",
+      "moduleId": "M3.3",
+      "levelId": 3,
+      "difficulty": "medium",
+      "question": "When does asking a model to reason step by step help, and when doesn't it?",
+      "answer": "It helps on multi-step problems like arithmetic, logic and planning, because the intermediate steps give the model room to work. It adds latency and tokens and does little for simple lookups or classification. With reasoning models, explicit chain-of-thought prompting is often unnecessary.",
+      "keyPoints": [
+        "Helps multi-step problems",
+        "Costs tokens and latency",
+        "Little gain on simple tasks",
+        "Reasoning models do it already"
+      ]
     }
   ],
   "M3.4": [
@@ -4126,6 +4621,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Write a system prompt that sets stable, predictable behavior for an app."
+    },
+    {
+      "id": "m3-4-iq1",
+      "type": "interview",
+      "moduleId": "M3.4",
+      "levelId": 3,
+      "difficulty": "medium",
+      "question": "What belongs in a system prompt versus the user message?",
+      "answer": "The system prompt holds stable behaviour: role, tone, rules, safety boundaries and output conventions. The user message holds the per-request task and data. Keeping stable content in the system prompt also helps prompt caching, and keeping untrusted data out of it reduces injection risk.",
+      "keyPoints": [
+        "Stable rules in system prompt",
+        "Per-request data in user turn",
+        "Helps caching",
+        "Keep untrusted data out of system"
+      ]
     }
   ],
   "M3.5": [
@@ -4224,6 +4734,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Get output in the format you need, enforcing it in code when it matters."
+    },
+    {
+      "id": "m3-5-iq1",
+      "type": "interview",
+      "moduleId": "M3.5",
+      "levelId": 3,
+      "difficulty": "easy",
+      "question": "How do you control the length and format of a model's output?",
+      "answer": "State the format explicitly, give an example, and set limits in words or items. Use structured output modes for machine-readable formats, set max tokens as a hard cap, and validate the result. Asking for what you want works better than listing what you don't want.",
+      "keyPoints": [
+        "Explicit format and example",
+        "Structured output modes",
+        "max_tokens as a hard cap",
+        "Positive instructions"
+      ]
     }
   ],
   "M3.6": [
@@ -4323,6 +4848,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Debug prompts with a test set instead of one-off tries."
+    },
+    {
+      "id": "m3-6-iq1",
+      "type": "interview",
+      "moduleId": "M3.6",
+      "levelId": 3,
+      "difficulty": "medium",
+      "question": "A prompt works on your examples but fails in production. How do you debug it?",
+      "answer": "Collect the failing production inputs and add them to an evaluation set. Look for patterns, such as input types, lengths or ambiguous instructions. Change one thing at a time and re-run the whole set, not just the failing case, so you don't fix one thing and break another.",
+      "keyPoints": [
+        "Collect real failures",
+        "Find patterns",
+        "Change one variable at a time",
+        "Re-run the full eval set"
+      ]
     }
   ],
   "M3.7": [
@@ -4422,6 +4962,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Manage prompts as versioned, cost-aware artifacts."
+    },
+    {
+      "id": "m3-7-iq1",
+      "type": "interview",
+      "moduleId": "M3.7",
+      "levelId": 3,
+      "difficulty": "medium",
+      "question": "How do you manage prompts like code?",
+      "answer": "Store prompts in version control with ids, review changes, and tie every logged request to a prompt version. Gate changes with an evaluation run. Structure prompts with a stable prefix so provider prompt caching cuts cost and latency.",
+      "keyPoints": [
+        "Version control and ids",
+        "Log prompt version per request",
+        "Eval gate on changes",
+        "Stable prefix for caching"
+      ]
     }
   ],
   "M3.8": [
@@ -4553,6 +5108,21 @@
       "checklist": [
         "Case-insensitive",
         "A comment explains why this isn't a real defence on its own"
+      ]
+    },
+    {
+      "id": "m3-8-iq1",
+      "type": "interview",
+      "moduleId": "M3.8",
+      "levelId": 3,
+      "difficulty": "medium",
+      "question": "What is prompt injection and what is your first line of defence?",
+      "answer": "Prompt injection is when untrusted input, such as a user message, web page or document, contains instructions the model follows instead of yours. First, treat model output as untrusted and limit what it can do: least-privilege tools and confirmation for risky actions. Delimiters and input screening help but can't fully prevent it.",
+      "keyPoints": [
+        "Instructions hidden in untrusted input",
+        "Direct and indirect forms",
+        "Least privilege and confirmations",
+        "Filters help but aren't sufficient"
       ]
     }
   ],
@@ -4749,6 +5319,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Turn a real document collection into clean, structured data ready for retrieval."
+    },
+    {
+      "id": "m4-1-iq1",
+      "type": "interview",
+      "moduleId": "M4.1",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "What can go wrong when ingesting PDFs for RAG?",
+      "answer": "Text extraction can scramble reading order, break tables, drop headers or merge columns. Scanned pages need OCR. Boilerplate like headers and footers pollutes chunks. You should inspect extracted text, keep metadata like source and page, and use layout-aware parsers for complex documents.",
+      "keyPoints": [
+        "Reading order and tables break",
+        "Scans need OCR",
+        "Strip boilerplate",
+        "Keep source and page metadata"
+      ]
     }
   ],
   "M4.2": [
@@ -4889,6 +5474,21 @@
         "Every word appears in at least one chunk",
         "Boundary words are shared between neighbours"
       ]
+    },
+    {
+      "id": "m4-2-iq1",
+      "type": "interview",
+      "moduleId": "M4.2",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "How do you choose a chunk size?",
+      "answer": "Chunks should be small enough to be specific and fit several in context, but large enough to carry a complete idea. Split on document structure such as headings and paragraphs rather than raw character counts, add a little overlap, and tune the size against retrieval metrics on your own questions.",
+      "keyPoints": [
+        "Specific vs complete trade-off",
+        "Split on structure",
+        "Small overlap",
+        "Tune with retrieval evals"
+      ]
     }
   ],
   "M4.3": [
@@ -4988,6 +5588,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Select and use an embedding model suited to a retrieval task."
+    },
+    {
+      "id": "m4-3-iq1",
+      "type": "interview",
+      "moduleId": "M4.3",
+      "levelId": 4,
+      "difficulty": "easy",
+      "question": "What is an embedding, and what does it not capture well?",
+      "answer": "An embedding is a vector representation of text where similar meanings land close together, so you can search by meaning. Embeddings can miss exact matches such as names, IDs, codes and rare terms, and negation. The query and documents must use the same embedding model.",
+      "keyPoints": [
+        "Vector of meaning",
+        "Similar meaning means close vectors",
+        "Weak on exact terms and IDs",
+        "Same model for query and docs"
+      ]
     }
   ],
   "M4.4": [
@@ -5124,6 +5739,21 @@
         "Handles zero vectors without crashing",
         "Deterministic tie-breaking"
       ]
+    },
+    {
+      "id": "m4-4-iq1",
+      "type": "interview",
+      "moduleId": "M4.4",
+      "levelId": 4,
+      "difficulty": "easy",
+      "question": "Why is cosine similarity the usual metric for text embeddings?",
+      "answer": "Cosine similarity compares direction rather than magnitude, which suits embeddings where meaning lives in the direction. If vectors are normalized to unit length, cosine similarity and dot product give the same ranking, and dot product is cheaper.",
+      "keyPoints": [
+        "Compares direction",
+        "Ignores magnitude",
+        "Equivalent to dot product when normalized",
+        "Use what the model was trained for"
+      ]
     }
   ],
   "M4.5": [
@@ -5224,6 +5854,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build and query a scalable vector index over a real corpus."
+    },
+    {
+      "id": "m4-5-iq1",
+      "type": "interview",
+      "moduleId": "M4.5",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "Why use an approximate nearest neighbour index, and what do you give up?",
+      "answer": "Exact search compares the query to every vector, which gets slow at millions of vectors. ANN indexes like HNSW or IVF trade a little recall for big speedups. You tune parameters such as ef or nprobe to balance recall, latency and memory, and measure recall against exact search.",
+      "keyPoints": [
+        "Exact search doesn't scale",
+        "HNSW / IVF",
+        "Trade recall for speed",
+        "Tune and measure recall"
+      ]
     }
   ],
   "M4.6": [
@@ -5391,6 +6036,21 @@
       "checklist": [
         "Uses ranks, not raw scores",
         "Documents missing from a list simply get no contribution"
+      ]
+    },
+    {
+      "id": "m4-6-iq1",
+      "type": "interview",
+      "moduleId": "M4.6",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "When does hybrid retrieval beat pure vector search?",
+      "answer": "When queries contain exact terms like product names, error codes, IDs or rare jargon that embeddings blur. Combining BM25 with dense retrieval, for example with Reciprocal Rank Fusion, catches both exact matches and paraphrases. You confirm the gain with recall on your own query set.",
+      "keyPoints": [
+        "Exact terms, IDs and names",
+        "BM25 plus dense",
+        "Fuse with RRF",
+        "Verify with recall"
       ]
     }
   ],
@@ -5623,6 +6283,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Decide whether a problem genuinely needs RAG."
+    },
+    {
+      "id": "m4-8-iq1",
+      "type": "interview",
+      "moduleId": "M4.8",
+      "levelId": 4,
+      "difficulty": "easy",
+      "question": "When is RAG the right approach versus fine-tuning or a long prompt?",
+      "answer": "RAG fits when answers depend on a large or changing body of knowledge that needs citations and access control. Fine-tuning changes behaviour or format rather than adding fresh facts. A long prompt works when the knowledge is small and stable.",
+      "keyPoints": [
+        "Large or changing knowledge",
+        "Citations and access control",
+        "Fine-tuning for behaviour",
+        "Long prompt for small, stable data"
+      ]
     }
   ],
   "M4.9": [
@@ -5763,6 +6438,21 @@
       ]
     },
     {
+      "id": "m4-9-iq1",
+      "type": "interview",
+      "moduleId": "M4.9",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "Describe a baseline RAG pipeline end to end.",
+      "answer": "Offline: load documents, clean, chunk, embed and store chunks with metadata. Online: embed the query, retrieve the top-k chunks, build a prompt with those chunks and the question, and generate an answer with citations. Measure retrieval and answer quality separately before adding complexity.",
+      "keyPoints": [
+        "Ingest, chunk, embed, index",
+        "Retrieve top-k",
+        "Prompt with context and question",
+        "Evaluate retrieval and generation separately"
+      ]
+    },
+    {
       "id": "m4-9-sc1",
       "type": "scenario",
       "moduleId": "M4.9",
@@ -5875,6 +6565,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Improve the context sent to the LLM without just retrieving more."
+    },
+    {
+      "id": "m4-10-iq1",
+      "type": "interview",
+      "moduleId": "M4.10",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "What does a reranker add, and what does it cost?",
+      "answer": "A cross-encoder reranker scores each query-chunk pair jointly, which is more accurate than comparing separate embeddings. You retrieve a wider candidate set cheaply, then rerank to pick the best few. It adds latency and cost per candidate, so you limit how many candidates you rerank.",
+      "keyPoints": [
+        "Cross-encoder scores pairs jointly",
+        "Retrieve wide, rerank narrow",
+        "Improves precision at top-k",
+        "Adds latency per candidate"
+      ]
     }
   ],
   "M4.11": [
@@ -5976,6 +6681,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Turn hard user questions into better retrieval queries."
+    },
+    {
+      "id": "m4-11-iq1",
+      "type": "interview",
+      "moduleId": "M4.11",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "What are query rewriting and RAG-Fusion for?",
+      "answer": "User queries are often short, vague or phrased differently from the documents. Rewriting expands or clarifies the query, and RAG-Fusion generates several variants, retrieves for each, and fuses the results with RRF. This raises recall at the cost of extra LLM calls and latency.",
+      "keyPoints": [
+        "Queries don't match document wording",
+        "Rewrite or expand",
+        "Multiple queries fused with RRF",
+        "Extra cost and latency"
+      ]
     }
   ],
   "M4.12": [
@@ -6105,6 +6825,21 @@
         "Flags citations to sources that don't exist",
         "Counts unsupported sentences"
       ]
+    },
+    {
+      "id": "m4-12-iq1",
+      "type": "interview",
+      "moduleId": "M4.12",
+      "levelId": 4,
+      "difficulty": "medium",
+      "question": "How do you make a RAG system say 'I don't know' instead of hallucinating?",
+      "answer": "Instruct the model to answer only from the provided context and to abstain when it isn't there. Use a retrieval score threshold so weak context leads to abstention. Require citations and check that cited sources exist and support the claim, and evaluate abstention on unanswerable questions.",
+      "keyPoints": [
+        "Answer only from context",
+        "Abstain below a relevance threshold",
+        "Require and verify citations",
+        "Test with unanswerable questions"
+      ]
     }
   ],
   "M4.13": [
@@ -6209,6 +6944,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Choose a RAG architecture based on why the baseline fails."
+    },
+    {
+      "id": "m4-13-iq1",
+      "type": "interview",
+      "moduleId": "M4.13",
+      "levelId": 4,
+      "difficulty": "hard",
+      "question": "Name some advanced RAG patterns and when each is worth it.",
+      "answer": "Parent-document retrieval returns larger context around small matched chunks. Multi-hop or agentic retrieval handles questions that need several lookups. Graph-based RAG helps with questions about relationships across documents. Each adds complexity, so you adopt one only when evals show the baseline fails on that question type.",
+      "keyPoints": [
+        "Parent / small-to-big retrieval",
+        "Multi-hop or agentic retrieval",
+        "Graph RAG for relationships",
+        "Adopt only when evals justify it"
+      ]
     },
     {
       "id": "m4-13-sc1",
@@ -6323,6 +7073,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Use RAG frameworks productively while understanding what is underneath."
+    },
+    {
+      "id": "m4-14-iq1",
+      "type": "interview",
+      "moduleId": "M4.14",
+      "levelId": 4,
+      "difficulty": "easy",
+      "question": "What do RAG frameworks speed up, and what should you still own?",
+      "answer": "They speed up loaders, chunkers, vector store integrations and standard pipelines. You should still own your data quality, chunking choices, evaluation set and prompt, and understand what the framework does under the hood so you can debug retrieval failures.",
+      "keyPoints": [
+        "Loaders and integrations",
+        "Standard pipelines",
+        "Own data quality and evals",
+        "Know what's under the hood"
+      ]
     }
   ],
   "M4.15": [
@@ -6505,6 +7270,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Decide whether a problem genuinely needs an agent."
+    },
+    {
+      "id": "m5-1-iq1",
+      "type": "interview",
+      "moduleId": "M5.1",
+      "levelId": 5,
+      "difficulty": "easy",
+      "question": "What makes a system an agent rather than a workflow?",
+      "answer": "In an agent, the model decides the next step, such as which tool to call or when to stop, based on intermediate results. In a workflow the steps are fixed in code. Agents handle open-ended tasks but are less predictable, so they need step limits, observability and evaluation.",
+      "keyPoints": [
+        "Model chooses the next action",
+        "Loop over tool results",
+        "Less predictable than workflows",
+        "Needs limits and observability"
+      ]
     }
   ],
   "M5.2": [
@@ -6638,6 +7418,21 @@
       "checklist": [
         "Argument order doesn't matter",
         "Catches both tight loops and slow repetition"
+      ]
+    },
+    {
+      "id": "m5-2-iq1",
+      "type": "interview",
+      "moduleId": "M5.2",
+      "levelId": 5,
+      "difficulty": "medium",
+      "question": "Explain the ReAct pattern and its main failure mode.",
+      "answer": "ReAct interleaves reasoning, an action such as a tool call, and an observation of the result, repeating until the task is done. Its main failure mode is looping: repeating the same action or drifting without progress. You guard with step limits, detection of repeated calls, and a clear stopping condition.",
+      "keyPoints": [
+        "Reason, act, observe loop",
+        "Grounds reasoning in tool results",
+        "Can loop or drift",
+        "Step limits and repeat detection"
       ]
     },
     {
@@ -6784,6 +7579,21 @@
         "Tells the model the result was truncated",
         "Drops fields the model doesn't need"
       ]
+    },
+    {
+      "id": "m5-3-iq1",
+      "type": "interview",
+      "moduleId": "M5.3",
+      "levelId": 5,
+      "difficulty": "medium",
+      "question": "A tool returns a 50,000-token JSON blob to your agent. What do you do?",
+      "answer": "Don't pass it raw. Trim or summarise the result to the fields the agent needs, paginate large lists, and store the full payload outside the context with a reference the agent can query. This keeps context small, cost down, and the model focused.",
+      "keyPoints": [
+        "Never pass huge raw output",
+        "Select relevant fields",
+        "Paginate",
+        "Store externally with a reference"
+      ]
     }
   ],
   "M5.4": [
@@ -6886,6 +7696,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build a reusable MCP integration that exposes a real system to AI apps."
+    },
+    {
+      "id": "m5-4-iq1",
+      "type": "interview",
+      "moduleId": "M5.4",
+      "levelId": 5,
+      "difficulty": "medium",
+      "question": "What problem does MCP solve?",
+      "answer": "The Model Context Protocol standardises how applications expose tools, resources and prompts to models, so one server works with many clients instead of writing a custom integration for each. It separates the tool provider from the agent host, which makes tools reusable. You still need to handle authentication, permissions and trust in the servers you connect.",
+      "keyPoints": [
+        "Standard interface for tools and resources",
+        "Write once, use across clients",
+        "Separates host and provider",
+        "Still need auth and trust decisions"
+      ]
     },
     {
       "id": "m5-4-sc1",
@@ -7041,6 +7866,21 @@
         "Supports update and delete, not just append",
         "Returns only relevant memories"
       ]
+    },
+    {
+      "id": "m5-5-iq1",
+      "type": "interview",
+      "moduleId": "M5.5",
+      "levelId": 5,
+      "difficulty": "medium",
+      "question": "How would you give an agent memory across sessions?",
+      "answer": "Separate short-term memory, the current conversation, from long-term memory stored outside the model. Save durable facts or summaries with metadata, retrieve only the relevant ones for each new task, and let users view and delete what is stored. Decide what is worth remembering, otherwise memory fills with noise.",
+      "keyPoints": [
+        "Short-term vs long-term",
+        "External store with retrieval",
+        "Store selectively",
+        "User control and privacy"
+      ]
     }
   ],
   "M5.6": [
@@ -7148,6 +7988,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Use multi-agent designs only when specialization justifies the complexity."
+    },
+    {
+      "id": "m5-6-iq1",
+      "type": "interview",
+      "moduleId": "M5.6",
+      "levelId": 5,
+      "difficulty": "hard",
+      "question": "When is a multi-agent design worth it?",
+      "answer": "When a task splits into parts that benefit from different tools, prompts or context, or can run in parallel, such as research subtasks. Multiple agents add coordination cost, latency and more ways to fail, so a single agent with good tools is the default. You justify multi-agent with evals.",
+      "keyPoints": [
+        "Separable subtasks or parallelism",
+        "Different tools or context per role",
+        "Coordination overhead",
+        "Default to a single agent"
+      ]
     }
   ],
   "M5.7": [
@@ -7253,6 +8108,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build a controllable, stateful, resumable agent with explicit execution logic."
+    },
+    {
+      "id": "m5-7-iq1",
+      "type": "interview",
+      "moduleId": "M5.7",
+      "levelId": 5,
+      "difficulty": "medium",
+      "question": "Why model an agent as a graph, as LangGraph does?",
+      "answer": "A graph makes the control flow explicit: nodes are steps, edges are transitions, and state is passed and persisted between them. That gives you checkpoints, resumability, human-in-the-loop interrupts and easier debugging than a hidden loop.",
+      "keyPoints": [
+        "Explicit nodes and edges",
+        "Shared, persisted state",
+        "Checkpoints and resume",
+        "Human-in-the-loop interrupts"
+      ]
     }
   ],
   "M5.8": [
@@ -7353,6 +8223,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Give an agent code execution without exposing the host."
+    },
+    {
+      "id": "m5-8-iq1",
+      "type": "interview",
+      "moduleId": "M5.8",
+      "levelId": 5,
+      "difficulty": "medium",
+      "question": "Your agent runs code it writes. How do you make that safe?",
+      "answer": "Execute in an isolated sandbox such as a container or microVM with no access to secrets, limited or no network, read-only mounts, and CPU, memory and time limits. Destroy it after use. Log what ran and require approval for anything that touches real systems.",
+      "keyPoints": [
+        "Isolated sandbox",
+        "No secrets, restricted network",
+        "Resource and time limits",
+        "Ephemeral and logged"
+      ]
     }
   ],
   "M5.9": [
@@ -7488,6 +8373,21 @@
         "Limits are enforced in code, not the prompt",
         "The error says which budget ran out"
       ]
+    },
+    {
+      "id": "m5-9-iq1",
+      "type": "interview",
+      "moduleId": "M5.9",
+      "levelId": 5,
+      "difficulty": "hard",
+      "question": "An agent sometimes runs up large bills. How do you prevent it?",
+      "answer": "Set hard budgets on steps, tokens and cost per task, and stop gracefully when they're hit. Detect loops such as repeated identical tool calls. Monitor cost per task and alert on outliers. Trace runs so you can see where the spend goes and fix the prompt or tools.",
+      "keyPoints": [
+        "Budgets on steps, tokens and cost",
+        "Loop detection",
+        "Graceful stop with partial result",
+        "Per-task cost monitoring"
+      ]
     }
   ],
   "M5.10": [
@@ -7590,6 +8490,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Choose an agent framework by architecture rather than popularity."
+    },
+    {
+      "id": "m5-10-iq1",
+      "type": "interview",
+      "moduleId": "M5.10",
+      "levelId": 5,
+      "difficulty": "easy",
+      "question": "How do you evaluate an agent framework before adopting it?",
+      "answer": "Build the same small but realistic task in it and judge observability, how much control you have over prompts and the loop, state persistence, tool integration, and how hard it is to debug failures. Check maturity, documentation and lock-in.",
+      "keyPoints": [
+        "Prototype a real task",
+        "Observability and control",
+        "State and tools",
+        "Maturity and lock-in"
+      ]
     }
   ],
   "M5.11": [
@@ -7791,6 +8706,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Diagnose when degradation is really a context-management problem."
+    },
+    {
+      "id": "m6-1-iq1",
+      "type": "interview",
+      "moduleId": "M6.1",
+      "levelId": 6,
+      "difficulty": "easy",
+      "question": "What does 'context is a resource' mean for an engineer?",
+      "answer": "Every token in the window costs money and latency and competes for the model's attention. So you budget it: decide what goes in, in what order and how much, rather than appending everything. Good context selection often improves quality more than a better prompt.",
+      "keyPoints": [
+        "Tokens cost money and latency",
+        "Attention is limited",
+        "Budget and prioritise",
+        "Selection beats volume"
+      ]
     }
   ],
   "M6.2": [
@@ -7891,6 +8821,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build the smallest useful context for the model's current decision."
+    },
+    {
+      "id": "m6-2-iq1",
+      "type": "interview",
+      "moduleId": "M6.2",
+      "levelId": 6,
+      "difficulty": "medium",
+      "question": "How do you decide what goes into the context for a request?",
+      "answer": "Start with the task and what the model needs to do it: instructions, the relevant retrieved knowledge, key conversation state and tool results. Rank by relevance, remove duplicates, fit within a token budget, and order so the most important material is at the start or end.",
+      "keyPoints": [
+        "Driven by the task",
+        "Rank and deduplicate",
+        "Fit a token budget",
+        "Order deliberately"
+      ]
     }
   ],
   "M6.3": [
@@ -8023,6 +8968,21 @@
       ]
     },
     {
+      "id": "m6-3-iq1",
+      "type": "interview",
+      "moduleId": "M6.3",
+      "levelId": 6,
+      "difficulty": "medium",
+      "question": "Long conversations are getting expensive. What are your options?",
+      "answer": "Trim old turns, summarise earlier parts of the conversation into a running summary, and offload details to external memory that can be retrieved when needed. Keep the system prompt and recent turns verbatim. Test that summaries keep decisions and facts the user cares about.",
+      "keyPoints": [
+        "Trim old turns",
+        "Rolling summaries",
+        "Offload to memory",
+        "Check summaries preserve key facts"
+      ]
+    },
+    {
       "id": "m6-3-sc1",
       "type": "scenario",
       "moduleId": "M6.3",
@@ -8135,6 +9095,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build systems that do not need the full history inside the window."
+    },
+    {
+      "id": "m6-4-iq1",
+      "type": "interview",
+      "moduleId": "M6.4",
+      "levelId": 6,
+      "difficulty": "medium",
+      "question": "What is state offloading in an agent?",
+      "answer": "Instead of keeping everything in the prompt, the agent writes notes, plans, or intermediate results to files or a store, and reads back only what it needs. This lets long tasks continue past the context limit and makes progress inspectable.",
+      "keyPoints": [
+        "Write state outside the prompt",
+        "Read back on demand",
+        "Enables long tasks",
+        "Inspectable progress"
+      ]
     }
   ],
   "M6.5": [
@@ -8234,6 +9209,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Pick a strategy for very long documents, conversations and agent runs."
+    },
+    {
+      "id": "m6-5-iq1",
+      "type": "interview",
+      "moduleId": "M6.5",
+      "levelId": 6,
+      "difficulty": "medium",
+      "question": "How would you answer questions over a 1,000-page document?",
+      "answer": "Don't send the whole thing each time. Either retrieve relevant sections with RAG, or use map-reduce: process sections independently, then combine. For questions needing a global view, build hierarchical summaries. Long-context models help, but cost and middle-of-context recall still matter.",
+      "keyPoints": [
+        "Retrieval for targeted questions",
+        "Map-reduce over sections",
+        "Hierarchical summaries",
+        "Long context still has limits"
+      ]
     }
   ],
   "M6.6": [
@@ -8334,6 +9324,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Keep tool-heavy agents coherent as their action history grows."
+    },
+    {
+      "id": "m6-6-iq1",
+      "type": "interview",
+      "moduleId": "M6.6",
+      "levelId": 6,
+      "difficulty": "medium",
+      "question": "An agent has 80 tools and keeps picking the wrong one. What do you do?",
+      "answer": "Reduce what the model sees per step: group tools, load only those relevant to the current task, or route first to a category. Improve names and descriptions so they don't overlap, and evaluate tool selection accuracy on a test set.",
+      "keyPoints": [
+        "Too many tools confuse selection",
+        "Load tools dynamically",
+        "Clear, non-overlapping descriptions",
+        "Measure selection accuracy"
+      ]
     }
   ],
   "M6.7": [
@@ -8463,6 +9468,21 @@
         "Timestamps and user input come last",
         "Two requests share the long static prefix"
       ]
+    },
+    {
+      "id": "m6-7-iq1",
+      "type": "interview",
+      "moduleId": "M6.7",
+      "levelId": 6,
+      "difficulty": "medium",
+      "question": "How do you get the most from prompt caching?",
+      "answer": "Put stable content such as the system prompt, tool definitions and fixed documents first, and variable content last, so the prefix is identical across requests. Avoid timestamps or ids early in the prompt. Monitor cache hit rates, because a small change at the top invalidates the cache.",
+      "keyPoints": [
+        "Stable prefix first",
+        "Variable content last",
+        "Avoid dynamic values early",
+        "Monitor hit rate"
+      ]
     }
   ],
   "M6.8": [
@@ -8567,6 +9587,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Design a harness that keeps an agent on track across tasks larger than one window."
+    },
+    {
+      "id": "m6-8-iq1",
+      "type": "interview",
+      "moduleId": "M6.8",
+      "levelId": 6,
+      "difficulty": "hard",
+      "question": "What is harness engineering for agents?",
+      "answer": "It's designing everything around the model: the loop, tools, context management, memory, checks, retries and stop conditions. Often the harness matters as much as the model for reliability. You iterate on it with traces and evals, the same way you'd iterate on a prompt.",
+      "keyPoints": [
+        "Loop, tools, context and checks",
+        "Harness drives reliability",
+        "Iterate with traces",
+        "Evaluate changes"
+      ]
     }
   ],
   "M6.9": [
@@ -8765,6 +9800,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Explain why LLM evaluation is needed and how it differs from traditional testing."
+    },
+    {
+      "id": "m7-1-iq1",
+      "type": "interview",
+      "moduleId": "M7.1",
+      "levelId": 7,
+      "difficulty": "easy",
+      "question": "Why are LLM evaluations harder than ordinary unit tests?",
+      "answer": "Outputs are open-ended and non-deterministic, so there's often no single correct string. Quality has several dimensions, such as correctness, faithfulness, tone and format. So you combine exact checks where possible with rubric-based grading, human review and statistics over a dataset.",
+      "keyPoints": [
+        "Open-ended outputs",
+        "Non-determinism",
+        "Multiple quality dimensions",
+        "Dataset-level measurement"
+      ]
     }
   ],
   "M7.2": [
@@ -8864,6 +9914,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Pick the right evaluation method for a testing scenario."
+    },
+    {
+      "id": "m7-2-iq1",
+      "type": "interview",
+      "moduleId": "M7.2",
+      "levelId": 7,
+      "difficulty": "medium",
+      "question": "When would you use an LLM as a judge, and how do you trust it?",
+      "answer": "Use it for qualities that are hard to check with code, like helpfulness or faithfulness, at a scale humans can't manage. Give it a clear rubric and examples, prefer pairwise or pass/fail over fine scales, and calibrate it against human labels. Watch for biases toward length, position and its own outputs.",
+      "keyPoints": [
+        "For subjective qualities at scale",
+        "Clear rubric",
+        "Calibrate against humans",
+        "Known biases"
+      ]
     }
   ],
   "M7.3": [
@@ -8964,6 +10029,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Design a two-layer strategy that catches regressions before and after release."
+    },
+    {
+      "id": "m7-3-iq1",
+      "type": "interview",
+      "moduleId": "M7.3",
+      "levelId": 7,
+      "difficulty": "medium",
+      "question": "How do offline and online evaluation complement each other?",
+      "answer": "Offline evals run on a fixed dataset before release and catch regressions cheaply. Online evaluation measures real usage through user feedback, A/B tests and sampled grading of production traffic. Production failures should flow back into the offline set.",
+      "keyPoints": [
+        "Offline: fixed set before release",
+        "Online: real traffic and feedback",
+        "A/B tests",
+        "Feed failures back into the set"
+      ]
     }
   ],
   "M7.4": [
@@ -9063,6 +10143,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Assess public benchmarks critically."
+    },
+    {
+      "id": "m7-4-iq1",
+      "type": "interview",
+      "moduleId": "M7.4",
+      "levelId": 7,
+      "difficulty": "medium",
+      "question": "How do you compare two models fairly for your use case?",
+      "answer": "Use the same task-specific dataset, prompts adapted fairly for each, and the same grading. Run enough examples, and repeat where outputs vary, to tell real differences from noise. Compare quality alongside cost and latency.",
+      "keyPoints": [
+        "Same dataset and grading",
+        "Enough samples",
+        "Account for variance",
+        "Weigh cost and latency"
+      ]
     }
   ],
   "M7.5": [
@@ -9162,6 +10257,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Know which knowledge benchmarks still discriminate between frontier models."
+    },
+    {
+      "id": "m7-5-iq1",
+      "type": "interview",
+      "moduleId": "M7.5",
+      "levelId": 7,
+      "difficulty": "easy",
+      "question": "Why do knowledge benchmarks keep getting replaced?",
+      "answer": "Models saturate them as they improve, and test questions leak into training data, so scores stop separating models. New benchmarks get harder, use fresh or private data, or test skills like reasoning and tool use instead of recall.",
+      "keyPoints": [
+        "Saturation",
+        "Contamination",
+        "Harder or private replacements",
+        "Shift toward reasoning and agentic tasks"
+      ]
     }
   ],
   "M7.6": [
@@ -9263,6 +10373,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Select the most capable, cost-effective model for a specific application."
+    },
+    {
+      "id": "m7-6-iq1",
+      "type": "interview",
+      "moduleId": "M7.6",
+      "levelId": 7,
+      "difficulty": "medium",
+      "question": "How would you build an evaluation set for a new product?",
+      "answer": "Start with real or realistic inputs covering common cases, edge cases and known failures. Write expected outputs or grading criteria with domain experts. Start small, around 50 to 100 examples, and grow it from production failures. Version it and keep a held-out part.",
+      "keyPoints": [
+        "Real inputs and edge cases",
+        "Expected outputs or rubrics",
+        "Start small, grow from failures",
+        "Version the dataset"
+      ]
     }
   ],
   "M7.7": [
@@ -9401,6 +10526,21 @@
         "Fails on regressions, not only absolute thresholds",
         "Report names each failing metric"
       ]
+    },
+    {
+      "id": "m7-7-iq1",
+      "type": "interview",
+      "moduleId": "M7.7",
+      "levelId": 7,
+      "difficulty": "medium",
+      "question": "How do you stop a prompt change from silently making things worse?",
+      "answer": "Run the eval suite in CI on every prompt or model change and compare against the current baseline. Fail the change if key metrics drop beyond a threshold, and review per-example diffs for regressions. Track results over time.",
+      "keyPoints": [
+        "Eval suite in CI",
+        "Compare against baseline",
+        "Thresholds block regressions",
+        "Inspect per-example diffs"
+      ]
     }
   ],
   "M7.8": [
@@ -9519,6 +10659,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Evaluate a RAG app across retrieval, generation, pipeline, user quality, operations and safety."
+    },
+    {
+      "id": "m7-8-iq1",
+      "type": "interview",
+      "moduleId": "M7.8",
+      "levelId": 7,
+      "difficulty": "medium",
+      "question": "How do you evaluate a RAG system?",
+      "answer": "Evaluate retrieval and generation separately. For retrieval, measure recall and precision at k or MRR against labelled relevant chunks. For generation, measure faithfulness to the context, answer relevance and correctness. That tells you which stage to fix.",
+      "keyPoints": [
+        "Separate retrieval and generation",
+        "Recall@k, MRR",
+        "Faithfulness and relevance",
+        "Locate the failing stage"
+      ]
     },
     {
       "id": "m7-8-sc1",
@@ -9648,6 +10803,21 @@
       "doneWhen": "Evaluate an agent's decisions, tool use, efficiency, recovery and security boundaries."
     },
     {
+      "id": "m7-9-iq1",
+      "type": "interview",
+      "moduleId": "M7.9",
+      "levelId": 7,
+      "difficulty": "hard",
+      "question": "What's different about evaluating agents?",
+      "answer": "You judge the trajectory as well as the final answer: whether it reached the goal, which tools it called, how many steps and how much it cost, and whether it did anything unsafe. Tasks need reproducible environments, and you run multiple trials because outcomes vary.",
+      "keyPoints": [
+        "Final outcome and trajectory",
+        "Tool use correctness",
+        "Cost and steps",
+        "Reproducible environments, multiple trials"
+      ]
+    },
+    {
       "id": "m7-9-sc1",
       "type": "scenario",
       "moduleId": "M7.9",
@@ -9758,6 +10928,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Threat-model an LLM app before adding defenses."
+    },
+    {
+      "id": "m8-1-iq1",
+      "type": "interview",
+      "moduleId": "M8.1",
+      "levelId": 8,
+      "difficulty": "medium",
+      "question": "How would you threat model an LLM application?",
+      "answer": "Map the data flows: user inputs, retrieved documents, tool outputs and model outputs, and what each can influence. Identify assets such as data, credentials and actions, and trust boundaries. Then consider threats like prompt injection, data leakage, excessive agency and abuse, and assign mitigations to each.",
+      "keyPoints": [
+        "Map data flows and trust boundaries",
+        "Identify assets",
+        "Enumerate LLM-specific threats",
+        "Mitigation per threat"
+      ]
     }
   ],
   "M8.2": [
@@ -9858,6 +11043,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Build apps that stay safe even when malicious instructions reach the model."
+    },
+    {
+      "id": "m8-2-iq1",
+      "type": "interview",
+      "moduleId": "M8.2",
+      "levelId": 8,
+      "difficulty": "hard",
+      "question": "How can indirect prompt injection lead to data exfiltration?",
+      "answer": "An attacker plants instructions in content the model will read, like a web page or email. If the model has access to private data and can make outbound requests, for example by rendering an image URL or calling a tool, it can be tricked into sending that data out. Defences include restricting outbound channels, separating privileges and requiring confirmation.",
+      "keyPoints": [
+        "Instructions in third-party content",
+        "Private data plus outbound channel",
+        "Markdown images and tool calls as channels",
+        "Cut channels, limit privileges"
+      ]
     },
     {
       "id": "m8-2-sc1",
@@ -9972,6 +11172,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Reduce unsafe behavior without relying on one defensive prompt."
+    },
+    {
+      "id": "m8-3-iq1",
+      "type": "interview",
+      "moduleId": "M8.3",
+      "levelId": 8,
+      "difficulty": "medium",
+      "question": "What do guardrails do, and why aren't they enough on their own?",
+      "answer": "Guardrails check inputs and outputs for policy violations, sensitive data, or off-topic requests, using classifiers, rules or a model. They reduce risk but can be bypassed and produce false positives. They should be layered with least privilege, monitoring and safe system design.",
+      "keyPoints": [
+        "Input and output checks",
+        "Classifiers and rules",
+        "Bypassable, false positives",
+        "Defence in depth"
+      ]
     }
   ],
   "M8.4": [
@@ -10073,6 +11288,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Give agents autonomy without unrestricted control over real systems."
+    },
+    {
+      "id": "m8-4-iq1",
+      "type": "interview",
+      "moduleId": "M8.4",
+      "levelId": 8,
+      "difficulty": "hard",
+      "question": "How do you secure an agent that can take actions?",
+      "answer": "Give each tool the minimum permissions it needs, scope credentials per user, validate tool arguments, and require human confirmation for destructive or high-impact actions. Log every action and run untrusted code in sandboxes.",
+      "keyPoints": [
+        "Least privilege per tool",
+        "Per-user scoped credentials",
+        "Confirmation for risky actions",
+        "Audit logs and sandboxes"
+      ]
     }
   ],
   "M8.5": [
@@ -10173,6 +11403,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Secure the knowledge layer beneath a RAG app."
+    },
+    {
+      "id": "m8-5-iq1",
+      "type": "interview",
+      "moduleId": "M8.5",
+      "levelId": 8,
+      "difficulty": "medium",
+      "question": "How can RAG leak data a user shouldn't see?",
+      "answer": "If the index mixes documents with different permissions, retrieval can surface restricted content. Enforce access control at retrieval time using document metadata and the user's identity, not by asking the model to withhold it. Also guard against poisoned documents injecting instructions.",
+      "keyPoints": [
+        "Mixed-permission indexes",
+        "Filter at retrieval time",
+        "Never rely on the model to withhold",
+        "Poisoned documents"
+      ]
     },
     {
       "id": "m8-5-sc1",
@@ -10326,6 +11571,21 @@
         "Runs before anything is logged or traced",
         "Doesn't mangle ordinary numbers"
       ]
+    },
+    {
+      "id": "m8-6-iq1",
+      "type": "interview",
+      "moduleId": "M8.6",
+      "levelId": 8,
+      "difficulty": "medium",
+      "question": "How do you handle personal data in prompts and logs?",
+      "answer": "Minimise what you send, redact or pseudonymise PII before it reaches the model or logs, and check provider data retention and training terms. Keep secrets out of prompts entirely. Restrict who can read logs and set retention periods.",
+      "keyPoints": [
+        "Data minimisation",
+        "Redact before model and logs",
+        "Provider retention terms",
+        "Access and retention for logs"
+      ]
     }
   ],
   "M8.7": [
@@ -10426,6 +11686,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Test defenses adversarially instead of assuming they work."
+    },
+    {
+      "id": "m8-7-iq1",
+      "type": "interview",
+      "moduleId": "M8.7",
+      "levelId": 8,
+      "difficulty": "medium",
+      "question": "How would you red-team an LLM application?",
+      "answer": "Define what harm means for this product, then systematically attack it with jailbreaks, injections, data extraction attempts and abuse cases, both manually and with automated generators. Record successful attacks as test cases, fix them, and re-run on every release.",
+      "keyPoints": [
+        "Define harms first",
+        "Manual and automated attacks",
+        "Turn findings into tests",
+        "Repeat each release"
+      ]
     }
   ],
   "M8.8": [
@@ -10525,6 +11800,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Recognize when an AI app creates governance or compliance obligations."
+    },
+    {
+      "id": "m8-8-iq1",
+      "type": "interview",
+      "moduleId": "M8.8",
+      "levelId": 8,
+      "difficulty": "easy",
+      "question": "What does responsible AI mean in day-to-day engineering?",
+      "answer": "Being clear with users that they're dealing with AI, testing for bias and harmful outputs, documenting intended use and limitations, keeping humans in the loop for consequential decisions, and complying with relevant regulation. It shows up as concrete checks and docs, not just principles.",
+      "keyPoints": [
+        "Transparency to users",
+        "Bias and harm testing",
+        "Documented limits",
+        "Human oversight for consequential decisions"
+      ]
     }
   ],
   "M8.9": [
@@ -10727,6 +12017,21 @@
       "doneWhen": "Turn a product requirement into a defensible architecture."
     },
     {
+      "id": "m9-1-iq1",
+      "type": "interview",
+      "moduleId": "M9.1",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "How do you structure an answer to an AI system design question?",
+      "answer": "Clarify requirements and constraints first: users, scale, latency, quality, privacy and budget. Propose a simple baseline, then the architecture with data flow, model choice and context strategy. Cover evaluation, monitoring, failure handling and cost, and discuss trade-offs explicitly.",
+      "keyPoints": [
+        "Clarify requirements",
+        "Baseline first",
+        "Architecture and data flow",
+        "Evals, ops and trade-offs"
+      ]
+    },
+    {
       "id": "m9-1-sc1",
       "type": "scenario",
       "moduleId": "M9.1",
@@ -10854,6 +12159,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Design the knowledge layer that feeds the model the right information."
+    },
+    {
+      "id": "m9-2-iq1",
+      "type": "interview",
+      "moduleId": "M9.2",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "How do you decide between RAG, a database tool, and fine-tuning for knowledge?",
+      "answer": "Use RAG for unstructured text that changes and needs citations. Use a database or API tool for structured, exact data like orders or prices. Use fine-tuning for style, format or narrow skills, not for frequently changing facts. Many systems combine them.",
+      "keyPoints": [
+        "RAG for unstructured text",
+        "Tools for structured exact data",
+        "Fine-tuning for behaviour",
+        "Combine as needed"
+      ]
     },
     {
       "id": "m9-2-sc1",
@@ -10986,6 +12306,21 @@
       "doneWhen": "Avoid apps built around one hard-coded model."
     },
     {
+      "id": "m9-3-iq1",
+      "type": "interview",
+      "moduleId": "M9.3",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "Why put a model router or gateway in front of LLM providers?",
+      "answer": "It centralises authentication, rate limits, logging, cost tracking and fallbacks, and lets you route each request to the cheapest model that can handle it. It also makes switching providers a configuration change instead of a code change.",
+      "keyPoints": [
+        "Central auth, limits and logging",
+        "Fallbacks",
+        "Route by difficulty and cost",
+        "Provider portability"
+      ]
+    },
+    {
       "id": "m9-3-sc1",
       "type": "scenario",
       "moduleId": "M9.3",
@@ -11115,6 +12450,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Find where an AI app is slow and apply the right fix."
+    },
+    {
+      "id": "m9-4-iq1",
+      "type": "interview",
+      "moduleId": "M9.4",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "Users complain responses are slow. What levers do you have?",
+      "answer": "Stream output to cut perceived latency, shorten prompts and outputs, use a smaller or faster model for simple requests, cache repeated work, run independent calls in parallel, and use prompt caching for long stable prefixes. Measure time to first token and total time separately.",
+      "keyPoints": [
+        "Streaming",
+        "Smaller prompts and models",
+        "Caching",
+        "Parallelism; measure TTFT separately"
+      ]
     },
     {
       "id": "m9-4-sc1",
@@ -11273,6 +12623,21 @@
       "checklist": [
         "Threshold is tunable",
         "User-specific answers are scoped to that user"
+      ]
+    },
+    {
+      "id": "m9-5-iq1",
+      "type": "interview",
+      "moduleId": "M9.5",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "What can you cache in an LLM system and what are the risks?",
+      "answer": "You can cache exact responses, semantic matches of similar queries, embeddings, retrieval results and prompt prefixes. Risks include serving stale answers, returning a wrong answer to a merely similar query, and leaking one user's data to another. Use TTLs, sensible similarity thresholds and per-tenant keys.",
+      "keyPoints": [
+        "Exact, semantic, embedding and prefix caches",
+        "Staleness",
+        "False semantic matches",
+        "Per-tenant isolation"
       ]
     },
     {
@@ -11441,6 +12806,21 @@
       ]
     },
     {
+      "id": "m9-6-iq1",
+      "type": "interview",
+      "moduleId": "M9.6",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "How should an AI feature degrade when the model provider is down?",
+      "answer": "Detect failures quickly with timeouts and a circuit breaker, then fall back to a secondary model, a cached or simpler response, or a clear message while the rest of the product keeps working. Decide these behaviours in advance and test them.",
+      "keyPoints": [
+        "Timeouts and circuit breaker",
+        "Fallback model or cached answer",
+        "Rest of product keeps working",
+        "Test the degraded path"
+      ]
+    },
+    {
       "id": "m9-6-sc1",
       "type": "scenario",
       "moduleId": "M9.6",
@@ -11569,6 +12949,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Combine AI components into a coherent production system."
+    },
+    {
+      "id": "m9-7-iq1",
+      "type": "interview",
+      "moduleId": "M9.7",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "How do you design a reliable pipeline that processes documents through several LLM steps?",
+      "answer": "Break it into idempotent steps with persisted intermediate results, run them in a queue or workflow engine with retries, and make failures visible with dead-letter handling. Version prompts per step and track cost and quality per stage.",
+      "keyPoints": [
+        "Idempotent steps",
+        "Persist intermediate results",
+        "Queue with retries and dead letters",
+        "Per-stage metrics"
+      ]
     },
     {
       "id": "m9-7-sc1",
@@ -11702,6 +13097,21 @@
       "doneWhen": "Design AI products that improve from real usage."
     },
     {
+      "id": "m9-8-iq1",
+      "type": "interview",
+      "moduleId": "M9.8",
+      "levelId": 9,
+      "difficulty": "medium",
+      "question": "How do you keep improving an AI feature after launch?",
+      "answer": "Collect explicit feedback such as ratings and implicit signals such as edits or retries, trace every request, and regularly review failures. Turn them into eval cases, fix with prompt, retrieval or model changes, and verify with the eval suite before releasing.",
+      "keyPoints": [
+        "Explicit and implicit feedback",
+        "Tracing",
+        "Failures become eval cases",
+        "Eval-gated releases"
+      ]
+    },
+    {
       "id": "m9-8-sc1",
       "type": "scenario",
       "moduleId": "M9.8",
@@ -11829,6 +13239,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Defend architectural decisions, not just draw boxes."
+    },
+    {
+      "id": "m9-9-iq1",
+      "type": "interview",
+      "moduleId": "M9.9",
+      "levelId": 9,
+      "difficulty": "hard",
+      "question": "Design a customer support assistant at a high level.",
+      "answer": "Clarify scope, channels, languages and when to hand off to humans. Use RAG over help articles and past tickets with access control, tools for account lookups, and guardrails for policy. Add escalation to humans, evals from real tickets, monitoring of resolution rate, cost and latency, and a fallback path.",
+      "keyPoints": [
+        "Scope and handoff",
+        "RAG plus account tools",
+        "Guardrails and escalation",
+        "Evals and monitoring"
+      ]
     },
     {
       "id": "m9-9-sc1",
@@ -12090,6 +13515,21 @@
         "Each marked detectable today: yes/no, and how",
         "Top two undetectable risks have a proposed detection method"
       ]
+    },
+    {
+      "id": "m10-1-iq1",
+      "type": "interview",
+      "moduleId": "M10.1",
+      "levelId": 10,
+      "difficulty": "easy",
+      "question": "What does LLMOps add on top of regular MLOps or DevOps?",
+      "answer": "Prompts and model versions become release artifacts, evaluation replaces simple accuracy metrics, cost per request becomes a key metric, and outputs need runtime guardrails. You also depend on external model providers whose behaviour can change underneath you.",
+      "keyPoints": [
+        "Prompts as versioned artifacts",
+        "Eval-driven releases",
+        "Cost as a core metric",
+        "Provider changes and guardrails"
+      ]
     }
   ],
   "M10.2": [
@@ -12185,6 +13625,21 @@
         "Both values are read from config with defaults",
         "Changing them requires zero code changes (show the diff is config only)",
         "The eval set runs against both configurations and scores are recorded"
+      ]
+    },
+    {
+      "id": "m10-2-iq1",
+      "type": "interview",
+      "moduleId": "M10.2",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "What do you check before taking an LLM prototype to production?",
+      "answer": "Configuration and secrets out of code, timeouts, retries and fallbacks, input and output validation, rate limiting, logging and tracing, an eval baseline, cost estimates at expected traffic, and a security review covering injection and data handling.",
+      "keyPoints": [
+        "Config and secrets",
+        "Resilience",
+        "Validation and rate limits",
+        "Observability, evals and cost"
       ]
     }
   ],
@@ -12282,6 +13737,21 @@
         "A comparison view or table of both runs",
         "The label is moved (or not) with a one-line justification"
       ]
+    },
+    {
+      "id": "m10-3-iq1",
+      "type": "interview",
+      "moduleId": "M10.3",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "How do you track prompt experiments?",
+      "answer": "Give every prompt a version, and log each experiment with the prompt, model, parameters, dataset version and resulting metrics. Use an experiment tracker so you can compare runs and reproduce the winner. Production logs should record which prompt version answered.",
+      "keyPoints": [
+        "Versioned prompts",
+        "Log model, params and dataset",
+        "Compare and reproduce",
+        "Prompt version in production logs"
+      ]
     }
   ],
   "M10.4": [
@@ -12377,6 +13847,21 @@
         "CI fails on the weakened prompt",
         "The report names the failed metric and its threshold",
         "Reverting the prompt makes CI pass again"
+      ]
+    },
+    {
+      "id": "m10-4-iq1",
+      "type": "interview",
+      "moduleId": "M10.4",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "What does it mean to use evaluation as a release gate?",
+      "answer": "A change to prompts, models or retrieval ships only if it passes the eval suite: no regression beyond agreed thresholds on key metrics and no new failures on critical cases. It runs automatically in CI, and the thresholds are agreed with stakeholders.",
+      "keyPoints": [
+        "Automated eval in CI",
+        "Thresholds on key metrics",
+        "Critical cases must pass",
+        "Agreed with stakeholders"
       ]
     }
   ],
@@ -12474,6 +13959,21 @@
         "Every block appears in the logs with its reason",
         "One rule is tuned and the counts are re-measured"
       ]
+    },
+    {
+      "id": "m10-5-iq1",
+      "type": "interview",
+      "moduleId": "M10.5",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "What runtime guardrails would you add to a public chatbot?",
+      "answer": "Input checks for abuse, injection patterns and off-topic requests, output checks for unsafe content, PII leaks and policy, rate limiting per user, and limits on length and cost. Log blocked events and review them to tune false positives.",
+      "keyPoints": [
+        "Input moderation",
+        "Output checks for safety and PII",
+        "Rate and cost limits",
+        "Review blocked events"
+      ]
     }
   ],
   "M10.6": [
@@ -12569,6 +14069,21 @@
         "Stack starts with one command and no manual steps",
         "A streamed response is visible end to end in the frontend",
         "No secret is present in any image layer (checked with docker history or similar)"
+      ]
+    },
+    {
+      "id": "m10-6-iq1",
+      "type": "interview",
+      "moduleId": "M10.6",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "How would you serve an LLM-backed API?",
+      "answer": "Package it as a container with a production ASGI server, health and readiness checks, and configuration from environment. Run multiple replicas behind a load balancer, autoscale on traffic, and set timeouts that accommodate long-running streamed responses.",
+      "keyPoints": [
+        "Containerised with ASGI server",
+        "Health checks",
+        "Replicas and autoscaling",
+        "Timeouts for streaming"
       ]
     }
   ],
@@ -12666,6 +14181,21 @@
         "The image is tagged with the commit SHA",
         "Pipeline secrets are never printed in logs"
       ]
+    },
+    {
+      "id": "m10-7-iq1",
+      "type": "interview",
+      "moduleId": "M10.7",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "What would your CI/CD pipeline run for an LLM app?",
+      "answer": "Lint, type check and unit tests on every push; the eval suite on prompt or model changes; build and scan the container image; deploy to staging with smoke tests; then promote to production, ideally gradually with automatic rollback on errors.",
+      "keyPoints": [
+        "Lint, types and tests",
+        "Eval suite",
+        "Image build and scan",
+        "Staged, gradual deploy"
+      ]
     }
   ],
   "M10.8": [
@@ -12761,6 +14291,21 @@
         "A load-test report with concurrency, latency percentiles and error rate",
         "Scale-out events are captured",
         "You conclude whether instances or provider rate limits were the bottleneck, with evidence"
+      ]
+    },
+    {
+      "id": "m10-8-iq1",
+      "type": "interview",
+      "moduleId": "M10.8",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "How would you deploy a containerised LLM service on AWS?",
+      "answer": "Push the image to ECR and run it on ECS Fargate or similar behind a load balancer, with secrets in Secrets Manager, logs and metrics in CloudWatch, IAM roles with least privilege, and autoscaling based on load. Use infrastructure as code so environments are reproducible.",
+      "keyPoints": [
+        "ECR plus ECS/Fargate or similar",
+        "Secrets Manager and IAM roles",
+        "CloudWatch logs and metrics",
+        "Infrastructure as code"
       ]
     },
     {
@@ -12872,6 +14417,21 @@
         "Token use is broken down by prompt section (system, retrieval, history, output)",
         "One concrete change to cut its cost is proposed"
       ]
+    },
+    {
+      "id": "m10-9-iq1",
+      "type": "interview",
+      "moduleId": "M10.9",
+      "levelId": 10,
+      "difficulty": "medium",
+      "question": "What dashboards would you build for an LLM service?",
+      "answer": "Request volume, error rate, latency percentiles including time to first token, tokens and cost per feature, cache hit rate, guardrail blocks, and quality signals such as user feedback and sampled eval scores. Alert on error, latency and cost spikes.",
+      "keyPoints": [
+        "Errors and latency percentiles",
+        "Tokens and cost",
+        "Guardrail and cache metrics",
+        "Quality signals and alerts"
+      ]
     }
   ],
   "M10.10": [
@@ -12967,6 +14527,21 @@
         "Time to detect, fall back and recover is measured",
         "Users see a graceful message, not a stack trace",
         "The runbook is updated with what you learned"
+      ]
+    },
+    {
+      "id": "m10-10-iq1",
+      "type": "interview",
+      "moduleId": "M10.10",
+      "levelId": 10,
+      "difficulty": "hard",
+      "question": "Answer quality dropped overnight with no deploy. How do you respond?",
+      "answer": "Confirm the drop with metrics and examples, then check what changed outside your code: the provider model version, the data or index, traffic mix, or a dependency. Mitigate first, for example by pinning a model version or rolling back the index, then find the root cause and add the case to evals.",
+      "keyPoints": [
+        "Confirm with data",
+        "Look for external changes",
+        "Mitigate before root cause",
+        "Add to evals and write it up"
       ]
     },
     {
@@ -13182,6 +14757,21 @@
       ]
     },
     {
+      "id": "m11-1-iq1",
+      "type": "interview",
+      "moduleId": "M11.1",
+      "levelId": 11,
+      "difficulty": "easy",
+      "question": "What are the main ways to consume a model, and the trade-offs?",
+      "answer": "Use a provider's API directly, use a cloud platform that hosts many models such as Bedrock, Vertex AI or Azure AI Foundry, or self-host open weights. They move along a scale from least effort and control to most effort and control, with different data residency, cost and compliance profiles.",
+      "keyPoints": [
+        "Direct API",
+        "Cloud platform",
+        "Self-hosting",
+        "Effort vs control"
+      ]
+    },
+    {
       "id": "m11-1-sc1",
       "type": "scenario",
       "moduleId": "M11.1",
@@ -13291,6 +14881,21 @@
         "Latency and price per 1k tokens recorded for both",
         "A recommendation for your use case"
       ]
+    },
+    {
+      "id": "m11-2-iq1",
+      "type": "interview",
+      "moduleId": "M11.2",
+      "levelId": 11,
+      "difficulty": "medium",
+      "question": "Why might an enterprise choose Bedrock, Vertex AI or Azure AI Foundry over a model vendor's API?",
+      "answer": "They fit existing cloud accounts, identity, networking, billing and compliance, provide private connectivity and regional hosting, and offer several model families in one place. The trade-off is that new models or features may arrive later than on the vendor's own API.",
+      "keyPoints": [
+        "Existing cloud identity and billing",
+        "Private networking and compliance",
+        "Multiple model families",
+        "Feature lag possible"
+      ]
     }
   ],
   "M11.3": [
@@ -13386,6 +14991,21 @@
         "The calling instance has no internet route",
         "The call succeeds through the private endpoint",
         "Audit logs show the call with the role identity"
+      ]
+    },
+    {
+      "id": "m11-3-iq1",
+      "type": "interview",
+      "moduleId": "M11.3",
+      "levelId": 11,
+      "difficulty": "medium",
+      "question": "How do you keep tenants isolated in a multi-tenant LLM product?",
+      "answer": "Separate data by tenant in storage and indexes or enforce tenant filters on every query, scope credentials and caches per tenant, include tenant id in logs and metrics, and test that one tenant can never retrieve another's data.",
+      "keyPoints": [
+        "Tenant-scoped data and indexes",
+        "Scoped credentials and caches",
+        "Tenant-aware logging",
+        "Isolation tests"
       ]
     }
   ],
@@ -13487,6 +15107,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "State exactly where data goes, where it is processed, how long it is kept and under whose terms."
+    },
+    {
+      "id": "m11-4-iq1",
+      "type": "interview",
+      "moduleId": "M11.4",
+      "levelId": 11,
+      "difficulty": "medium",
+      "question": "A customer requires data to stay in the EU. What do you check?",
+      "answer": "That the model endpoint, storage, vector database, logs and backups all run in EU regions, and that the provider doesn't route or retain data elsewhere, including for abuse monitoring. Document data flows and get contractual commitments.",
+      "keyPoints": [
+        "Every component in-region",
+        "Provider routing and retention",
+        "Logs and backups count",
+        "Document and contract"
+      ]
     }
   ],
   "M11.5": [
@@ -13582,6 +15217,21 @@
         "Token and request volumes stated",
         "All three totals computed with formulas shown",
         "The break-even volume between options is identified"
+      ]
+    },
+    {
+      "id": "m11-5-iq1",
+      "type": "interview",
+      "moduleId": "M11.5",
+      "levelId": 11,
+      "difficulty": "medium",
+      "question": "How do you plan capacity and cost for a managed model?",
+      "answer": "Estimate requests and tokens at peak and average, compare against quotas and rate limits, and request increases early. Decide between on-demand and provisioned throughput based on utilisation. Monitor cost per feature and set budgets and alerts.",
+      "keyPoints": [
+        "Estimate token volume",
+        "Quotas and rate limits",
+        "On-demand vs provisioned",
+        "Budgets and alerts"
       ]
     }
   ],
@@ -13711,6 +15361,21 @@
         "Weights scale with bits per parameter",
         "KV cache grows with context length and batch size"
       ]
+    },
+    {
+      "id": "m11-6-iq1",
+      "type": "interview",
+      "moduleId": "M11.6",
+      "levelId": 11,
+      "difficulty": "hard",
+      "question": "Roughly how much GPU memory do you need to serve a 7B model?",
+      "answer": "In 16-bit precision, weights take about 2 bytes per parameter, so around 14 GB, plus memory for the KV cache that grows with context length and batch size, plus overhead. Quantising to 8 or 4 bits cuts weight memory to roughly half or a quarter.",
+      "keyPoints": [
+        "About 2 bytes per parameter at fp16",
+        "KV cache grows with context and batch",
+        "Runtime overhead",
+        "Quantisation reduces memory"
+      ]
     }
   ],
   "M11.7": [
@@ -13806,6 +15471,21 @@
         "Requests are served by the fallback",
         "Fallback latency is within your stated budget",
         "Usage is attributed per provider in the router's logs"
+      ]
+    },
+    {
+      "id": "m11-7-iq1",
+      "type": "interview",
+      "moduleId": "M11.7",
+      "levelId": 11,
+      "difficulty": "medium",
+      "question": "What should an LLM gateway handle?",
+      "answer": "A single API across providers, authentication and key management, rate limits and quotas per team, routing and fallbacks, caching, logging, cost attribution and guardrails. It gives you one place to enforce policy.",
+      "keyPoints": [
+        "Unified API",
+        "Keys, quotas and routing",
+        "Caching and fallbacks",
+        "Logging and cost attribution"
       ]
     },
     {
@@ -13918,6 +15598,21 @@
         "Cost compared per month at your volume",
         "The control you gave up is listed explicitly"
       ]
+    },
+    {
+      "id": "m11-8-iq1",
+      "type": "interview",
+      "moduleId": "M11.8",
+      "levelId": 11,
+      "difficulty": "easy",
+      "question": "How do you decide whether to build or buy a component such as a vector store or guardrail service?",
+      "answer": "Buy when it's not your differentiator, a managed option meets requirements, and the cost is reasonable. Build when you need control, have unusual requirements, or the managed option creates unacceptable lock-in or cost at your scale. Revisit as you grow.",
+      "keyPoints": [
+        "Is it a differentiator?",
+        "Requirements fit",
+        "Cost at scale",
+        "Lock-in"
+      ]
     }
   ],
   "M11.9": [
@@ -14020,6 +15715,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Adopt a platform without being trapped by it."
+    },
+    {
+      "id": "m11-9-iq1",
+      "type": "interview",
+      "moduleId": "M11.9",
+      "levelId": 11,
+      "difficulty": "medium",
+      "question": "How do you avoid lock-in to one model provider?",
+      "answer": "Put model calls behind your own interface or a gateway, keep prompts and evals provider-agnostic where possible, avoid relying on niche features without fallbacks, and periodically run your eval suite against alternative models so switching is a known cost.",
+      "keyPoints": [
+        "Abstraction layer",
+        "Provider-agnostic prompts and evals",
+        "Careful with niche features",
+        "Regularly test alternatives"
+      ]
     }
   ],
   "M11.10": [
@@ -14217,6 +15927,21 @@
         "Each answer scored correct/incorrect",
         "You identify what information OCR lost"
       ]
+    },
+    {
+      "id": "m12-1-iq1",
+      "type": "interview",
+      "moduleId": "M12.1",
+      "levelId": 12,
+      "difficulty": "easy",
+      "question": "What makes a model multimodal?",
+      "answer": "It accepts or produces more than one kind of data, such as text, images, audio or video. Inputs from each modality are turned into embeddings in a shared space the model can reason over, so it can, for example, answer a question about an image.",
+      "keyPoints": [
+        "Multiple input or output modalities",
+        "Encoders map to shared representations",
+        "Cross-modal reasoning",
+        "Costs differ by modality"
+      ]
     }
   ],
   "M12.2": [
@@ -14312,6 +16037,21 @@
         "Input tokens and cost per variant",
         "Answer quality per variant",
         "A rule of thumb for when to crop"
+      ]
+    },
+    {
+      "id": "m12-2-iq1",
+      "type": "interview",
+      "moduleId": "M12.2",
+      "levelId": 12,
+      "difficulty": "medium",
+      "question": "How are images turned into tokens, and why does resolution matter for cost?",
+      "answer": "A vision encoder splits the image into patches and embeds each one; the resulting vectors act like tokens. Higher resolution means more patches, so more tokens, higher cost and more detail. Resizing or cropping to the region that matters controls cost.",
+      "keyPoints": [
+        "Patches become embeddings",
+        "More pixels means more tokens",
+        "Cost and detail trade-off",
+        "Crop or resize"
       ]
     }
   ],
@@ -14409,6 +16149,21 @@
         "Failures grouped by type (counting, small text, layout)",
         "One safeguard proposed for the worst failure type"
       ]
+    },
+    {
+      "id": "m12-3-iq1",
+      "type": "interview",
+      "moduleId": "M12.3",
+      "levelId": 12,
+      "difficulty": "medium",
+      "question": "Where do vision models still fail?",
+      "answer": "Precise counting, small text, exact spatial relationships, reading dense charts, and fine-grained measurements. They can also hallucinate details that aren't there. For critical tasks you combine them with OCR, specialised detectors or human review.",
+      "keyPoints": [
+        "Counting and small text",
+        "Spatial precision",
+        "Hallucinated details",
+        "Pair with specialised tools"
+      ]
     }
   ],
   "M12.4": [
@@ -14504,6 +16259,21 @@
         "Field-level accuracy for all four combinations",
         "Cost and latency for each",
         "Recommendation per document type"
+      ]
+    },
+    {
+      "id": "m12-4-iq1",
+      "type": "interview",
+      "moduleId": "M12.4",
+      "levelId": 12,
+      "difficulty": "hard",
+      "question": "How would you build RAG over scanned PDFs full of tables and charts?",
+      "answer": "Either extract text and tables with layout-aware OCR and index them as text, or embed page images directly with a multimodal embedding model and send retrieved page images to a vision model. Often you combine both, keeping page-level metadata for citations.",
+      "keyPoints": [
+        "Layout-aware OCR",
+        "Page-image embeddings",
+        "Vision model on retrieved pages",
+        "Keep page metadata"
       ]
     },
     {
@@ -14616,6 +16386,21 @@
         "The inpainting mask and result shown",
         "Cost per accepted image estimated"
       ]
+    },
+    {
+      "id": "m12-5-iq1",
+      "type": "interview",
+      "moduleId": "M12.5",
+      "levelId": 12,
+      "difficulty": "easy",
+      "question": "What should you consider before adding image or video generation to a product?",
+      "answer": "Cost and latency per generation, content safety filtering, rights and licensing of outputs, labelling AI-generated media, and how users will iterate on results. Quality varies widely by prompt, so you design for retries and editing.",
+      "keyPoints": [
+        "Cost and latency",
+        "Safety filtering",
+        "Rights and disclosure",
+        "Iteration UX"
+      ]
     }
   ],
   "M12.6": [
@@ -14711,6 +16496,21 @@
         "Both answers recorded",
         "The transcript is shown",
         "You explain which cues the transcript discarded"
+      ]
+    },
+    {
+      "id": "m12-6-iq1",
+      "type": "interview",
+      "moduleId": "M12.6",
+      "levelId": 12,
+      "difficulty": "medium",
+      "question": "How is audio represented for a model?",
+      "answer": "Audio is usually converted to a spectrogram or passed through an audio encoder that produces frame-level embeddings, which become tokens. Longer audio means more tokens. Some models also produce discrete audio tokens to generate speech.",
+      "keyPoints": [
+        "Spectrograms or encoders",
+        "Frames become tokens",
+        "Length drives cost",
+        "Discrete tokens for generation"
       ]
     }
   ],
@@ -14844,6 +16644,21 @@
         "Word-level, not character-level",
         "Insertions can push WER above 100%"
       ]
+    },
+    {
+      "id": "m12-7-iq1",
+      "type": "interview",
+      "moduleId": "M12.7",
+      "levelId": 12,
+      "difficulty": "medium",
+      "question": "How do you evaluate a speech-to-text system?",
+      "answer": "Word error rate on a representative test set that matches your accents, audio quality, and vocabulary, and also check domain terms, numbers and names, latency, and speaker diarisation if you need it. WER alone can hide failures on critical words.",
+      "keyPoints": [
+        "WER on representative audio",
+        "Domain terms and numbers",
+        "Latency",
+        "Critical-word errors"
+      ]
     }
   ],
   "M12.8": [
@@ -14939,6 +16754,21 @@
         "Latency broken down per stage",
         "At least ten turns measured",
         "One optimization applied and re-measured"
+      ]
+    },
+    {
+      "id": "m12-8-iq1",
+      "type": "interview",
+      "moduleId": "M12.8",
+      "levelId": 12,
+      "difficulty": "hard",
+      "question": "What makes a realtime voice agent hard?",
+      "answer": "Latency budget across speech recognition, the model and speech synthesis must stay under about a second to feel natural. You need turn detection, interruption handling (barge-in), streaming at every stage, and recovery from recognition errors.",
+      "keyPoints": [
+        "End-to-end latency",
+        "Turn detection",
+        "Interruptions",
+        "Streaming everything"
       ]
     },
     {
@@ -15051,6 +16881,21 @@
         "Precision@5 for both approaches",
         "Examples where each approach wins"
       ]
+    },
+    {
+      "id": "m12-9-iq1",
+      "type": "interview",
+      "moduleId": "M12.9",
+      "levelId": 12,
+      "difficulty": "medium",
+      "question": "How does cross-modal search work, for example text to image?",
+      "answer": "A model like CLIP embeds images and text into the same vector space, trained so matching pairs are close. You embed your images once, embed the text query at search time, and do nearest-neighbour search.",
+      "keyPoints": [
+        "Shared embedding space",
+        "Contrastive training on pairs",
+        "Index one modality, query with another",
+        "Nearest-neighbour search"
+      ]
     }
   ],
   "M12.10": [
@@ -15154,6 +16999,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "Choose a multimodal model by modality support, unit cost, latency and privacy."
+    },
+    {
+      "id": "m12-10-iq1",
+      "type": "interview",
+      "moduleId": "M12.10",
+      "levelId": 12,
+      "difficulty": "easy",
+      "question": "How do you choose a multimodal model?",
+      "answer": "Test candidates on your actual inputs: your documents, images or audio, measuring accuracy on the specific task, along with latency, cost per input, supported formats and size limits, and data handling terms.",
+      "keyPoints": [
+        "Test on your own inputs",
+        "Task-specific accuracy",
+        "Latency and cost",
+        "Formats, limits and data terms"
+      ]
     }
   ],
   "M12.11": [
@@ -15250,6 +17110,21 @@
         "Number of sources and unique claims compared",
         "You judge whether the extra time changed the conclusion"
       ]
+    },
+    {
+      "id": "m12-11-iq1",
+      "type": "interview",
+      "moduleId": "M12.11",
+      "levelId": 12,
+      "difficulty": "hard",
+      "question": "How would you design a deep research agent that runs for many minutes?",
+      "answer": "Plan the research into sub-questions, run searches and reading in parallel where possible, store findings with sources outside the context, and periodically compact. Add budgets on time and cost, checkpoints for resumption, and a final synthesis step with citations that can be checked.",
+      "keyPoints": [
+        "Plan into sub-questions",
+        "Parallel search and reading",
+        "External notes and compaction",
+        "Budgets, checkpoints and cited synthesis"
+      ]
     }
   ],
   "M12.12": [
@@ -15345,6 +17220,21 @@
         "WER, latency and cost per hour of audio for both",
         "Hardware used is documented",
         "A recommendation for a privacy-sensitive use case"
+      ]
+    },
+    {
+      "id": "m12-12-iq1",
+      "type": "interview",
+      "moduleId": "M12.12",
+      "levelId": 12,
+      "difficulty": "medium",
+      "question": "When would you run a model on-device?",
+      "answer": "When you need offline use, very low latency, privacy for sensitive data, or lower serving cost. You trade off model size and quality, battery and memory use, and the complexity of shipping model updates.",
+      "keyPoints": [
+        "Offline and low latency",
+        "Privacy",
+        "Smaller, quantised models",
+        "Update and resource constraints"
       ]
     }
   ],
@@ -15542,6 +17432,21 @@
       ]
     },
     {
+      "id": "m13-1-iq1",
+      "type": "interview",
+      "moduleId": "M13.1",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "How do you decide whether to fine-tune?",
+      "answer": "First exhaust prompting, few-shot examples and RAG. Fine-tune when you need consistent format or style, a narrow skill, lower latency or cost with a smaller model, and you have enough quality data and an eval set to prove it beats the baseline. Don't fine-tune to add fast-changing facts.",
+      "keyPoints": [
+        "Try prompting and RAG first",
+        "Good for format, style, narrow skills",
+        "Need data and evals",
+        "Not for fresh facts"
+      ]
+    },
+    {
       "id": "m13-1-sc1",
       "type": "scenario",
       "moduleId": "M13.1",
@@ -15678,6 +17583,21 @@
         "Near-duplicates share a key, so they share a split",
         "Deterministic, so evals are reproducible"
       ]
+    },
+    {
+      "id": "m13-2-iq1",
+      "type": "interview",
+      "moduleId": "M13.2",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "What makes a good fine-tuning dataset?",
+      "answer": "Examples that represent the real task and distribution, consistent and correct labels, coverage of edge cases, no duplicates, and no leakage between train and test sets. A few hundred to a few thousand clean examples beat a large noisy set.",
+      "keyPoints": [
+        "Representative examples",
+        "Consistent, correct labels",
+        "Edge cases",
+        "Deduplicated, leak-free splits"
+      ]
     }
   ],
   "M13.3": [
@@ -15773,6 +17693,21 @@
         "Training and validation loss curves for all three",
         "Ten outputs read per checkpoint",
         "The chosen checkpoint is justified with both metrics and examples"
+      ]
+    },
+    {
+      "id": "m13-3-iq1",
+      "type": "interview",
+      "moduleId": "M13.3",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "What does supervised fine-tuning teach a model, and what are the risks?",
+      "answer": "SFT teaches the model to produce your target outputs for given inputs, shaping format, style and task behaviour. Risks include overfitting to the training set, forgetting general abilities, and learning errors present in the data. You monitor validation loss and run task and general evals.",
+      "keyPoints": [
+        "Learns input-output mapping",
+        "Shapes format and behaviour",
+        "Overfitting and forgetting",
+        "Validate on held-out and general evals"
       ]
     }
   ],
@@ -15903,6 +17838,21 @@
         "Adapter size grows linearly with rank",
         "Much smaller than the full matrix (d_out × d_in)"
       ]
+    },
+    {
+      "id": "m13-4-iq1",
+      "type": "interview",
+      "moduleId": "M13.4",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "Explain LoRA and why it's popular.",
+      "answer": "LoRA freezes the base model and trains small low-rank matrices added to selected weight matrices. It trains a tiny fraction of the parameters, so it needs much less memory and produces small adapter files that can be swapped per task. QLoRA does the same over a quantised base model to cut memory further.",
+      "keyPoints": [
+        "Freeze base, train low-rank updates",
+        "Few trainable parameters",
+        "Small swappable adapters",
+        "QLoRA adds quantisation"
+      ]
     }
   ],
   "M13.5": [
@@ -15998,6 +17948,21 @@
         "Pairs checked for length bias",
         "Blind win rate of after vs before reported",
         "Five examples where DPO helped or hurt"
+      ]
+    },
+    {
+      "id": "m13-5-iq1",
+      "type": "interview",
+      "moduleId": "M13.5",
+      "levelId": 13,
+      "difficulty": "hard",
+      "question": "How does DPO differ from RLHF?",
+      "answer": "Both learn from preference pairs of a better and a worse response. RLHF trains a separate reward model and then optimises the policy with reinforcement learning, which is complex and unstable. DPO optimises the policy directly on the preference pairs with a simple classification-style loss, with no reward model or RL loop.",
+      "keyPoints": [
+        "Both use preference pairs",
+        "RLHF: reward model plus RL",
+        "DPO: direct loss on pairs",
+        "DPO is simpler and more stable"
       ]
     }
   ],
@@ -16095,6 +18060,21 @@
         "The grader is fixed to reject them",
         "Before/after grader accuracy on a labeled set"
       ]
+    },
+    {
+      "id": "m13-6-iq1",
+      "type": "interview",
+      "moduleId": "M13.6",
+      "levelId": 13,
+      "difficulty": "hard",
+      "question": "When is reinforcement fine-tuning a good fit?",
+      "answer": "When you can automatically grade outputs, for example code that passes tests or answers that can be checked, and you want the model to improve at reasoning toward correct results rather than copying examples. It needs a reliable grader, because the model will exploit any loophole in it.",
+      "keyPoints": [
+        "Automatically gradable tasks",
+        "Improves reasoning toward correct outcomes",
+        "Grader quality is critical",
+        "Reward hacking risk"
+      ]
     }
   ],
   "M13.7": [
@@ -16191,6 +18171,21 @@
         "Quality, latency and cost per 1k requests for teacher and student",
         "The provider's terms of use were checked and noted"
       ]
+    },
+    {
+      "id": "m13-7-iq1",
+      "type": "interview",
+      "moduleId": "M13.7",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "What is distillation and why use it?",
+      "answer": "You use a large, strong teacher model to generate outputs, then train a smaller student model on them. The student gets close to the teacher on that task at much lower cost and latency. Check the teacher's licence terms and evaluate the student against the teacher.",
+      "keyPoints": [
+        "Teacher generates training data",
+        "Smaller student learns the task",
+        "Lower cost and latency",
+        "Licence terms and evals"
+      ]
     }
   ],
   "M13.8": [
@@ -16286,6 +18281,21 @@
         "On-task scores for all three",
         "Off-task results for all three",
         "A written adopt/reject decision"
+      ]
+    },
+    {
+      "id": "m13-8-iq1",
+      "type": "interview",
+      "moduleId": "M13.8",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "How do you prove a fine-tune is better?",
+      "answer": "Compare it with the prompted base model and with the previous version on a held-out, leak-free eval set for the target task, plus a general capability check to catch regressions. Include cost and latency in the comparison, and look at example outputs, not just averages.",
+      "keyPoints": [
+        "Held-out, leak-free eval",
+        "Compare against prompted baseline",
+        "General regression checks",
+        "Cost, latency and examples"
       ]
     },
     {
@@ -16397,6 +18407,21 @@
         "Both adapters answer correctly by name",
         "The swap happens without restarting the server",
         "Latency compared with the base model alone"
+      ]
+    },
+    {
+      "id": "m13-9-iq1",
+      "type": "interview",
+      "moduleId": "M13.9",
+      "levelId": 13,
+      "difficulty": "medium",
+      "question": "How would you serve several LoRA adapters efficiently?",
+      "answer": "Load one base model and switch or batch adapters per request, using a server that supports multi-LoRA serving. This avoids running a full model copy per adapter. Track which adapter version served each request and roll back by switching adapters.",
+      "keyPoints": [
+        "Shared base model",
+        "Multi-adapter serving",
+        "Per-request adapter selection",
+        "Versioning and rollback"
       ]
     }
   ],
@@ -16516,6 +18541,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "A public document Q&A app with a measured retrieval eval."
+    },
+    {
+      "id": "m14-1-iq1",
+      "type": "interview",
+      "moduleId": "M14.1",
+      "levelId": 14,
+      "difficulty": "medium",
+      "question": "Walk me through the hardest decision in your document Q&A project.",
+      "answer": "A strong answer names a specific decision, such as chunking strategy or hybrid retrieval, the alternatives considered, how you measured them on your eval set, the result with numbers, and what you would change next. It shows judgement rather than a feature list.",
+      "keyPoints": [
+        "Specific decision",
+        "Alternatives considered",
+        "Measured result",
+        "What you'd change"
+      ]
     }
   ],
   "M14.2": [
@@ -16532,6 +18572,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "A screening agent that returns structured, explainable matches."
+    },
+    {
+      "id": "m14-2-iq1",
+      "type": "interview",
+      "moduleId": "M14.2",
+      "levelId": 14,
+      "difficulty": "medium",
+      "question": "How did you make sure your screening agent was fair and accurate?",
+      "answer": "Explain how you built a labelled test set, measured agreement with human reviewers, checked for bias across groups and removed protected attributes from inputs, and kept a human in the loop for final decisions. Mention failure cases you found.",
+      "keyPoints": [
+        "Labelled test set",
+        "Agreement with humans",
+        "Bias checks",
+        "Human decides"
+      ]
     }
   ],
   "M14.3": [
@@ -16548,6 +18603,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "A multi-agent system that produces cited research reports."
+    },
+    {
+      "id": "m14-3-iq1",
+      "type": "interview",
+      "moduleId": "M14.3",
+      "levelId": 14,
+      "difficulty": "medium",
+      "question": "Why did your research system use multiple agents, and did it pay off?",
+      "answer": "Explain how the work split into roles or parallel subtasks, how agents shared state, and how you compared against a single-agent baseline on quality, cost and time. Being honest about where multi-agent didn't help is a strength.",
+      "keyPoints": [
+        "Reason for the split",
+        "Shared state and coordination",
+        "Baseline comparison",
+        "Honest trade-offs"
+      ]
     }
   ],
   "M14.4": [
@@ -16564,6 +18634,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "A working MCP server a model can use against a real service."
+    },
+    {
+      "id": "m14-4-iq1",
+      "type": "interview",
+      "moduleId": "M14.4",
+      "levelId": 14,
+      "difficulty": "medium",
+      "question": "What did you consider when designing the tools in your MCP server?",
+      "answer": "Which operations to expose, clear names and descriptions, input schemas, pagination and output size, error messages the model can act on, authentication and permissions, and how you tested it with a real client.",
+      "keyPoints": [
+        "Choice of operations",
+        "Schemas and descriptions",
+        "Output size and errors",
+        "Auth and testing"
+      ]
     }
   ],
   "M14.5": [
@@ -16580,6 +18665,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "An LLM API with a believable operations story."
+    },
+    {
+      "id": "m14-5-iq1",
+      "type": "interview",
+      "moduleId": "M14.5",
+      "levelId": 14,
+      "difficulty": "medium",
+      "question": "Show how you'd know your production API is healthy.",
+      "answer": "Walk through the dashboard: traffic, error rate, latency percentiles, cost per request and quality signals, then the alerts and what each triggers, and a recent incident or test you ran to prove alerts fire.",
+      "keyPoints": [
+        "Key metrics",
+        "Alerts and runbooks",
+        "Quality signals",
+        "Proof alerts work"
+      ]
     }
   ],
   "M14.6": [
@@ -16596,6 +18696,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "A shipped voice or vision project."
+    },
+    {
+      "id": "m14-6-iq1",
+      "type": "interview",
+      "moduleId": "M14.6",
+      "levelId": 14,
+      "difficulty": "medium",
+      "question": "What was the biggest latency challenge in your voice or multimodal build?",
+      "answer": "Name the stages and their measured latency, what you streamed or parallelised, what you traded off, such as a smaller model or lower resolution, and the final end-to-end number versus your target.",
+      "keyPoints": [
+        "Per-stage measurements",
+        "Streaming and parallelism",
+        "Trade-offs made",
+        "Result vs target"
+      ]
     }
   ],
   "M14.7": [
@@ -16612,6 +18727,21 @@
         "Write a NOTES.md with how to run it and one thing that failed or surprised you"
       ],
       "doneWhen": "A portfolio a recruiter can skim and an interviewer can dig into."
+    },
+    {
+      "id": "m14-7-iq1",
+      "type": "interview",
+      "moduleId": "M14.7",
+      "levelId": 14,
+      "difficulty": "easy",
+      "question": "How do you present your portfolio in two minutes?",
+      "answer": "Lead with one or two flagship projects tied to the role, each with the problem, your approach, a measured result and a link to code or a demo. Keep the rest as a short list. Practise it so it's concise.",
+      "keyPoints": [
+        "Lead with the most relevant work",
+        "Problem, approach, measured result",
+        "Links to code or demo",
+        "Concise and rehearsed"
+      ]
     },
     {
       "id": "l14-project",
@@ -16633,6 +18763,21 @@
     }
   ],
   "M15.1": [
+    {
+      "id": "m15-1-iq1",
+      "type": "interview",
+      "moduleId": "M15.1",
+      "levelId": 15,
+      "difficulty": "easy",
+      "question": "What's the difference between an AI engineer and an ML engineer in how you'd position yourself?",
+      "answer": "AI engineers build products on top of foundation models: prompting, RAG, agents, evaluation and production systems. ML engineers more often train and deploy models from data. Position yourself with projects that match the role's emphasis, and be clear about your depth on each side.",
+      "keyPoints": [
+        "AI engineer builds on foundation models",
+        "ML engineer trains models",
+        "Match projects to the role",
+        "Be honest about depth"
+      ]
+    },
     {
       "id": "m15-1-sc1",
       "type": "scenario",
@@ -16677,6 +18822,21 @@
     }
   ],
   "M15.2": [
+    {
+      "id": "m15-2-iq1",
+      "type": "interview",
+      "moduleId": "M15.2",
+      "levelId": 15,
+      "difficulty": "hard",
+      "question": "Your RAG app gives wrong answers for some users. How do you investigate?",
+      "answer": "Get failing examples and traces. Check whether the right documents exist and are indexed, whether retrieval returned them, and whether the model used them faithfully. Look at permissions, recent ingestion changes and query patterns for those users. Fix the failing stage and add the cases to evals.",
+      "keyPoints": [
+        "Collect traces",
+        "Data, retrieval or generation?",
+        "Permissions and ingestion changes",
+        "Add to evals"
+      ]
+    },
     {
       "id": "m15-2-sc1",
       "type": "scenario",
@@ -16725,6 +18885,21 @@
   ],
   "M15.3": [
     {
+      "id": "m15-3-iq1",
+      "type": "interview",
+      "moduleId": "M15.3",
+      "levelId": 15,
+      "difficulty": "hard",
+      "question": "How would you explain a production agent incident in an interview?",
+      "answer": "Use a clear structure: what happened and its impact, how it was detected, how you mitigated it, the root cause, and what you changed to prevent recurrence, such as limits, evals or permissions. Quantify where you can and own your part.",
+      "keyPoints": [
+        "Impact and detection",
+        "Mitigation",
+        "Root cause",
+        "Prevention and ownership"
+      ]
+    },
+    {
       "id": "m15-3-sc1",
       "type": "scenario",
       "moduleId": "M15.3",
@@ -16771,6 +18946,21 @@
   ],
   "M15.4": [
     {
+      "id": "m15-4-iq1",
+      "type": "interview",
+      "moduleId": "M15.4",
+      "levelId": 15,
+      "difficulty": "medium",
+      "question": "An interviewer asks: 'Would you fine-tune for this?' How do you answer?",
+      "answer": "Don't jump to yes. Ask about the task, data, quality bar, latency and cost constraints. Explain that you'd baseline prompting and RAG first, and fine-tune only if evals show a gap that fine-tuning targets, like format or a narrow skill, with enough data to support it.",
+      "keyPoints": [
+        "Ask clarifying questions",
+        "Baseline first",
+        "Fine-tune for specific gaps",
+        "Data and evals required"
+      ]
+    },
+    {
       "id": "m15-4-sc1",
       "type": "scenario",
       "moduleId": "M15.4",
@@ -16815,6 +19005,21 @@
     }
   ],
   "M15.5": [
+    {
+      "id": "m15-5-iq1",
+      "type": "interview",
+      "moduleId": "M15.5",
+      "levelId": 15,
+      "difficulty": "hard",
+      "question": "Costs doubled last week. How do you debug that?",
+      "answer": "Break cost down by feature, model, user and day to find where it grew. Check traffic, tokens per request, retries, agent step counts, cache hit rates, and any prompt or model changes. Fix the driver and add cost alerts so it's caught sooner.",
+      "keyPoints": [
+        "Break down by dimension",
+        "Tokens, retries and steps",
+        "Cache and config changes",
+        "Alerts"
+      ]
+    },
     {
       "id": "m15-5-sc1",
       "type": "scenario",
@@ -16861,6 +19066,21 @@
     }
   ],
   "M15.6": [
+    {
+      "id": "m15-6-iq1",
+      "type": "interview",
+      "moduleId": "M15.6",
+      "levelId": 15,
+      "difficulty": "hard",
+      "question": "How do you handle a system design interview where requirements are vague?",
+      "answer": "Ask focused questions about users, scale, latency, quality and constraints, then state assumptions out loud. Start with a simple design that works, then deepen the parts the interviewer cares about. Discuss trade-offs and how you'd evaluate and monitor it.",
+      "keyPoints": [
+        "Clarify and state assumptions",
+        "Simple design first",
+        "Go deep where asked",
+        "Trade-offs and evaluation"
+      ]
+    },
     {
       "id": "m15-6-sc1",
       "type": "scenario",
@@ -16909,6 +19129,21 @@
   ],
   "M15.7": [
     {
+      "id": "m15-7-iq1",
+      "type": "interview",
+      "moduleId": "M15.7",
+      "levelId": 15,
+      "difficulty": "easy",
+      "question": "How do you stay current without chasing every new release?",
+      "answer": "Follow a few reliable sources, read changelogs and papers that affect your work, and evaluate new models or tools against your own eval set before adopting them. Focus on fundamentals that change slowly, such as retrieval, evaluation and system design.",
+      "keyPoints": [
+        "Few reliable sources",
+        "Evaluate before adopting",
+        "Fundamentals over hype",
+        "Tie learning to your work"
+      ]
+    },
+    {
       "id": "m15-7-sc1",
       "type": "scenario",
       "moduleId": "M15.7",
@@ -16953,6 +19188,21 @@
   ],
   "M15.8": [
     {
+      "id": "m15-8-iq1",
+      "type": "interview",
+      "moduleId": "M15.8",
+      "levelId": 15,
+      "difficulty": "medium",
+      "question": "An interviewer challenges a design choice in your project. How do you respond?",
+      "answer": "Explain the constraints and options at the time, the evidence behind the choice, and acknowledge real weaknesses. If their suggestion is better in some respect, say so and explain what you would change. Defensiveness costs more than admitting a trade-off.",
+      "keyPoints": [
+        "Context and constraints",
+        "Evidence for the choice",
+        "Acknowledge weaknesses",
+        "Open to better ideas"
+      ]
+    },
+    {
       "id": "m15-8-sc1",
       "type": "scenario",
       "moduleId": "M15.8",
@@ -16996,6 +19246,21 @@
     }
   ],
   "M15.9": [
+    {
+      "id": "m15-9-iq1",
+      "type": "interview",
+      "moduleId": "M15.9",
+      "levelId": 15,
+      "difficulty": "easy",
+      "question": "How do you explain a technical trade-off to a non-technical stakeholder?",
+      "answer": "Start from what they care about, such as cost, speed, risk or user experience. Describe two or three options in those terms with a recommendation, and avoid jargon. Check understanding and confirm the decision in writing.",
+      "keyPoints": [
+        "Start from their goals",
+        "Options in business terms",
+        "Clear recommendation",
+        "Confirm the decision"
+      ]
+    },
     {
       "id": "m15-9-sc1",
       "type": "scenario",

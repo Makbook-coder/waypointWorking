@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import type { CodingItem, ExerciseItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
+import type { CodingItem, ExerciseItem, InterviewItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
 import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
+import { InterviewCard } from "./InterviewCard";
 import { MiniProjectCard } from "./MiniProjectCard";
 import { NoteEditor } from "./NoteEditor";
 import { ProjectChecklist } from "./ProjectChecklist";
@@ -165,6 +166,7 @@ function PracticePanel({ mod, practice, quizzes, color }: { mod: Module; practic
   const projects = practice.filter((p): p is ProjectItem => p.type === "project");
   const coding = practice.filter((p): p is CodingItem => p.type === "coding");
   const minis = practice.filter((p): p is MiniProjectItem => p.type === "mini");
+  const interview = practice.filter((p): p is InterviewItem => p.type === "interview");
   if (practice.length === 0) return <EmptyState>No practice items for {mod.id}.</EmptyState>;
   return (
     <div className="space-y-8">
@@ -196,6 +198,16 @@ function PracticePanel({ mod, practice, quizzes, color }: { mod: Module; practic
           <div className="grid gap-3 lg:grid-cols-2">
             {exercises.map((e) => (
               <ExerciseCard key={e.id} item={e} />
+            ))}
+          </div>
+        </section>
+      )}
+      {interview.length > 0 && (
+        <section aria-labelledby="iv-h" className="max-w-3xl">
+          <SectionTitle id="iv-h">Interview question</SectionTitle>
+          <div className="space-y-4">
+            {interview.map((q) => (
+              <InterviewCard key={q.id} item={q} />
             ))}
           </div>
         </section>
