@@ -1,0 +1,91 @@
+{
+  "id": 6,
+  "title": "Context Engineering",
+  "phase": "Agentic",
+  "summary": "Manage a model's limited context window deliberately and build an agent harness that applies those decisions across long-running work.",
+  "interviewWeight": 6,
+  "jobWeight": 8,
+  "sessionCount": 13,
+  "prerequisites": [5],
+  "outcome": "Control what enters, stays, gets compressed or moves outside the context window, and build a harness that keeps agents productive across long tasks.",
+  "project": {
+    "title": "Context-Managed Long-Horizon Agent",
+    "deliverables": [
+      "Run a tool-using agent through a long task where naive context accumulation degrades it",
+      "Define an explicit context budget: what to keep, retrieve, compress, offload or discard",
+      "Add history compaction, external state, selective memory retrieval and tool-output compression",
+      "Wrap the agent in a harness with a progress file, task list, pre-completion verification and step/token limits",
+      "Preserve goal, constraints, completed work and pending tasks across the run",
+      "Compare against a keep-everything version on coherence, tokens, latency and cost"
+    ]
+  },
+  "modules": [
+    {"id": "M6.1", "title": "The context window as a resource", "sessions": 1, "topics": [
+      {"t": "Context as a budget", "d": "Treat context as finite rather than 'more is better'."},
+      {"t": "Context rot & lost-in-the-middle", "d": "Degradation from rot, distraction, conflicts and mid-window loss."},
+      {"t": "Inspecting what actually enters", "d": "See what reaches the model; separate signal from noise."},
+      {"t": "Allocating the budget", "d": "Rough token shares for instructions, history, retrieval, memory and tools."}
+    ], "tryIt": null, "outcome": "Diagnose when degradation is really a context-management problem.", "mentalModel": null},
+    {"id": "M6.2", "title": "Context selection & assembly", "sessions": 2, "topics": [
+      {"t": "Assembling the window deliberately", "d": "Instructions, history, knowledge, memory, tools and state, combined with intent."},
+      {"t": "Always present, retrieved, or excluded", "d": "Fixed, fetched on demand, summarized or left out."},
+      {"t": "Prioritizing what matters", "d": "Rank by relevance, importance, recency and reliability."},
+      {"t": "Ordering so sources stay distinguishable", "d": "Keep instructions, evidence, memory and user data separable."},
+      {"t": "Cutting redundant & stale context", "d": "Remove duplicated, outdated or contradictory material."}
+    ], "tryIt": null, "outcome": "Build the smallest useful context for the model's current decision.", "mentalModel": null},
+    {"id": "M6.3", "title": "Compression & compaction", "sessions": 2, "topics": [
+      {"t": "Summarizing history without losing goals", "d": "Keep goals, constraints, decisions and open work."},
+      {"t": "Compacting large tool outputs", "d": "Shrink big results before they re-enter the model."},
+      {"t": "Rolling & hierarchical summaries", "d": "Incremental and layered summaries for long tasks."},
+      {"t": "Preserving exact structured data", "d": "Store precise facts separately when summaries could drop them."},
+      {"t": "Reduction vs information loss", "d": "Savings weighed against lost information."}
+    ], "tryIt": null, "outcome": "Shrink context without losing task-critical information.", "mentalModel": null},
+    {"id": "M6.4", "title": "Memory & state offloading", "sessions": 2, "topics": [
+      {"t": "Scratchpads, files & external stores", "d": "Move information out of the window into notes, files or databases."},
+      {"t": "Active context vs stored context", "d": "What must be in the window now vs what can be fetched later."},
+      {"t": "Persisting plans & progress", "d": "Save plans, steps, decisions and intermediate results."},
+      {"t": "Note-taking agents", "d": "Agents that write facts externally and recall them."},
+      {"t": "Remembering vs freeing space", "d": "Memory for recall vs offloading to free space."}
+    ], "tryIt": null, "outcome": "Build systems that do not need the full history inside the window.", "mentalModel": null},
+    {"id": "M6.5", "title": "Long-context strategies", "sessions": 1, "topics": [
+      {"t": "Why big windows do not solve it", "d": "Larger windows do not remove context problems."},
+      {"t": "Managing lost-in-the-middle", "d": "Placement, selective retrieval and restructuring."},
+      {"t": "Stuffing vs retrieval vs summarization", "d": "Full stuffing, retrieval over history, summaries and selective loading."},
+      {"t": "More context or better context", "d": "When to add more vs retrieve only what matters."}
+    ], "tryIt": null, "outcome": "Pick a strategy for very long documents, conversations and agent runs.", "mentalModel": null},
+    {"id": "M6.6", "title": "Tool context management", "sessions": 1, "topics": [
+      {"t": "Tool definitions compete for space", "d": "Schemas and results consume the budget too."},
+      {"t": "Exposing only relevant tools", "d": "Show only the tools the current task needs."},
+      {"t": "Filtering large tool outputs", "d": "Summarize or filter big API, search or DB responses."},
+      {"t": "Keeping full results externally", "d": "Store full results outside and re-fetch details."},
+      {"t": "Stopping observation build-up", "d": "Prevent long loops piling up observations."}
+    ], "tryIt": null, "outcome": "Keep tool-heavy agents coherent as their action history grows.", "mentalModel": null},
+    {"id": "M6.7", "title": "Context caching & efficiency", "sessions": 1, "topics": [
+      {"t": "The cost of resending static context", "d": "Resending large static context drives cost and latency."},
+      {"t": "Structuring for cache hits", "d": "Stable content first to benefit from prompt caching."},
+      {"t": "Stable context vs changing state", "d": "Keep slow-changing context apart from fast-changing state."},
+      {"t": "Cutting redundant tokens", "d": "Trim repetition while keeping what matters."},
+      {"t": "Measuring cache utilization", "d": "Track tokens, hit rates, latency and cost."}
+    ], "tryIt": null, "outcome": "Make large-context apps cheaper and faster without hurting quality.", "mentalModel": null},
+    {"id": "M6.8", "title": "Harness engineering", "sessions": 2, "topics": [
+      {"t": "What an agent harness is", "d": "Loop, prompts, tools, context, state, permissions and environment around the model."},
+      {"t": "Harness problems vs model problems", "d": "The same model passes or fails depending on its harness."},
+      {"t": "Designing the agent loop", "d": "Alternate model and tool calls, feed back errors, stop on limits."},
+      {"t": "What the harness enforces", "d": "Workflow steps, permissions, approvals and safe defaults vs model choice."},
+      {"t": "Work across many context windows", "d": "An init run, then runs that read progress notes and do one task each."},
+      {"t": "Durable artifacts as the source of truth", "d": "Progress files, task lists, git history and tests instead of chat."},
+      {"t": "Self-run feedback loops", "d": "Agent runs tests, linters and type checks before calling work done."},
+      {"t": "An environment agents can read", "d": "Concise instruction files and agent-readable docs."},
+      {"t": "Sub-agents for isolated context", "d": "Fresh-context sub-agents that return condensed results."}
+    ], "tryIt": null, "outcome": "Design a harness that keeps an agent on track across tasks larger than one window.", "mentalModel": null},
+    {"id": "M6.9", "title": "Capstone: Context-Managed Long-Horizon Agent", "sessions": 1, "topics": [
+      {"t": "A long task that degrades naively", "d": "Reproduce degradation from unmanaged context."},
+      {"t": "An explicit context budget", "d": "Decide what to keep, retrieve, compress, offload or discard."},
+      {"t": "Compaction, offloading & retrieval", "d": "History compaction, external state and tool-output compression."},
+      {"t": "Wrapping the agent in a harness", "d": "Progress file, task list, verification and limits."},
+      {"t": "Holding the goal across a long run", "d": "Keep goal, constraints and pending work intact."},
+      {"t": "Managed vs keep-everything comparison", "d": "Coherence, tokens, latency and cost compared."}
+    ], "tryIt": null, "outcome": "An agent that stays useful across a long, tool-heavy session.", "mentalModel": null}
+  ],
+  "links": []
+}

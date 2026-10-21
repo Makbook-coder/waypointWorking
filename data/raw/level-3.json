@@ -1,0 +1,80 @@
+{
+  "id": 3,
+  "title": "Prompt Engineering",
+  "phase": "Foundations",
+  "summary": "Design instructions that make LLM behavior more reliable and predictable, measured against a test set.",
+  "interviewWeight": 5,
+  "jobWeight": 8,
+  "sessionCount": 11,
+  "prerequisites": [2],
+  "outcome": "Write, test and version prompts systematically, and pick the best prompt by measurement rather than intuition.",
+  "project": {
+    "title": "Optimize a Real Prompt",
+    "deliverables": [
+      "Pick one realistic task: classification, extraction, support answering or a domain assistant",
+      "Build a small test set and several competing prompt versions",
+      "Compare versions on correctness, instruction following, format adherence, consistency, token usage and latency/cost",
+      "Choose the final prompt from measured results, not intuition"
+    ]
+  },
+  "modules": [
+    {"id": "M3.1", "title": "Anatomy of a prompt", "sessions": 1, "topics": [
+      {"t": "The parts of a prompt", "d": "Instructions, context, input, constraints, examples and output requirements."},
+      {"t": "Roles & instruction priority", "d": "System, user and assistant roles and how instructions are prioritized."},
+      {"t": "Separating instructions from data", "d": "Keep instructions clearly apart from user or external data."}
+    ], "tryIt": null, "outcome": "Structure any prompt into clear, separable parts.", "mentalModel": null},
+    {"id": "M3.2", "title": "Zero-shot & few-shot prompting", "sessions": 2, "topics": [
+      {"t": "When examples are needed", "d": "When a clear instruction suffices and when examples are required."},
+      {"t": "Designing few-shot examples", "d": "Examples that demonstrate behavior and format."},
+      {"t": "Example quality, diversity & order", "d": "How quality, diversity and ordering change results."},
+      {"t": "Few-shot vs fine-tuning", "d": "In-context examples versus changing weights."}
+    ], "tryIt": null, "outcome": "Decide whether a task needs examples and write ones that help.", "mentalModel": null},
+    {"id": "M3.3", "title": "Reasoning & decomposition", "sessions": 1, "topics": [
+      {"t": "When to prompt for reasoning", "d": "Complex logic, planning, math, code and constraint-heavy tasks."},
+      {"t": "When reasoning is unnecessary", "d": "Extraction, classification and rewriting."},
+      {"t": "Decomposing complex tasks", "d": "Breaking tasks into subproblems or steps."},
+      {"t": "Prompting reasoning models", "d": "Adapting prompts instead of blindly asking for step-by-step."}
+    ], "tryIt": null, "outcome": "Use reasoning prompts only where they pay off.", "mentalModel": null},
+    {"id": "M3.4", "title": "System prompt design", "sessions": 2, "topics": [
+      {"t": "What belongs in a system prompt", "d": "Purpose, behavior, constraints, boundaries and output expectations."},
+      {"t": "Stable rules vs task instructions", "d": "Separating application rules from per-task instructions."},
+      {"t": "Handling missing or out-of-scope input", "d": "What to do when information is missing or off-topic."},
+      {"t": "Lightweight behavioural guardrails", "d": "Simple guardrails without an endless rulebook."}
+    ], "tryIt": null, "outcome": "Write a system prompt that sets stable, predictable behavior for an app.", "mentalModel": null},
+    {"id": "M3.5", "title": "Controlling output", "sessions": 1, "topics": [
+      {"t": "Controlling style, length & format", "d": "Style, length, headings, tables and JSON via instructions and examples."},
+      {"t": "When prompting is not enough", "d": "When schema enforcement beats prompting."},
+      {"t": "Semantic instruction vs format enforcement", "d": "Meaning in the prompt; format enforced in code."}
+    ], "tryIt": null, "outcome": "Get output in the format you need, enforcing it in code when it matters.", "mentalModel": null},
+    {"id": "M3.6", "title": "Prompt reliability & debugging", "sessions": 2, "topics": [
+      {"t": "Diagnosing prompt failures", "d": "Ambiguity, conflicting constraints, bad examples, missing context or unclear output specs."},
+      {"t": "Building a small test set", "d": "Normal cases, edge cases and known failures."},
+      {"t": "Comparing versions on the same examples", "d": "Judge versions across a fixed set, not single responses."},
+      {"t": "Reducing variance & regressions", "d": "Systematic iteration to cut variance and regressions."}
+    ], "tryIt": null, "outcome": "Debug prompts with a test set instead of one-off tries.", "mentalModel": null},
+    {"id": "M3.7", "title": "Prompt versioning, cost & caching", "sessions": 1, "topics": [
+      {"t": "Versioning prompts like code", "d": "Track which prompt and model produced each result."},
+      {"t": "Comparing on quality, latency & cost", "d": "Quality, latency, tokens and cost per variant."},
+      {"t": "Trimming unnecessary context", "d": "Remove unneeded context and repeated instructions."},
+      {"t": "Prompt caching & reusable prefixes", "d": "Stable prefixes that benefit from provider caching."}
+    ], "tryIt": null, "outcome": "Manage prompts as versioned, cost-aware artifacts.", "mentalModel": null},
+    {"id": "M3.8", "title": "Prompt injection basics", "sessions": 1, "topics": [
+      {"t": "What prompt injection is", "d": "Treat external or user-controlled text as untrusted data."},
+      {"t": "Recognising override attempts", "d": "Attempts to override instructions or extract hidden information."},
+      {"t": "Wording is not a security boundary", "d": "Code, not prompt wording, must govern permissions."},
+      {"t": "Deeper defences come later", "d": "Advanced defenses are covered in AI Security."}
+    ], "tryIt": null, "outcome": "Recognize injection risk and keep security decisions out of the prompt.", "mentalModel": null},
+    {"id": "M3.9", "title": "Capstone: Optimize a Real Prompt", "sessions": 0, "topics": [
+      {"t": "Choosing a realistic task", "d": "Classification, extraction, support answering or a domain assistant."},
+      {"t": "A test set and competing prompt versions", "d": "A small test set and several prompt versions."},
+      {"t": "Correctness", "d": "Are outputs correct?"},
+      {"t": "Instruction following", "d": "Do outputs follow the instructions?"},
+      {"t": "Output-format adherence", "d": "Do outputs match the required format?"},
+      {"t": "Consistency", "d": "Are outputs stable across runs?"},
+      {"t": "Token usage", "d": "Tokens consumed per prompt."},
+      {"t": "Latency & cost", "d": "Response time and cost per prompt."},
+      {"t": "Choosing on measurement, not intuition", "d": "Select the final prompt from the numbers."}
+    ], "tryIt": null, "outcome": "A prompt chosen and defended with measurements.", "mentalModel": null}
+  ],
+  "links": []
+}

@@ -1,0 +1,159 @@
+{
+  "id": 12,
+  "title": "Multimodal 101: Beyond Text",
+  "phase": "Frontier & Proof",
+  "summary": "How models handle images, audio and video, where they fail differently from text models, and how to choose and use them.",
+  "interviewWeight": 4,
+  "jobWeight": 5,
+  "sessionCount": 20,
+  "prerequisites": [1, 2, 4],
+  "outcome": "Build and ship a multimodal app that handles real inputs, with measured latency and cost and clearly stated limitations.",
+  "project": {
+    "title": "Ship a Multimodal Build",
+    "deliverables": [
+      "A working app combining at least two modalities on real, messy inputs from your domain",
+      "Handle modality-specific failures: unreadable regions, silence, hallucinated chart values, ambiguous references",
+      "Latency and cost per request, broken down by modality",
+      "A written account of one real failure: what broke, how it was detected, what changed",
+      "Package with a README so someone else can run it with their own inputs and credentials"
+    ]
+  },
+  "modules": [
+    {"id": "M12.1", "title": "Beyond text: what a multimodal model is", "sessions": 1, "topics": [
+      {"t": "What makes a model multimodal", "d": "Non-text inputs become tokens for the same transformer."},
+      {"t": "Native multimodal vs bolted-on pipeline", "d": "Mixed-data training vs chaining OCR/ASR/captioning before a text LLM."},
+      {"t": "Text as the interlingua", "d": "Reasoning and output are almost always text."},
+      {"t": "What carries over from text LLMs", "d": "Context windows, tokens, sampling and failure modes still apply."},
+      {"t": "What \"any-to-any\" really means", "d": "Many inputs, mostly text output."},
+      {"t": "What a pipeline throws away", "d": "Tone in speech, layout in scans."}
+    ], "tryIt": "Send the same chart as an image to a native multimodal model and as OCR-extracted text to a text-only model, then compare answers.", "outcome": "Tell whether a product uses a native multimodal model or a pipeline.", "mentalModel": "Image / audio / video → tokens → shared transformer → text out"},
+    {"id": "M12.2", "title": "Vision: how images become tokens", "sessions": 1, "topics": [
+      {"t": "Patches & the vision encoder", "d": "Images are split into patches and embedded."},
+      {"t": "Why one image costs many tokens", "d": "Cost scales with resolution, not file size."},
+      {"t": "Tiling & detail settings", "d": "High-detail modes tile large images, each tile billed."},
+      {"t": "What downscaling destroys", "d": "Small text, thin lines, dense tables and chart labels."},
+      {"t": "Images share the context window", "d": "Screenshots crowd out instructions and history."},
+      {"t": "Full image, crops, or overview", "d": "Trading detail against token cost."}
+    ], "tryIt": "Send one screenshot at full resolution, half resolution and cropped to the relevant region, then compare tokens, cost and answer quality.", "outcome": "Estimate an image's token cost and pick a resolution and crop strategy.", "mentalModel": null},
+    {"id": "M12.3", "title": "Vision: capabilities & failure modes", "sessions": 1, "topics": [
+      {"t": "What vision models do well", "d": "Reading text, describing scenes, extracting fields, coarse chart reading."},
+      {"t": "Counting, space & dense tables", "d": "Recurring weak spots."},
+      {"t": "Fabricated visual detail", "d": "Confident values that the image never contained."},
+      {"t": "Why vision failures happen", "d": "Plausible descriptions from patches, not measurement."},
+      {"t": "Asking \"how reliably?\" for images", "d": "Your documents, resolution and formats."},
+      {"t": "Safeguards when reliability is short", "d": "Higher resolution, crops, structured output, verification or review."}
+    ], "tryIt": "Build ten test images (crowded shelf, dense table, low-res receipt, handwritten note) and score how often the model is exactly right.", "outcome": "Predict which visual tasks need cropping, resolution or verification.", "mentalModel": null},
+    {"id": "M12.4", "title": "Vision: documents, charts & visual RAG", "sessions": 3, "topics": [
+      {"t": "Text-layer PDFs vs scans", "d": "Digital PDFs carry text; scans must be recovered from pixels."},
+      {"t": "OCR vs native vision reading", "d": "Accuracy, cost, latency and layout preservation."},
+      {"t": "Layout & reading order", "d": "Columns, headers, footnotes and sidebars scramble badly flattened text."},
+      {"t": "Tables, forms & merged cells", "d": "Merged cells, multi-page tables, checkboxes and key-value pairs."},
+      {"t": "How models read charts", "d": "Values are estimates from axes and labels."},
+      {"t": "Schema before prompt", "d": "Field names, types and required fields first."},
+      {"t": "Extract & validate fields", "d": "Check types, ranges, dates, totals and required values."},
+      {"t": "Grounding fields to page regions", "d": "Return where each value came from."},
+      {"t": "Document failure modes", "d": "Invented values, merged rows, unit confusion and misread handwriting."},
+      {"t": "Routing low confidence to review", "d": "Human review instead of silent writes."},
+      {"t": "Pages & regions as retrieval units", "d": "Embedding page images or regions."},
+      {"t": "Hybrid text + visual retrieval", "d": "Search text and page images together."},
+      {"t": "Citing the page you answered from", "d": "Page or region citations."},
+      {"t": "When plain text beats visual", "d": "Clean digital text rarely needs page images."},
+      {"t": "The token cost of page images", "d": "Page images cost far more tokens than text."}
+    ], "tryIt": "Run one scanned invoice and one clean digital PDF through a text pipeline and a vision pipeline, comparing accuracy, cost and latency.", "outcome": "Read real PDFs and scans, extract validated fields and answer with page citations.", "mentalModel": "Document → pages → text layer + page images → layout & regions → structured fields or retrievable units"},
+    {"id": "M12.5", "title": "Vision: image & video generation", "sessions": 2, "topics": [
+      {"t": "Denoising, not next-token prediction", "d": "Diffusion models iteratively remove noise."},
+      {"t": "What a prompt controls", "d": "Subject, composition, style and detail, loosely."},
+      {"t": "Seeds & reproducibility", "d": "Same prompt + seed reproduces an image."},
+      {"t": "Resolution, steps & cost", "d": "Effects on quality, time and cost."},
+      {"t": "img2img, inpainting & outpainting", "d": "Pick the mode the task needs."},
+      {"t": "Style & structural control", "d": "Reference images plus pose, depth or edge guidance."},
+      {"t": "Cost per accepted image", "d": "Most candidates are discarded."},
+      {"t": "What video adds: time & motion", "d": "Cross-frame consistency makes cost and failures grow."},
+      {"t": "Provenance, watermarks & rights", "d": "Watermarking, content credentials and licensing."}
+    ], "tryIt": "Generate one prompt at three seeds and three aspect ratios, then inpaint the best result instead of re-prompting.", "outcome": "Control generated images iteratively and judge review time and rights risk.", "mentalModel": "Noise → repeated denoising guided by the prompt → image"},
+    {"id": "M12.6", "title": "Audio: how sound becomes tokens", "sessions": 1, "topics": [
+      {"t": "Waveform to spectrogram to tokens", "d": "Sampled audio becomes spectrograms or learned audio tokens."},
+      {"t": "Cost per second, not per word", "d": "Silence and noise are billed too."},
+      {"t": "Transcribe-then-prompt vs audio-native", "d": "STT into an LLM vs models that hear directly."},
+      {"t": "What a transcript discards", "d": "Tone, emphasis, hesitation, overlap and emotion."},
+      {"t": "Why audio is latency-sensitive", "d": "Conversations are judged on response delay."},
+      {"t": "Where speech recognition breaks", "d": "Accents, code-switching, jargon, bad mics and silence."}
+    ], "tryIt": "Run the same 30-second clip through a speech-to-text model and an audio-native model, then ask both about the speaker's mood.", "outcome": "Choose between transcription pipelines and audio-native models.", "mentalModel": null},
+    {"id": "M12.7", "title": "Audio: speech to text & text to speech", "sessions": 2, "topics": [
+      {"t": "What Whisper actually returns", "d": "Transcript, optional word timestamps and confidence signals."},
+      {"t": "Batch vs streaming transcription", "d": "Complete recordings vs partial text while speaking."},
+      {"t": "Accents, code-mixing & noise", "d": "Degradation sources; vocabulary hints help."},
+      {"t": "Speaker diarization", "d": "Who spoke when, as a separate step."},
+      {"t": "Word error rate in practice", "d": "Which errors matter downstream."},
+      {"t": "What Kokoro turns text into", "d": "Audio in a chosen voice, whole or streamed."},
+      {"t": "Voice choice & prosody", "d": "Pace, pauses and emphasis."},
+      {"t": "Pronunciation control", "d": "Names, acronyms, numbers and code-mixed text."},
+      {"t": "Streaming synthesis", "d": "Play the first audio while the rest is generated."},
+      {"t": "Hosted vs local speech models", "d": "Cost, latency, privacy and voice quality."}
+    ], "tryIt": "Transcribe a five-minute Hindi-English recording, read it back with a synthetic voice, and note where each step breaks.", "outcome": "Build a speech pipeline with visibility into lost accuracy and latency.", "mentalModel": "Audio → transcript + timestamps + speakers → text → synthesized audio"},
+    {"id": "M12.8", "title": "Audio: realtime voice agents", "sessions": 3, "topics": [
+      {"t": "Latency as the design constraint", "d": "Silence beyond about a second breaks conversation."},
+      {"t": "Where the milliseconds go", "d": "Capture, network, STT, thinking, TTS and playback."},
+      {"t": "Cascaded vs speech-to-speech", "d": "STT→LLM→TTS vs realtime audio-in/audio-out APIs."},
+      {"t": "Comparing the two architectures", "d": "Latency, control, cost and debuggability."},
+      {"t": "What can overlap", "d": "Start synthesis early; transcribe while the user speaks."},
+      {"t": "Voice activity detection & endpointing", "d": "Deciding when the user has stopped."},
+      {"t": "Why endpointing is hard", "d": "Thinking pauses and background chatter."},
+      {"t": "Barge-in & interruption", "d": "Stop playback when the user interrupts."},
+      {"t": "Acting on partial transcripts", "d": "Faster, but risks acting on unfinished speech."},
+      {"t": "State after a cut-short turn", "d": "Don't believe the user heard what they did not."},
+      {"t": "Silence, dead air & dropped calls", "d": "Holding phrases, reconnection and graceful exits."},
+      {"t": "Noise, crosstalk & bad mics", "d": "Where to put safeguards."},
+      {"t": "Staying alive during tool calls", "d": "Keep talking while slow lookups run."},
+      {"t": "What to say while waiting", "d": "And what to do when a tool fails."},
+      {"t": "Reconstructing a bad call", "d": "Capture audio, transcript, timings and turns."}
+    ], "tryIt": "Build a small STT → LLM → TTS loop and measure the delay from the end of your sentence to the first sound of the reply.", "outcome": "Ship a voice agent that handles turn-taking and interruptions with short silences.", "mentalModel": "User speech → VAD & endpointing → transcript → model → speech, with barge-in resetting the loop"},
+    {"id": "M12.9", "title": "Cross-modal search & retrieval", "sessions": 1, "topics": [
+      {"t": "A shared embedding space", "d": "Images and matching captions land close together."},
+      {"t": "CLIP-style joint embeddings", "d": "Contrastive training of paired image and text encoders."},
+      {"t": "Searching across modalities", "d": "Text-to-image and image-to-text search."},
+      {"t": "Cross-modal vs caption-then-search", "d": "When each approach wins."},
+      {"t": "Where cross-modal retrieval fails", "d": "Fine detail, text in images, counting and unseen domains."},
+      {"t": "Evaluating on your own collection", "d": "Your images and queries, not general benchmarks."}
+    ], "tryIt": "Build a small image index, query it in plain language and compare with a caption-then-search baseline.", "outcome": "Build a small image-and-text search over your own collection.", "mentalModel": "Different modalities → one shared vector space → distance means similarity"},
+    {"id": "M12.10", "title": "Choosing a multimodal model", "sessions": 1, "topics": [
+      {"t": "Start from the modalities", "d": "Every required input and output."},
+      {"t": "Per-image & per-minute pricing", "d": "Charges beyond text tokens."},
+      {"t": "The context cost of images", "d": "Resolution-dependent share of the window."},
+      {"t": "Latency by modality", "d": "Time to first audio matters for voice."},
+      {"t": "API vs self-hosting", "d": "Open vision and speech models at volume."},
+      {"t": "Privacy for voice, faces & scans", "d": "Consent and residency obligations."},
+      {"t": "Managed speech, vision & document services", "d": "Narrow services often beat general models."},
+      {"t": "Shortlist, then test your own data", "d": "Two or three candidates on your own inputs."}
+    ], "tryIt": null, "outcome": "Choose a multimodal model by modality support, unit cost, latency and privacy.", "mentalModel": null},
+    {"id": "M12.11", "title": "Deep research & long-horizon scenarios", "sessions": 2, "topics": [
+      {"t": "Why long runs are different", "d": "Many minutes and many sources."},
+      {"t": "Decomposing a research question", "d": "Independent sub-questions, or flagging vagueness."},
+      {"t": "Breadth first, then depth", "d": "Gather widely, read a few closely."},
+      {"t": "Reading sources critically", "d": "Primary evidence, commentary, marketing and outdated claims."},
+      {"t": "Reconciling disagreement", "d": "Prefer better evidence or report uncertainty."},
+      {"t": "Claims attached to sources", "d": "Every claim verifiable."},
+      {"t": "Notes and interim summaries", "d": "Carry findings forward, not raw text."},
+      {"t": "Knowing when to stop", "d": "Answered, repeating sources or irreducible uncertainty."},
+      {"t": "A report a human can audit", "d": "Question, answer, evidence, contradictions and gaps."},
+      {"t": "How long runs fail", "d": "Drift, thin-evidence synthesis and unsupported citations."}
+    ], "tryIt": "Run the same research question with a five-minute budget and a thirty-minute budget, then compare what the extra time bought.", "outcome": "Produce a cited, structured research report whose claims can be checked.", "mentalModel": null},
+    {"id": "M12.12", "title": "On-device & edge modalities", "sessions": 1, "topics": [
+      {"t": "Why modalities suit the device", "d": "Small models, private inputs, no round trip."},
+      {"t": "Quantization & what it costs", "d": "Precision traded for size and speed."},
+      {"t": "Phone & laptop hardware limits", "d": "Memory, thermal throttling and battery."},
+      {"t": "What on-device buys you", "d": "Offline use, no per-request cost, predictable latency, private data."},
+      {"t": "On-device, self-hosted or API", "d": "Choose per modality."}
+    ], "tryIt": "Run a small quantized speech-to-text model locally and compare accuracy, latency and cost against a hosted API on the same audio.", "outcome": "Decide which parts of a multimodal system belong on the device.", "mentalModel": null},
+    {"id": "M12.13", "title": "Capstone: Ship a Multimodal Build", "sessions": 1, "topics": [
+      {"t": "Pick one realistic build", "d": "Voice agent, document pipeline, visual search or research reports."},
+      {"t": "At least two modalities", "d": "A real cross-modal boundary."},
+      {"t": "Real inputs, not samples", "d": "Poor scans, accented speech, awkward layouts."},
+      {"t": "Modality-specific failures", "d": "Unreadable regions, silence, hallucinated values, ambiguity."},
+      {"t": "Latency and cost per request", "d": "Broken down by modality."},
+      {"t": "Document one real failure", "d": "What broke, how detected, what changed."},
+      {"t": "Runnable by someone else", "d": "README with their own inputs and credentials."}
+    ], "tryIt": null, "outcome": "A multimodal app that handles real inputs, with quotable latency, cost and limits.", "mentalModel": null}
+  ],
+  "links": []
+}

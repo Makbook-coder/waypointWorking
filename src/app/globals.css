@@ -1,26 +1,139 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Theme: data-theme on <html> wins; otherwise follow the OS. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --bg: #f4f1ea;
+  --grid: #e6e1d6;
+  --surface: #fffdf8;
+  --surface-2: #ebe7dd;
+  --ink: #17181c;
+  --muted: #55585f;
+  --line: #d6d0c3;
+  --strong-line: #17181c;
+  --focus: #1d4ed8;
+  --good: #1f7a4d;
+  --bad: #b42318;
+
+  /* Seven phase lines, chosen to stay distinct for common colour-vision deficiencies when paired with labels */
+  --phase-1: #e0522b; /* Foundations */
+  --phase-2: #c98a00; /* Retrieval */
+  --phase-3: #23935f; /* Agentic */
+  --phase-4: #2a74c9; /* Evaluation & Trust */
+  --phase-5: #7448cf; /* Production */
+  --phase-6: #c93f78; /* Frontier & Proof */
+  --phase-7: #0d8a8a; /* Interview */
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --bg: #111215;
+    --grid: #1b1d22;
+    --surface: #17191d;
+    --surface-2: #22252b;
+    --ink: #eceae4;
+    --muted: #a3a5ab;
+    --line: #2f333a;
+    --strong-line: #eceae4;
+    --focus: #8ab4ff;
+    --good: #4cc38a;
+    --bad: #ff7a6b;
+    --phase-1: #ff7a52;
+    --phase-2: #f0b429;
+    --phase-3: #45c486;
+    --phase-4: #5aa2f0;
+    --phase-5: #a385f2;
+    --phase-6: #f0709f;
+    --phase-7: #2fc0c0;
+    color-scheme: dark;
   }
 }
 
+:root[data-theme="dark"] {
+  --bg: #111215;
+  --grid: #1b1d22;
+  --surface: #17191d;
+  --surface-2: #22252b;
+  --ink: #eceae4;
+  --muted: #a3a5ab;
+  --line: #2f333a;
+  --strong-line: #eceae4;
+  --focus: #8ab4ff;
+  --good: #4cc38a;
+  --bad: #ff7a6b;
+  --phase-1: #ff7a52;
+  --phase-2: #f0b429;
+  --phase-3: #45c486;
+  --phase-4: #5aa2f0;
+  --phase-5: #a385f2;
+  --phase-6: #f0709f;
+  --phase-7: #2fc0c0;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-strong-line: var(--strong-line);
+  --color-focus: var(--focus);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --color-phase-1: var(--phase-1);
+  --color-phase-2: var(--phase-2);
+  --color-phase-3: var(--phase-3);
+  --color-phase-4: var(--phase-4);
+  --color-phase-5: var(--phase-5);
+  --color-phase-6: var(--phase-6);
+  --color-phase-7: var(--phase-7);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+html {
+  background: var(--bg);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--focus) 30%, transparent);
+}
+
+/* Tabular figures for every number we show */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Markdown preview inside notes */
+.prose-note h1, .prose-note h2, .prose-note h3 { font-weight: 700; margin: 0.75em 0 0.25em; }
+.prose-note p { margin: 0.4em 0; }
+.prose-note ul { list-style: disc; padding-left: 1.25rem; }
+.prose-note ol { list-style: decimal; padding-left: 1.25rem; }
+.prose-note code { font-family: var(--font-mono); background: var(--surface-2); padding: 0 0.25em; border-radius: 3px; }
+.prose-note pre { background: var(--surface-2); padding: 0.75rem; border-radius: 6px; overflow-x: auto; }
+.prose-note a { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }

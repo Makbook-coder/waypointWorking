@@ -1,0 +1,116 @@
+{
+  "id": 2,
+  "title": "Working with LLM APIs (Orchestration)",
+  "phase": "Foundations",
+  "summary": "Turn single LLM API calls into reliable software: messages, streaming, structured outputs, tools, orchestration, concurrency, failure handling and observability.",
+  "interviewWeight": 8,
+  "jobWeight": 10,
+  "sessionCount": 19,
+  "prerequisites": [1],
+  "outcome": "Build applications that combine LLM calls, software logic, external tools and reliability controls, without RAG or autonomous agents.",
+  "project": {
+    "title": "Streaming Tool-Using Assistant",
+    "deliverables": [
+      "Conversational assistant with history, system instructions and streamed responses",
+      "Integrate at least 2-3 real tools or APIs",
+      "Sequential or parallel tool use, validating every model-generated argument",
+      "Structured outputs where useful, retries for transient failures and enforced timeouts",
+      "Graceful handling of tool and API errors",
+      "Record token usage, latency, retries, tool calls and estimated cost",
+      "Build the main implementation with LangChain and explain the raw API and tool-call mechanics underneath"
+    ]
+  },
+  "modules": [
+    {"id": "M2.1", "title": "First API calls & conversation state", "sessions": 2, "topics": [
+      {"t": "Messages, roles & usage metadata", "d": "Calling OpenAI and Anthropic SDKs: roles, system instructions, stop reasons and usage."},
+      {"t": "APIs are stateless", "d": "History must be resent explicitly because the API keeps no state."},
+      {"t": "Application state vs model context", "d": "What the app stores versus what is in the current window."},
+      {"t": "Managing API keys safely", "d": "Env vars, .env files or secret managers, never in frontend code."},
+      {"t": "Inspecting the full response object", "d": "Read token counts and metadata instead of treating the API as prompt-to-string."}
+    ], "tryIt": null, "outcome": "Make multi-turn API calls to two providers, managing history, keys and usage data yourself.", "mentalModel": null},
+    {"id": "M2.2", "title": "Streaming", "sessions": 1, "topics": [
+      {"t": "Rendering output incrementally", "d": "Display partial output in a terminal or UI as it arrives."},
+      {"t": "TTFT & perceived latency", "d": "Time to first token, generation speed, perceived and total latency."},
+      {"t": "Accumulating and interrupting streams", "d": "Assemble events into a full response; handle cancellation and broken streams."}
+    ], "tryIt": null, "outcome": "Stream responses to a user and handle cancelled or incomplete streams.", "mentalModel": null},
+    {"id": "M2.3", "title": "LangChain fundamentals", "sessions": 2, "topics": [
+      {"t": "Why orchestration libraries exist", "d": "What LangChain abstracts over raw SDKs."},
+      {"t": "Models, templates & output parsers", "d": "Chat models, prompt templates, parsers, streaming and configuration."},
+      {"t": "Working across providers", "d": "Swapping providers while knowing the underlying calls."},
+      {"t": "Composing pipelines with runnables", "d": "Chaining prompts, models and parsers with runnables."},
+      {"t": "Raw SDK vs LangChain", "d": "Comparing equivalent implementations for convenience vs overhead."},
+      {"t": "LangChain is a layer, not the model", "d": "It orchestrates calls; it is not the LLM."}
+    ], "tryIt": null, "outcome": "Build the same small pipeline with a raw SDK and with LangChain and explain the trade-offs.", "mentalModel": null},
+    {"id": "M2.4", "title": "Structured outputs", "sessions": 2, "topics": [
+      {"t": "Schema-constrained generation", "d": "Constrain output with a schema rather than asking nicely for JSON."},
+      {"t": "Defining schemas", "d": "JSON Schema or Pydantic with required/optional fields, enums, lists and nesting."},
+      {"t": "Provider-native vs framework support", "d": "Native structured-output features vs LangChain abstractions."},
+      {"t": "Validating before use", "d": "Check outputs before they reach application logic."},
+      {"t": "Syntactic validity vs semantic correctness", "d": "Well-formed output can still be wrong."},
+      {"t": "Generate → validate → repair", "d": "Accept, retry, repair or reject invalid outputs."}
+    ], "tryIt": null, "outcome": "Get reliably typed, validated data out of a model and handle invalid outputs.", "mentalModel": null},
+    {"id": "M2.5", "title": "Function / tool calling", "sessions": 3, "topics": [
+      {"t": "Who chooses and who executes", "d": "The model picks a tool and arguments; your code runs it."},
+      {"t": "Defining a tool", "d": "Names, descriptions, parameter schemas and required arguments."},
+      {"t": "The full tool-calling loop", "d": "User input, model request, execution, result back, final answer."},
+      {"t": "Tool-call IDs & returning results", "d": "Matching IDs and inserting results correctly into the conversation."},
+      {"t": "Provider APIs vs LangChain tools", "d": "Direct tool calling and how LangChain wraps it."},
+      {"t": "Sequential, repeated & parallel calls", "d": "Dependent, repeated and parallel calls in one turn."},
+      {"t": "Tool failures & malformed arguments", "d": "Handling failing tools and bad arguments."}
+    ], "tryIt": null, "outcome": "Implement the complete tool-calling loop by hand, including parallel calls and failures.", "mentalModel": null},
+    {"id": "M2.6", "title": "Designing good tools", "sessions": 1, "topics": [
+      {"t": "Names, descriptions & types", "d": "Precise names, clear descriptions, minimal params, strong types and useful errors."},
+      {"t": "Ambiguous & overlapping tools", "d": "Overlap leads the model to pick the wrong tool."},
+      {"t": "Too many undifferentiated tools", "d": "Avoid large sets of similar tools and needless arguments."},
+      {"t": "Treating arguments as untrusted", "d": "Validate types, values, permissions and destructive operations."},
+      {"t": "Tool descriptions are context", "d": "Descriptions shape the model's decisions."}
+    ], "tryIt": null, "outcome": "Design a tool set the model selects correctly and that is safe to execute.", "mentalModel": null},
+    {"id": "M2.7", "title": "Multi-step LLM workflows", "sessions": 1, "topics": [
+      {"t": "Beyond prompt → model → answer", "d": "Combining multiple calls, tools, transformations and code."},
+      {"t": "Sequential, routed & fan-out patterns", "d": "Pipelines, routing, conditional branches and fan-out/fan-in."},
+      {"t": "When to split a task", "d": "Specialized calls vs one big prompt."},
+      {"t": "Building by hand, then composing", "d": "Hand-built control flow first, then LangChain primitives."},
+      {"t": "Workflows vs agents", "d": "Application-controlled flows vs model-controlled agents."}
+    ], "tryIt": null, "outcome": "Build a multi-step workflow whose control flow lives in your code.", "mentalModel": null},
+    {"id": "M2.8", "title": "Async, concurrency & batching", "sessions": 1, "topics": [
+      {"t": "When concurrency helps", "d": "Sync vs async calls and when concurrency raises throughput."},
+      {"t": "Running requests concurrently", "d": "Process independent requests in parallel."},
+      {"t": "Bounded concurrency & rate limits", "d": "Cap concurrency to avoid rate-limit failures."},
+      {"t": "Async and batch execution", "d": "Async and batch APIs in SDKs and orchestration tools."},
+      {"t": "The throughput / cost trade-off", "d": "Throughput vs latency, limits, resources and cost."}
+    ], "tryIt": null, "outcome": "Process many LLM requests quickly without tripping rate limits.", "mentalModel": null},
+    {"id": "M2.9", "title": "Robustness: retries, timeouts & fallbacks", "sessions": 2, "topics": [
+      {"t": "Common API failures", "d": "Auth errors, bad requests, rate limits, 5xx, timeouts, context limits and malformed output."},
+      {"t": "What to retry and what to fail fast", "d": "Retry transient errors; fail fast on auth and invalid requests."},
+      {"t": "Backoff, jitter, timeouts & degradation", "d": "Exponential backoff with jitter, retry caps, timeouts and graceful degradation."},
+      {"t": "Model and provider fallbacks", "d": "Falling back to other models or providers, minding behavior differences."},
+      {"t": "Failures at the LLM and tool levels", "d": "Handling both model API and tool API failures."},
+      {"t": "Where reliability logic belongs", "d": "SDK, orchestration layer or application code."}
+    ], "tryIt": null, "outcome": "Make an LLM app survive rate limits, outages and timeouts gracefully.", "mentalModel": null},
+    {"id": "M2.10", "title": "Cost, usage & observability", "sessions": 1, "topics": [
+      {"t": "What to record per request", "d": "Model, tokens, latency, retries, errors, tool calls and estimated cost."},
+      {"t": "Interactions as traces", "d": "One multi-step interaction is one trace."},
+      {"t": "Finding the failing step", "d": "Which step failed, used most tokens or added latency."},
+      {"t": "Tracing a full workflow", "d": "LangChain callbacks and tracing to link model and tool calls."},
+      {"t": "Logging you can actually debug with", "d": "Structured logs and traces instead of scattered prints."}
+    ], "tryIt": null, "outcome": "Trace a workflow end to end and explain where its time and money went.", "mentalModel": null},
+    {"id": "M2.11", "title": "Other orchestration frameworks", "sessions": 2, "topics": [
+      {"t": "LangChain is one approach among many", "d": "Not a universal standard."},
+      {"t": "LlamaIndex", "d": "How LlamaIndex's abstractions and focus differ."},
+      {"t": "Graph & state-machine orchestration", "d": "Branches, loops, persistent state and complex control flow."},
+      {"t": "LangGraph", "d": "A graph-based approach for stateful LLM workflows."},
+      {"t": "DSPy", "d": "Declaring input/output behavior instead of hand-writing prompts."},
+      {"t": "Comparing orchestration approaches", "d": "Speed, overhead, debugging, portability, state and control."},
+      {"t": "Choosing one for your application", "d": "Raw SDK, LangChain, graph frameworks, LlamaIndex, DSPy or custom."}
+    ], "tryIt": null, "outcome": "Choose an orchestration approach based on the application, not habit.", "mentalModel": null},
+    {"id": "M2.12", "title": "Capstone: Streaming Tool-Using Assistant", "sessions": 1, "topics": [
+      {"t": "A streaming assistant with real tools", "d": "History, system instructions, streaming and 2-3 real tools."},
+      {"t": "Sequential or parallel tool use", "d": "Validated arguments for every generated call."},
+      {"t": "Structured outputs, retries & timeouts", "d": "Structured outputs, transient retries, timeouts and graceful tool errors."},
+      {"t": "Recording usage, latency & cost", "d": "Tokens, latency, retries, tool calls and cost per request."},
+      {"t": "Building on LangChain, explaining the raw calls", "d": "LangChain implementation with raw mechanics explained."},
+      {"t": "LLM + software + tools + reliability", "d": "All combined without RAG or autonomous agents."}
+    ], "tryIt": null, "outcome": "A reliable, observable streaming assistant that uses real tools.", "mentalModel": null}
+  ],
+  "links": []
+}

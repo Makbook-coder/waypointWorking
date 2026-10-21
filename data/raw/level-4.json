@@ -1,0 +1,125 @@
+{
+  "id": 4,
+  "title": "RAG",
+  "phase": "Retrieval",
+  "summary": "The retrieval layer RAG depends on (ingestion, chunking, embeddings, vector and hybrid search), then grounded generation and advanced RAG architectures.",
+  "interviewWeight": 10,
+  "jobWeight": 9,
+  "sessionCount": 27,
+  "prerequisites": [3],
+  "outcome": "Build and evaluate a complete RAG system, from retrieval infrastructure to grounded, cited answers that abstain when evidence is thin, and choose architectures by failure mode.",
+  "project": {
+    "title": "Hybrid Search Engine + Advanced RAG Application",
+    "deliverables": [
+      "Ingest, clean, chunk, embed and index a real corpus with metadata in a vector database",
+      "Implement dense, BM25 and hybrid retrieval with metadata filters, served as a search API or UI",
+      "Document Q&A app with ingestion, chunking, retrieval, generation, citations and abstention",
+      "A baseline RAG pipeline plus at least one real improvement (reranking, query transformation, RAG-Fusion, hybrid or an advanced variant)",
+      "Graceful handling of weak retrieval and insufficient evidence",
+      "Track latency, token usage and cost across the pipeline",
+      "Deploy as an API or simple UI"
+    ]
+  },
+  "modules": [
+    {"id": "M4.1", "title": "Data ingestion & document processing", "sessions": 2, "topics": [
+      {"t": "Extracting from PDFs, HTML & DOCX", "d": "Pull content from common formats and know when OCR is needed."},
+      {"t": "Cleaning while keeping structure", "d": "Normalize messy text while preserving structure and metadata."},
+      {"t": "Duplicates, updates & re-indexing", "d": "Handle duplicates, document updates and incremental re-indexing."}
+    ], "tryIt": null, "outcome": "Turn a real document collection into clean, structured data ready for retrieval.", "mentalModel": null},
+    {"id": "M4.2", "title": "Chunking strategies", "sessions": 2, "topics": [
+      {"t": "Why documents must be split", "d": "Why documents are split before embedding and retrieval."},
+      {"t": "Fixed, recursive, structural & semantic", "d": "Four families of chunking methods."},
+      {"t": "Size, overlap, boundaries & metadata", "d": "How each affects retrieval quality."},
+      {"t": "Precise chunks vs context-rich chunks", "d": "Small precise chunks vs larger chunks with more context."}
+    ], "tryIt": null, "outcome": "Choose a chunking strategy from document structure and query type.", "mentalModel": null},
+    {"id": "M4.3", "title": "Embeddings fundamentals", "sessions": 2, "topics": [
+      {"t": "What an embedding represents", "d": "Vectors that capture semantic relationships."},
+      {"t": "Generating embeddings", "d": "Embedding documents and queries with an embedding model."},
+      {"t": "Choosing an embedding model", "d": "Dimensions, multilingual/domain quality, cost and latency."},
+      {"t": "Vector spaces cannot be mixed", "d": "Embeddings from different models are not comparable."}
+    ], "tryIt": null, "outcome": "Select and use an embedding model suited to a retrieval task.", "mentalModel": null},
+    {"id": "M4.4", "title": "Similarity & semantic search", "sessions": 2, "topics": [
+      {"t": "Cosine, dot product & Euclidean", "d": "How each measure compares vectors."},
+      {"t": "Semantic search from scratch", "d": "Query → embedding → similarity → top-k without a vector DB."},
+      {"t": "Semantic similarity vs keyword match", "d": "Meaning-based vs exact keyword matching."},
+      {"t": "Where semantic search fails", "d": "Exact names, IDs, numbers and rare terms."}
+    ], "tryIt": null, "outcome": "Build semantic search without a vector database and know what a DB will automate.", "mentalModel": null},
+    {"id": "M4.5", "title": "Vector databases & ANN search", "sessions": 3, "topics": [
+      {"t": "Storing vectors in pgvector or Qdrant", "d": "Embeddings, documents, IDs and metadata in a vector DB."},
+      {"t": "Top-k search with metadata filters", "d": "Vector queries combined with metadata filters."},
+      {"t": "Why ANN search exists", "d": "Brute force gets expensive at scale; ANN trades exactness for speed."},
+      {"t": "HNSW & IVF trade-offs", "d": "Speed, memory and recall trade-offs."},
+      {"t": "Indexing, updates & deletes", "d": "Index maintenance and operational basics."}
+    ], "tryIt": null, "outcome": "Build and query a scalable vector index over a real corpus.", "mentalModel": null},
+    {"id": "M4.6", "title": "Sparse & hybrid retrieval", "sessions": 2, "topics": [
+      {"t": "Lexical retrieval & BM25", "d": "Keyword retrieval with BM25 and when it beats embeddings."},
+      {"t": "Sparse vs dense retrieval", "d": "BM25-style sparse vs vector-based dense retrieval."},
+      {"t": "Hybrid retrieval with RRF", "d": "Merging dense and sparse results with Reciprocal Rank Fusion."},
+      {"t": "When hybrid retrieval helps", "d": "Names, IDs and exact phrases benefit most."}
+    ], "tryIt": null, "outcome": "Choose dense, sparse or hybrid retrieval instead of defaulting to vectors.", "mentalModel": null},
+    {"id": "M4.7", "title": "Capstone: Build a Hybrid Search Engine", "sessions": 1, "topics": [
+      {"t": "Ingest, chunk, embed & index a real corpus", "d": "Clean corpus with metadata, indexed in a vector DB."},
+      {"t": "Dense + BM25 + hybrid retrieval", "d": "All three retrieval modes with useful filters."},
+      {"t": "Deploying a search API or UI", "d": "Serve the most relevant chunks through an API or UI."}
+    ], "tryIt": null, "outcome": "A hybrid retrieval system ready to be a RAG app's retrieval component.", "mentalModel": null},
+    {"id": "M4.8", "title": "RAG architecture & when to use it", "sessions": 1, "topics": [
+      {"t": "The core RAG pipeline", "d": "Query → retrieve → assemble context → generate."},
+      {"t": "What RAG solves", "d": "Private knowledge, changing information, large corpora and sourced answers."},
+      {"t": "When not to use RAG", "d": "When the model already knows enough or the data fits in context."},
+      {"t": "Retrieval failure vs generation failure", "d": "Telling the two kinds of failure apart."}
+    ], "tryIt": null, "outcome": "Decide whether a problem genuinely needs RAG.", "mentalModel": null},
+    {"id": "M4.9", "title": "Baseline RAG from scratch", "sessions": 2, "topics": [
+      {"t": "Building the pipeline by hand", "d": "A full RAG pipeline on top of your retrieval system."},
+      {"t": "Retrieve, assemble, generate", "d": "Top-k chunks into the prompt, then a grounded answer."},
+      {"t": "Prompting for grounded answers", "d": "Keep answers tied to supplied evidence."},
+      {"t": "Handling weak or missing context", "d": "Respond sensibly when retrieval is weak or irrelevant."},
+      {"t": "The effect of k and chunk ordering", "d": "How k, order and context size shape quality."}
+    ], "tryIt": null, "outcome": "Build working RAG without hiding the mechanics behind a framework.", "mentalModel": null},
+    {"id": "M4.10", "title": "Reranking", "sessions": 2, "topics": [
+      {"t": "Retrieve many, rerank, send the best", "d": "Two-stage retrieval: wide recall, then precise reordering."},
+      {"t": "Cross-encoder & reranking models", "d": "Cross-encoders and dedicated rerankers."},
+      {"t": "Relevance gained, latency added", "d": "Weighing relevance gains against latency and cost."},
+      {"t": "When reranking adds little", "d": "Measuring with and without reranking."}
+    ], "tryIt": null, "outcome": "Improve the context sent to the LLM without just retrieving more.", "mentalModel": null},
+    {"id": "M4.11", "title": "Query transformation & RAG-Fusion", "sessions": 2, "topics": [
+      {"t": "Why the user question is a poor query", "d": "Raw questions often retrieve poorly."},
+      {"t": "Rewriting, expansion, multi-query & HyDE", "d": "Rewriting, expansion, multiple queries and hypothetical document embeddings."},
+      {"t": "RAG-Fusion", "d": "Multiple queries, retrieval for each, rankings fused with RRF."},
+      {"t": "Handling ambiguous questions", "d": "Multi-query for ambiguous or multi-part questions."},
+      {"t": "The extra calls it costs", "d": "Extra LLM calls, latency and cost."},
+      {"t": "When to skip transformation", "d": "Skip it when baseline retrieval already works."}
+    ], "tryIt": null, "outcome": "Turn hard user questions into better retrieval queries.", "mentalModel": null},
+    {"id": "M4.12", "title": "Grounding, citations & abstention", "sessions": 1, "topics": [
+      {"t": "Answering from evidence", "d": "Answers based on retrieved evidence, not unsupported knowledge."},
+      {"t": "Attaching claims to sources", "d": "Link claims to supporting chunks with useful citations."},
+      {"t": "Citations are not grounding", "d": "Verify that cited sources really support the claim."},
+      {"t": "Abstaining on insufficient evidence", "d": "Detect weak evidence and say so honestly."},
+      {"t": "Keeping evidence and synthesis distinct", "d": "Separate retrieved evidence from model synthesis."}
+    ], "tryIt": null, "outcome": "Produce traceable answers that abstain when evidence is insufficient.", "mentalModel": null},
+    {"id": "M4.13", "title": "RAG variants & advanced patterns", "sessions": 3, "topics": [
+      {"t": "Naive → Advanced → adaptive RAG", "d": "From naive to advanced to adaptive, self-correcting RAG."},
+      {"t": "Self-RAG", "d": "Retrieve when needed and reflect on evidence and output."},
+      {"t": "CRAG (Corrective RAG)", "d": "Grade retrieved evidence and correct when it is weak."},
+      {"t": "Adaptive RAG", "d": "Decide dynamically whether and how to retrieve."},
+      {"t": "Iterative RAG", "d": "Repeat retrieval and generation until evidence suffices."},
+      {"t": "Multi-hop RAG", "d": "Questions that need several retrieval steps or sources."},
+      {"t": "Graph RAG", "d": "Retrieval over entity and relationship graphs."},
+      {"t": "When Graph RAG is useful", "d": "Connected knowledge, global questions and cross-document info."},
+      {"t": "Choosing by failure mode, not novelty", "d": "Compare variants by the failure they fix and their cost."}
+    ], "tryIt": null, "outcome": "Choose a RAG architecture based on why the baseline fails.", "mentalModel": null},
+    {"id": "M4.14", "title": "RAG with frameworks", "sessions": 1, "topics": [
+      {"t": "Rebuilding with LlamaIndex or LangChain", "d": "Recreate the hand-built pipeline with a framework."},
+      {"t": "Indexes, retrievers & query engines", "d": "Framework abstractions for ingestion, retrieval and citations."},
+      {"t": "Framework reranking & query transforms", "d": "Reranking and query transformation via components."},
+      {"t": "Framework vs hand-built", "d": "Control, speed, debugging and complexity compared."}
+    ], "tryIt": null, "outcome": "Use RAG frameworks productively while understanding what is underneath.", "mentalModel": null},
+    {"id": "M4.15", "title": "Capstone: Deploy an Advanced RAG Application", "sessions": 1, "topics": [
+      {"t": "A document Q&A app end to end", "d": "Ingestion, chunking, retrieval, generation, citations and abstention."},
+      {"t": "A baseline plus one real improvement", "d": "Baseline, then reranking, RAG-Fusion or similar."},
+      {"t": "Degrading gracefully on weak evidence", "d": "No bad failures when evidence is thin."},
+      {"t": "Tracking latency, tokens & cost", "d": "Measured across the pipeline."},
+      {"t": "Deploying as an API or UI", "d": "Ship it as an API or simple interface."}
+    ], "tryIt": null, "outcome": "A complete RAG application that goes well beyond retrieve-stuff-generate.", "mentalModel": null}
+  ],
+  "links": []
+}

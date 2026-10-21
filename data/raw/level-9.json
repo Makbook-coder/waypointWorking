@@ -1,0 +1,115 @@
+{
+  "id": 9,
+  "title": "AI System Design",
+  "phase": "Production",
+  "summary": "Design a complete production AI application and justify every architectural choice across quality, latency, cost, reliability and UX.",
+  "interviewWeight": 9,
+  "jobWeight": 8,
+  "sessionCount": 16,
+  "prerequisites": [8],
+  "outcome": "Design a production AI application and defend each decision across quality, latency, cost, reliability and user experience.",
+  "project": {
+    "title": "AI System Design Document",
+    "deliverables": [
+      "Requirements and success criteria",
+      "Expected traffic and constraints",
+      "High-level architecture diagram",
+      "Model choice and routing",
+      "Context/RAG architecture",
+      "Tools and agents where required",
+      "Caching strategy",
+      "Latency and cost budget",
+      "Reliability and fallback strategy",
+      "Security and guardrails",
+      "Evaluation and monitoring plan",
+      "User-feedback loop",
+      "Scaling strategy",
+      "Rejected alternatives with trade-off justifications"
+    ]
+  },
+  "modules": [
+    {"id": "M9.1", "title": "The AI system design framework", "sessions": 2, "topics": [
+      {"t": "Starting from requirements & constraints", "d": "Use case, success criteria, traffic, latency, quality, privacy and budget."},
+      {"t": "Prompting, RAG, agents or fine-tuning", "d": "Choose deliberately, or combine."},
+      {"t": "Quality ↔ latency ↔ cost", "d": "The core trade-offs plus complexity and reliability."},
+      {"t": "Baseline before sophistication", "d": "Simple baseline first."}
+    ], "tryIt": null, "outcome": "Turn a product requirement into a defensible architecture.", "mentalModel": null},
+    {"id": "M9.2", "title": "Context & knowledge architecture", "sessions": 2, "topics": [
+      {"t": "Where knowledge should come from", "d": "Weights, prompt, RAG, memory or tools."},
+      {"t": "The full context pipeline", "d": "Ingestion, retrieval, reranking, assembly and generation."},
+      {"t": "Combining retrieval approaches", "d": "Vector, keyword, graph and others where justified."},
+      {"t": "Freshness, access control & provenance", "d": "Updates, permissions, scale and attribution."},
+      {"t": "Retrieved dynamically or held in context", "d": "Fetch on demand vs keep in context or state."}
+    ], "tryIt": null, "outcome": "Design the knowledge layer that feeds the model the right information.", "mentalModel": null},
+    {"id": "M9.3", "title": "Model routing & gateways", "sessions": 2, "topics": [
+      {"t": "What a model gateway does", "d": "The layer between app code and model providers."},
+      {"t": "Routing on task, cost & risk", "d": "Route by task, capability, latency, context, cost, modality or risk."},
+      {"t": "Model cascades", "d": "Cheap models first; escalate hard requests."},
+      {"t": "Provider fallbacks & quality risk", "d": "Fallbacks and the quality shift they bring."},
+      {"t": "Centralising auth, limits & tracking", "d": "Auth, usage, retries and rate limits in one place."}
+    ], "tryIt": null, "outcome": "Avoid apps built around one hard-coded model.", "mentalModel": null},
+    {"id": "M9.4", "title": "Latency & inference optimization", "sessions": 2, "topics": [
+      {"t": "Breaking latency into components", "d": "Retrieval, TTFT, generation, tool calls and network."},
+      {"t": "Streaming for perceived latency", "d": "Make responses feel faster."},
+      {"t": "Parallelising independent work", "d": "Concurrency instead of needless sequential calls."},
+      {"t": "When a smaller model will do", "d": "Swap in faster models where quality allows."},
+      {"t": "Context reduction & batching", "d": "Smaller prompts, batching and serving optimizations."},
+      {"t": "Throughput & utilization at scale", "d": "Throughput, latency and utilization under load."}
+    ], "tryIt": null, "outcome": "Find where an AI app is slow and apply the right fix.", "mentalModel": null},
+    {"id": "M9.5", "title": "Caching architecture", "sessions": 1, "topics": [
+      {"t": "The four caches in an AI system", "d": "Exact-response, prompt/context, retrieval and semantic caches."},
+      {"t": "What is safe to cache", "d": "Expiry and invalidation strategies."},
+      {"t": "Semantic caching", "d": "Reuse answers across semantically equivalent queries."},
+      {"t": "Freshness vs latency & cost", "d": "Balance freshness, quality, latency and cost."},
+      {"t": "Measuring the hit rate", "d": "Measure real hit rates and savings."}
+    ], "tryIt": null, "outcome": "Treat caching as a deliberate architectural choice.", "mentalModel": null},
+    {"id": "M9.6", "title": "Reliability, guardrails & graceful degradation", "sessions": 2, "topics": [
+      {"t": "Designing for every failure", "d": "Model, provider, tool, rate-limit, malformed-output and retrieval failures."},
+      {"t": "Timeouts, circuit breakers & queues", "d": "Timeouts, retries, fallbacks, circuit breakers, queues and rate limits."},
+      {"t": "Guardrails at system boundaries", "d": "Enforcement at boundaries, not only in the model."},
+      {"t": "Graceful degradation", "d": "Simpler model, reduced features, cached answers or human escalation."},
+      {"t": "Human approval for high-risk actions", "d": "Sign-off for risky or irreversible actions."},
+      {"t": "Service-level expectations", "d": "Availability, latency and quality targets."}
+    ], "tryIt": null, "outcome": "Build a system that stays useful when components fail.", "mentalModel": null},
+    {"id": "M9.7", "title": "AI pipeline orchestration", "sessions": 1, "topics": [
+      {"t": "The end-to-end flow", "d": "Retrieval, models, tools, agents, guardrails, caches and external systems."},
+      {"t": "Deterministic vs model-delegated decisions", "d": "Which decisions are code and which the model makes."},
+      {"t": "Sync, async, queued or long-running", "d": "Choosing an execution model."},
+      {"t": "Avoiding unnecessary agentic complexity", "d": "Prefer deterministic pipelines when sufficient."},
+      {"t": "Component boundaries", "d": "Parts that change, evaluate and scale independently."}
+    ], "tryIt": null, "outcome": "Combine AI components into a coherent production system.", "mentalModel": null},
+    {"id": "M9.8", "title": "Monitoring, feedback & continuous improvement", "sessions": 1, "topics": [
+      {"t": "Wiring evals & feedback into production", "d": "Evals, traces, metrics and user feedback in the architecture."},
+      {"t": "What to monitor", "d": "Quality, latency, cost, errors, retrieval, tool use and providers."},
+      {"t": "Explicit & implicit feedback", "d": "Ratings and behavioral signals."},
+      {"t": "Failures become evaluation cases", "d": "Production failures turn into eval cases."},
+      {"t": "Versioning for traceable regressions", "d": "Version models, prompts, retrieval configs and code."},
+      {"t": "Deploy → observe → improve → redeploy", "d": "The continuous improvement loop."}
+    ], "tryIt": null, "outcome": "Design AI products that improve from real usage.", "mentalModel": null},
+    {"id": "M9.9", "title": "AI system design case studies", "sessions": 2, "topics": [
+      {"t": "Customer-support copilot", "d": "Fresh RAG, citations, routing, caching, escalation and budgets."},
+      {"t": "Coding assistant", "d": "Codebase context, retrieval, code execution, sandboxing and long tasks."},
+      {"t": "Deep research agent", "d": "Search, planning, parallel tools, context management, citations and cost limits."},
+      {"t": "Requirements → architecture → trade-offs", "d": "Baseline, architecture, bottlenecks, failure modes and scaling for each."}
+    ], "tryIt": null, "outcome": "Defend architectural decisions, not just draw boxes.", "mentalModel": null},
+    {"id": "M9.10", "title": "Capstone: AI System Design Document", "sessions": 1, "topics": [
+      {"t": "Requirements & success criteria", "d": "Goals and measures of success."},
+      {"t": "Expected traffic & constraints", "d": "Load estimates and operating constraints."},
+      {"t": "High-level architecture", "d": "Main components and interactions."},
+      {"t": "Model choice & routing", "d": "Models and routing logic."},
+      {"t": "Context / RAG architecture", "d": "Ingestion, retrieval and context assembly."},
+      {"t": "Tools & agents where required", "d": "Only where needed."},
+      {"t": "Caching strategy", "d": "Caches and invalidation."},
+      {"t": "Latency & cost budget", "d": "Budgets for the system."},
+      {"t": "Reliability & fallback strategy", "d": "Failure handling and fallback paths."},
+      {"t": "Security & guardrails", "d": "Security controls."},
+      {"t": "Evaluation & monitoring", "d": "Quality and operations measurement."},
+      {"t": "User-feedback loop", "d": "How feedback drives improvement."},
+      {"t": "Scaling strategy", "d": "How the system scales."},
+      {"t": "Diagram & rejected alternatives", "d": "Diagram plus justified trade-offs and rejected options."}
+    ], "tryIt": null, "outcome": "A design you can defend in an interview or architecture review.", "mentalModel": null}
+  ],
+  "links": [
+    {"label": "AI Engineering: Building Applications with Foundation Models (Chip Huyen, book)", "url": "https://www.amazon.in/AI-Engineering-Building-Applications-Foundation/dp/9355426666", "modules": ["M9.1"]}
+  ]
+}

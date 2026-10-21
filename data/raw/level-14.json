@@ -1,0 +1,47 @@
+{
+  "id": 14,
+  "title": "Projects",
+  "phase": "Frontier & Proof",
+  "summary": "Build and publicly ship 3-5 portfolio projects that compose earlier levels; deployed projects drive interview shortlisting.",
+  "interviewWeight": 10,
+  "jobWeight": 6,
+  "sessionCount": 16,
+  "prerequisites": [4, 5, 10, 12],
+  "outcome": "Ship 3-5 public portfolio projects that combine earlier levels into deployed, demonstrable work.",
+  "project": {
+    "title": "Portfolio of Shipped Projects",
+    "deliverables": [
+      "Document Q&A platform deployed publicly with a retrieval eval",
+      "Resume-to-JD screening agent with tool calling and structured output",
+      "Multi-agent research report system built with LangGraph",
+      "MCP server connecting a model to a real tool (calendar, CRM or task manager)",
+      "Monitored production API with routing, fallback, cost caps and tracing",
+      "Realtime voice agent or vision pipeline",
+      "Public GitHub write-ups, demos and a presentation of the work"
+    ]
+  },
+  "modules": [
+    {"id": "M14.1", "title": "Document Q&A platform", "sessions": 3, "topics": [
+      {"t": "Compose L4 with FastAPI", "d": "The L4 retrieval stack behind a FastAPI service with a retrieval eval, deployed publicly."}
+    ], "tryIt": null, "outcome": "A public document Q&A app with a measured retrieval eval.", "mentalModel": null},
+    {"id": "M14.2", "title": "Resume ↔ JD screening agent", "sessions": 2, "topics": [
+      {"t": "Tool calling and structured output", "d": "Tool calling and structured output on a real business task."}
+    ], "tryIt": null, "outcome": "A screening agent that returns structured, explainable matches.", "mentalModel": null},
+    {"id": "M14.3", "title": "Multi-agent research report system", "sessions": 3, "topics": [
+      {"t": "LangGraph orchestration", "d": "LangGraph orchestration and state management on top of L5."}
+    ], "tryIt": null, "outcome": "A multi-agent system that produces cited research reports.", "mentalModel": null},
+    {"id": "M14.4", "title": "MCP server for a real tool", "sessions": 2, "topics": [
+      {"t": "Connect a model to a real tool", "d": "A calendar, CRM or task manager exposed over MCP."}
+    ], "tryIt": null, "outcome": "A working MCP server a model can use against a real service.", "mentalModel": null},
+    {"id": "M14.5", "title": "Monitored production API", "sessions": 2, "topics": [
+      {"t": "Operations story", "d": "Routing, fallback, cost caps and tracing on top of L10."}
+    ], "tryIt": null, "outcome": "An LLM API with a believable operations story.", "mentalModel": null},
+    {"id": "M14.6", "title": "Voice or multimodal build", "sessions": 3, "topics": [
+      {"t": "Realtime voice or vision pipeline", "d": "A realtime voice agent or vision pipeline on top of L12."}
+    ], "tryIt": null, "outcome": "A shipped voice or vision project.", "mentalModel": null},
+    {"id": "M14.7", "title": "Portfolio & positioning", "sessions": 1, "topics": [
+      {"t": "Write up, publish, and present", "d": "Write-ups, public GitHub repos, recorded demos and a presentation."}
+    ], "tryIt": null, "outcome": "A portfolio a recruiter can skim and an interviewer can dig into.", "mentalModel": null}
+  ],
+  "links": []
+}

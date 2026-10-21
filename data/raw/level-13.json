@@ -1,0 +1,124 @@
+{
+  "id": 13,
+  "title": "Fine-Tuning",
+  "phase": "Frontier & Proof",
+  "summary": "Fine-tune only after prompting, retrieval and orchestration measurably fail, and prove with eval numbers that the tune pays for its data, training and serving.",
+  "interviewWeight": 7,
+  "jobWeight": 3,
+  "sessionCount": 16,
+  "prerequisites": [1, 7, 11],
+  "outcome": "Fine-tune only when cheaper options have run out, and show with evaluations that the tune was worth its total cost.",
+  "project": {
+    "title": "A LoRA That Beats a Prompted Baseline",
+    "deliverables": [
+      "Pick a narrow, real task where the best prompt still fails measurably",
+      "Set the failure, success metric and passing threshold before training",
+      "Build the strongest prompted baseline (few-shot, retrieval where relevant) and score it on a held-out set",
+      "Create a clean, versioned dataset with leak-free train/validation/held-out splits",
+      "Run a reproducible SFT tune with LoRA or QLoRA from a shareable config; add preference tuning only if evals show a gap",
+      "Compare tuned vs prompted on the same held-out set: quality, latency, tokens and cost per 1k requests",
+      "Test off-task regressions and document at least one failure",
+      "Serve the adapter with the correct chat template and confirm it reproduces offline numbers",
+      "Write a one-page decision record with retraining triggers"
+    ]
+  },
+  "modules": [
+    {"id": "M13.1", "title": "Should you fine-tune?", "sessions": 1, "topics": [
+      {"t": "Fine-tuning as the costliest option", "d": "Compared with prompts, retrieval, tools and stronger models."},
+      {"t": "What fine-tuning is good for", "d": "Consistent style, unenforceable formats, narrow tasks, shorter prompts, small-model specialization."},
+      {"t": "What it is not good for", "d": "Changing facts (use retrieval) or undefined tasks."},
+      {"t": "Start from a measured failure", "d": "A specific failure that persists after prompt and retrieval work."},
+      {"t": "The full cost of a tune", "d": "Data, training, evaluation, serving and retraining."},
+      {"t": "Tied to one base model", "d": "A new base model means redoing the work."}
+    ], "tryIt": "Take a task where a prompt struggles, spend an hour improving the prompt and adding examples, and record how much of the gap closes before any training.", "outcome": "Decide whether a task justifies fine-tuning and name the failure, metric and ownership cost.", "mentalModel": "Climb the ladder: prompt → retrieval → tools → stronger model → fine-tune, moving up only when the rung below has measurably failed."},
+    {"id": "M13.2", "title": "Data curation for fine-tuning", "sessions": 2, "topics": [
+      {"t": "Specify the behavior first", "d": "Write the target behavior before collecting data."},
+      {"t": "Where examples come from", "d": "Logs, expert demonstrations or filtered synthetic data, each with bias."},
+      {"t": "Match the chat template", "d": "Template mismatches silently degrade the tune."},
+      {"t": "Loss on responses, not prompts", "d": "Mask loss so training targets assistant turns."},
+      {"t": "Few clean beats many noisy", "d": "Hundreds of clean examples often beat thousands of noisy ones."},
+      {"t": "Cleaning bad examples", "d": "Duplicates, contradictions, wrong labels and truncation."},
+      {"t": "Balancing edge cases", "d": "Mix common and hard cases."},
+      {"t": "Leak-free splits", "d": "Keep near-duplicates from crossing splits."},
+      {"t": "PII & licensed content", "d": "Screen for personal data and licensed material."},
+      {"t": "Versioning the dataset", "d": "Dataset and config versioned together."}
+    ], "tryIt": "Write fifty examples by hand, generate fifty synthetically, then review all hundred and count how many you would keep.", "outcome": "Produce a clean, versioned, correctly formatted dataset with a held-out test set.", "mentalModel": null},
+    {"id": "M13.3", "title": "Supervised Fine-Tuning (SFT)", "sessions": 2, "topics": [
+      {"t": "What SFT changes", "d": "Nudges a model toward labeled examples by minimizing loss on targets."},
+      {"t": "Hyperparameters that matter", "d": "Learning rate, epochs, batch size, sequence length and grad accumulation."},
+      {"t": "Full vs parameter-efficient", "d": "Updating all weights is rarely needed for narrow tasks."},
+      {"t": "A first SFT run with TRL", "d": "A small job where train and validation loss both fall."},
+      {"t": "Reading the loss curves", "d": "Underfitting, overfitting and instability."},
+      {"t": "Catastrophic forgetting", "d": "Gaining the narrow skill, losing general ability."},
+      {"t": "Read outputs, not just loss", "d": "Lower loss does not guarantee better answers."},
+      {"t": "Choosing a checkpoint", "d": "By validation behavior, not the last epoch."}
+    ], "tryIt": "Train on the same dataset for one, three and eight epochs, then compare validation curves and read ten outputs from each checkpoint.", "outcome": "Run SFT, read its curves and pick a defensible checkpoint.", "mentalModel": "Examples → loss on target tokens → small weight updates → checkpoint chosen on validation, not training loss."},
+    {"id": "M13.4", "title": "LoRA & QLoRA", "sessions": 2, "topics": [
+      {"t": "LoRA adapters", "d": "Freeze the base; train small low-rank matrices."},
+      {"t": "QLoRA on a quantized base", "d": "A 4-bit frozen base so the tune fits a smaller GPU."},
+      {"t": "Rank, alpha & target modules", "d": "Plus dropout, precision and quantization type."},
+      {"t": "Adapters vs full fine-tuning", "d": "Quality, memory, time and storage."},
+      {"t": "PEFT with Unsloth or Axolotl", "d": "Rerunnable configs for open-weight tunes."},
+      {"t": "Estimating GPU memory", "d": "From params, precision, sequence length and batch size."},
+      {"t": "Tracking runs", "d": "Dataset version, config and eval results per run."},
+      {"t": "DIY vs managed fine-tuning", "d": "Available bases and whether you keep the weights."}
+    ], "tryIt": "Run the same tune as LoRA at two ranks and as QLoRA, then compare peak GPU memory, training time, adapter size and held-out score.", "outcome": "Fine-tune an open model efficiently on one GPU with reproducible results.", "mentalModel": "Frozen base + small trained adapter = tuned behavior at a fraction of the memory and storage."},
+    {"id": "M13.5", "title": "Preference tuning & DPO", "sessions": 2, "topics": [
+      {"t": "Demonstrations vs preferences", "d": "One right answer vs 'A beats B'."},
+      {"t": "Building preference pairs", "d": "Chosen and rejected responses differing in the target quality."},
+      {"t": "Sources & rater agreement", "d": "Human raters, judges or feedback; measure agreement."},
+      {"t": "Avoiding length bias", "d": "Pairs should not differ in irrelevant ways."},
+      {"t": "DPO intuition", "d": "Raise likelihood of preferred over rejected answers without RL."},
+      {"t": "DPO after SFT", "d": "Preference tuning usually builds on an SFT checkpoint."},
+      {"t": "What preference tuning is for", "d": "Tone, helpfulness, refusals and concision."},
+      {"t": "When SFT is enough", "d": "When preference optimization adds measurable value."}
+    ], "tryIt": "Build fifty preference pairs for a desired tone, run DPO on your SFT model, and have a blind judge compare outputs before and after.", "outcome": "Use preference data when behavior is best captured as comparisons.", "mentalModel": null},
+    {"id": "M13.6", "title": "Reinforcement Fine-Tuning (RFT)", "sessions": 1, "topics": [
+      {"t": "Reward-based tuning", "d": "Score outputs and train toward higher scores."},
+      {"t": "RFT vs SFT vs DPO", "d": "Learning from rewards vs examples vs comparisons."},
+      {"t": "Tasks with gradable outputs", "d": "Code that passes tests, checkable math."},
+      {"t": "Reward design & reward hacking", "d": "Models game the grader instead of the objective."},
+      {"t": "Reaching RFT in practice", "d": "Usually via managed services or specialized frameworks."}
+    ], "tryIt": "Write a grader for one task, try to fool it with outputs that score well but are wrong, and fix the grader before training against it.", "outcome": "Know when reward-based tuning is justified and write an honest grader.", "mentalModel": "Output → grader → reward → policy update: the grader decides what gets learned."},
+    {"id": "M13.7", "title": "Distillation", "sessions": 1, "topics": [
+      {"t": "Teacher → student", "d": "A strong teacher's outputs train a smaller student."},
+      {"t": "Generating & filtering teacher outputs", "d": "Filter teacher answers with evals first."},
+      {"t": "Capability for cost & latency", "d": "A little capability for lower cost and latency."},
+      {"t": "Copied mistakes, low diversity", "d": "Inherited errors and narrow data."},
+      {"t": "Teacher terms of use", "d": "Restrictions on training competing models."}
+    ], "tryIt": "Distill a large model's answers on one task into a small open model, then compare quality, latency and cost per thousand requests.", "outcome": "Specialize a smaller model with lost capability and saved cost both measured.", "mentalModel": null},
+    {"id": "M13.8", "title": "Evaluating fine-tunes", "sessions": 2, "topics": [
+      {"t": "Baselines before training", "d": "Base model, best prompt and a stronger model."},
+      {"t": "Same held-out set, same judge", "d": "Every candidate on identical data and scoring."},
+      {"t": "Beyond a single score", "d": "Quality, latency, cost, consistency and failure cases."},
+      {"t": "Regressions outside the task", "d": "General instruction following, safety and unseen formats."},
+      {"t": "Reading individual failures", "d": "Averages can hide new failures."},
+      {"t": "Simpler alternatives, one last time", "d": "Accept the result if a prompt or stronger base wins."},
+      {"t": "Writing the decision down", "d": "What improved, what regressed, and whether it is worth owning."}
+    ], "tryIt": "Run the base, prompted and tuned models through your eval suite, then add ten off-task prompts and see which model holds up.", "outcome": "Show a fine-tune delivers value without unacceptable regressions, or that it does not.", "mentalModel": null},
+    {"id": "M13.9", "title": "Serving the adapter", "sessions": 2, "topics": [
+      {"t": "Separate adapter or merged weights", "d": "Storage, loading and swapping implications."},
+      {"t": "Save, load & merge", "d": "Confirm merged weights reproduce adapter results."},
+      {"t": "Multi-LoRA serving with vLLM", "d": "Several adapters sharing one base on one GPU."},
+      {"t": "Quantized export for Ollama", "d": "Re-run evals; quantization can erase gains."},
+      {"t": "Managed & serverless adapter hosting", "d": "Shared-base hosting vs your own GPU."},
+      {"t": "Matching template & tokenizer", "d": "A common cause of poor production behavior."},
+      {"t": "Versioning & rollback", "d": "Adapter, base, data and config versioned together."},
+      {"t": "Gradual rollout via the gateway", "d": "Split traffic and expand while watching metrics."},
+      {"t": "Latency & cost vs baseline", "d": "Compare with the prompted baseline it replaces."},
+      {"t": "Retraining triggers", "d": "New base model, drifting inputs or new failures."}
+    ], "tryIt": "Serve two adapters on one base model, send requests to each, then swap one for a new version without restarting the server.", "outcome": "Deploy a tuned model with versioning, rollback, measured cost and a retraining plan.", "mentalModel": "Base model + versioned adapter + matching chat template, served behind the gateway and evaluated in production."},
+    {"id": "M13.10", "title": "Capstone: A LoRA That Beats a Prompted Baseline", "sessions": 1, "topics": [
+      {"t": "A narrow task with a measured failure", "d": "Where the best prompt still fails measurably."},
+      {"t": "Metric & threshold up front", "d": "Before any training."},
+      {"t": "A strong prompted baseline", "d": "Few-shot and retrieval, scored on held-out data."},
+      {"t": "Clean, leak-free dataset", "d": "Versioned splits."},
+      {"t": "Reproducible LoRA/QLoRA run", "d": "From a config others can rerun."},
+      {"t": "Same-set comparison & cost", "d": "Quality, latency, tokens and cost per 1k requests."},
+      {"t": "Regressions & one failure", "d": "Off-task tests and one documented failure."},
+      {"t": "Serve it, reproduce the numbers", "d": "Served model matches offline results."},
+      {"t": "A fine-tuning decision record", "d": "Failure, data, config, numbers, cost and retraining trigger."}
+    ], "tryIt": null, "outcome": "A served fine-tune that beats a strong prompted baseline with documented costs.", "mentalModel": null}
+  ],
+  "links": []
+}

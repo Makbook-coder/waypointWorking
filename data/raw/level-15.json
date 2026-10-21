@@ -1,0 +1,141 @@
+{
+  "id": 15,
+  "title": "GenAI / AI Engineer Interview Prep",
+  "phase": "Interview",
+  "summary": "Convert roadmap knowledge into interview performance through scenarios, system design, debugging cases, trade-off reasoning and project defense.",
+  "interviewWeight": 9,
+  "jobWeight": 1,
+  "sessionCount": 16,
+  "prerequisites": [14],
+  "outcome": "Reason like an AI engineer under interview conditions: explain trade-offs, debug production issues and defend decisions.",
+  "project": {
+    "title": "Full Mock GenAI Interview Loop",
+    "deliverables": [
+      "Round 1: solve six rapid production scenarios (RAG accuracy drop, costly agent loop, doubled provider latency, fine-tune regression, prompt that doubles cost, retriever failing on real queries)",
+      "Round 2: turn an ambiguous product brief into a defended architecture, from requirements to evals and monitoring",
+      "Round 3: present one portfolio project and handle deepening follow-ups on alternatives, cost, failures, evals and scaling",
+      "Record or have someone score each round and write down the weakest answers to revisit"
+    ]
+  },
+  "modules": [
+    {"id": "M15.1", "title": "Interview strategy & role positioning", "sessions": 1, "topics": [
+      {"t": "How GenAI interviews have shifted", "d": "From theory toward system design, debugging and production scenarios."},
+      {"t": "Reading a job description", "d": "Find which roadmap areas a JD actually tests."},
+      {"t": "AI Engineer vs GenAI DS vs DS", "d": "Roles differ by emphasis, not discipline."},
+      {"t": "Why the engineering layer dominates", "d": "APIs, inference, LLMOps, observability, cloud and deployment."},
+      {"t": "API-hosted vs self-hosted models", "d": "Capability, cost, latency, control, privacy and ops burden."},
+      {"t": "A personalized preparation plan", "d": "Based on target role and weaknesses."}
+    ], "tryIt": null, "outcome": "Prioritize preparation and position your skills for the target role.", "mentalModel": null},
+    {"id": "M15.2", "title": "Production RAG interview scenarios", "sessions": 2, "topics": [
+      {"t": "Ingestion for messy enterprise data", "d": "Complex PDFs, nested tables, diagrams and changing documents."},
+      {"t": "RAG at concurrent-user scale", "d": "Many users over very large collections."},
+      {"t": "Splitting the architecture into services", "d": "Embedding, retrieval, inference, ingestion, orchestration and storage."},
+      {"t": "Stateless services, stateful stores", "d": "State lives in databases, indexes and caches."},
+      {"t": "Production infrastructure around RAG", "d": "The supporting infrastructure below."},
+      {"t": "Asynchronous messaging & queues", "d": "Queues in the RAG pipeline."},
+      {"t": "Service fallbacks", "d": "When dependencies fail."},
+      {"t": "Object, vector, graph & search storage", "d": "Right store for each kind of data."},
+      {"t": "Observability & SLAs", "d": "Monitoring and service-level targets."},
+      {"t": "Networking & IAM", "d": "Topology and access management."},
+      {"t": "Secrets & encryption", "d": "Managing secrets and encrypting data."},
+      {"t": "CI/CD & deployment", "d": "Automated pipelines for RAG changes."},
+      {"t": "\"Quality dropped after a week\"", "d": "Investigating a RAG system that degraded."},
+      {"t": "Isolating the failing stage", "d": "Ingestion, retrieval, generation, data, model or infra."}
+    ], "tryIt": null, "outcome": "Whiteboard and defend a production-scale RAG architecture.", "mentalModel": null},
+    {"id": "M15.3", "title": "Agentic AI interview scenarios", "sessions": 2, "topics": [
+      {"t": "Designing an agent for a business task", "d": "Planning, tools, memory and multi-step execution."},
+      {"t": "Workflow or autonomous agent", "d": "Defend the choice."},
+      {"t": "Tools, MCP, memory & multi-agent", "d": "Under real constraints."},
+      {"t": "Runaway loops", "d": "Agents that never terminate."},
+      {"t": "Poor tool selection", "d": "Agents picking the wrong tool."},
+      {"t": "Tool failures", "d": "Failing tool calls."},
+      {"t": "Nondeterministic trajectories", "d": "Runs that vary unpredictably."},
+      {"t": "Excessive token & cost usage", "d": "Controlling spend."},
+      {"t": "Context degradation", "d": "Quality loss as context grows."},
+      {"t": "Overly powerful tool permissions", "d": "Reducing blast radius."},
+      {"t": "Human-in-the-loop checkpoints", "d": "Approvals for consequential actions."},
+      {"t": "Debugging an agent from its trajectory", "d": "Passes tests, fails in production."},
+      {"t": "When not to go autonomous", "d": "When multi-agent or autonomy is unnecessary."}
+    ], "tryIt": null, "outcome": "Design and defend an agent architecture with cost, reliability and blast radius in mind.", "mentalModel": null},
+    {"id": "M15.4", "title": "Fine-tuning & model adaptation interviews", "sessions": 1, "topics": [
+      {"t": "Prompt vs RAG vs fine-tuning", "d": "Choosing from a concrete product brief."},
+      {"t": "When fine-tuning earns its complexity", "d": "Value vs unnecessary complexity."},
+      {"t": "LoRA, QLoRA, PEFT & quantization", "d": "As engineering trade-offs, not definitions."},
+      {"t": "Deploying a fine-tuned open-weight model", "d": "Serving, GPUs, optimization, latency and cost."},
+      {"t": "\"Accuracy dropped after deployment\"", "d": "Good in testing, poor in production."},
+      {"t": "What to investigate", "d": "Data, formatting, shift, eval regressions, inference config, serving and quantization."}
+    ], "tryIt": null, "outcome": "Defend an adaptation strategy and debug post-deployment degradation.", "mentalModel": null},
+    {"id": "M15.5", "title": "LLMOps & production debugging interviews", "sessions": 2, "topics": [
+      {"t": "Diagnosing production incidents", "d": "APIs, self-hosted inference, retrieval, queues, caches, rate limits and tools."},
+      {"t": "Latency spikes, outages & cost explosions", "d": "Plus capacity limits and quality degradation."},
+      {"t": "Fallbacks, retries & autoscaling", "d": "Graceful degradation and load balancing."},
+      {"t": "Reading monitoring signals", "d": "Latency, throughput, errors, tokens, cost, retrieval and eval scores."},
+      {"t": "Alert, rollback or investigate", "d": "What triggers each response."},
+      {"t": "Proprietary API vs self-hosted inference", "d": "Under traffic and privacy constraints."}
+    ], "tryIt": null, "outcome": "Operate and troubleshoot an AI system after it leaves the notebook.", "mentalModel": null},
+    {"id": "M15.6", "title": "AI system-design interviews", "sessions": 2, "topics": [
+      {"t": "Turning ambiguity into assumptions", "d": "Users, traffic, latency, quality, cost, freshness, privacy and reliability."},
+      {"t": "Simplest viable architecture first", "d": "Before RAG, agents, fine-tuning or routing."},
+      {"t": "Whiteboarding the full AI stack", "d": "Components listed below."},
+      {"t": "Model selection & routing", "d": "Choose and route between models."},
+      {"t": "RAG & context", "d": "Retrieval and context assembly."},
+      {"t": "Tools & agents", "d": "Tool use and agent components."},
+      {"t": "Caches", "d": "Where caching helps."},
+      {"t": "Databases", "d": "Selecting data stores."},
+      {"t": "Inference services", "d": "Model serving design."},
+      {"t": "Observability", "d": "Instrumentation."},
+      {"t": "Evals", "d": "Evaluation built into the design."},
+      {"t": "Security", "d": "Across the stack."},
+      {"t": "Deployment", "d": "How it ships."},
+      {"t": "Designing under enterprise constraints", "d": "Managed or self-hosted when public APIs are disallowed."},
+      {"t": "Explaining trade-offs, not naming tools", "d": "Justify decisions by trade-offs."},
+      {"t": "Enterprise support assistant", "d": "Practice design."},
+      {"t": "Coding assistant", "d": "Practice design."},
+      {"t": "Research agent", "d": "Practice design."},
+      {"t": "Large-scale document intelligence", "d": "Practice design."}
+    ], "tryIt": null, "outcome": "Run a structured AI system-design interview end to end.", "mentalModel": null},
+    {"id": "M15.7", "title": "Staying current without chasing hype", "sessions": 1, "topics": [
+      {"t": "A process for evaluating what is new", "d": "Models, frameworks, papers, benchmarks and tools."},
+      {"t": "Capability change vs hype", "d": "Lasting change vs short-lived noise."},
+      {"t": "Evaluating a newly released model", "d": "Before replacing a production model."},
+      {"t": "Benchmarks → evals → controlled rollout", "d": "Shortlist, custom evals, cost/latency, rollout."},
+      {"t": "\"How do you stay current?\"", "d": "A strong answer to a common question."}
+    ], "tryIt": null, "outcome": "Show informed judgment instead of listing new tools.", "mentalModel": null},
+    {"id": "M15.8", "title": "Project & portfolio defense", "sessions": 2, "topics": [
+      {"t": "Choosing two or three projects to defend", "d": "Projects ready for deep questioning."},
+      {"t": "A structure for explaining each", "d": "A consistent walkthrough from problem to results."},
+      {"t": "Problem → architecture → results", "d": "Requirements, baseline, decisions, failures, evals and results."},
+      {"t": "Justifying every technology choice", "d": "Model, retriever, agent design, framework, database and deployment."},
+      {"t": "Quantifying the outcome", "d": "Quality, latency, cost per query, throughput and gains."},
+      {"t": "Discussing failures openly", "d": "Mistakes and what changed."},
+      {"t": "\"Why didn't you use RAG?\"", "d": "Defending no retrieval."},
+      {"t": "\"Why not fine-tune?\"", "d": "Defending no fine-tune."},
+      {"t": "\"Why do you need an agent?\"", "d": "Justifying an agent."},
+      {"t": "\"What happens at 100× traffic?\"", "d": "Scaling behavior."},
+      {"t": "\"How would you halve the cost?\"", "d": "Concrete cost cuts."},
+      {"t": "\"What breaks first?\"", "d": "The first bottleneck."}
+    ], "tryIt": null, "outcome": "Defend projects as engineering decisions.", "mentalModel": null},
+    {"id": "M15.9", "title": "Behavioral communication for AI engineers", "sessions": 1, "topics": [
+      {"t": "Clarity without implementation detail", "d": "Reasoning without drowning the interviewer."},
+      {"t": "Stating assumptions first", "d": "Before solving ambiguous problems."},
+      {"t": "Thinking in trade-offs", "d": "Structured trade-offs before tools."},
+      {"t": "Revealing a design progressively", "d": "Build the diagram step by step."},
+      {"t": "Measuring instead of bluffing", "d": "How you would measure or experiment."},
+      {"t": "Structuring experience-based answers", "d": "Situation, decision, implementation, result, lessons."}
+    ], "tryIt": null, "outcome": "Make your technical thinking visible.", "mentalModel": null},
+    {"id": "M15.10", "title": "Capstone: Full Mock GenAI Interview Loop", "sessions": 2, "topics": [
+      {"t": "Simulate a complete interview", "d": "Three rounds end to end."},
+      {"t": "Round 1 · Rapid production scenarios", "d": "Quick scenarios listed below."},
+      {"t": "RAG accuracy suddenly drops", "d": "Diagnose the drop."},
+      {"t": "Agent enters an expensive loop", "d": "Diagnose and stop it."},
+      {"t": "Provider latency doubles", "d": "Respond to the slowdown."},
+      {"t": "Fine-tuned model regresses after deployment", "d": "Investigate the regression."},
+      {"t": "Prompt change improves quality but doubles cost", "d": "Weigh the trade-off."},
+      {"t": "Retriever fails on real production queries", "d": "Works offline, fails live."},
+      {"t": "Round 2 · System design", "d": "Ambiguous brief to architecture."},
+      {"t": "The full design sequence", "d": "Requirements, constraints, baseline, architecture, models, data, scale, reliability, security, evals and trade-offs."},
+      {"t": "Round 3 · Project defense", "d": "One project under deepening follow-ups."}
+    ], "tryIt": null, "outcome": "Reason like an AI engineer under interview conditions.", "mentalModel": null}
+  ],
+  "links": []
+}

@@ -1,0 +1,123 @@
+{
+  "id": 11,
+  "title": "Managed AI Platforms",
+  "phase": "Production",
+  "summary": "Ship AI apps on cloud-managed platforms, open-weight hosts or routers, and decide which parts to outsource and which to keep.",
+  "interviewWeight": 6,
+  "jobWeight": 7,
+  "sessionCount": 18,
+  "prerequisites": [9, 10],
+  "outcome": "Choose and defend a consumption path for any workload, operate a platform's identity, network, cost and capacity controls, and avoid lock-in.",
+  "project": {
+    "title": "Deploy on a Managed Platform",
+    "deliverables": [
+      "Redeploy an earlier app on a managed platform, keeping behavior and changing the plumbing",
+      "Authenticate with cloud identity and least-privilege model access; no provider API key in the app",
+      "Route traffic over a private network path; record data location, retention and terms",
+      "Replace at least one hand-built component with a managed one and keep at least one hand-built, with a reason",
+      "Re-run the eval suite after the move and report quality, latency and cost changes",
+      "Route calls through a gateway with a working fallback, or justify direct single-provider calls",
+      "Size capacity, set a budget alert and state the volume where another pricing model wins",
+      "Write a one-page platform decision record with an exit plan"
+    ]
+  },
+  "modules": [
+    {"id": "M11.1", "title": "The three ways to consume a model", "sessions": 1, "topics": [
+      {"t": "Three ways to consume a model", "d": "Public API, managed platform in your cloud, or open weights hosted by you or a provider."},
+      {"t": "Open weights without running GPUs", "d": "Platforms and inference providers serve open models on demand."},
+      {"t": "Why regulated teams cannot use a public API", "d": "Regulation often rules out public APIs before quality is considered."},
+      {"t": "Comparing the three paths", "d": "Identity, data handling, region, capacity, price, ops effort and availability."},
+      {"t": "Platform, gateway, or both", "d": "A platform can be the gateway, sit behind one, or be one route."}
+    ], "tryIt": "List every component of an app built on a public API that would change if it had to run inside a cloud account.", "outcome": "Place any workload on the right consumption path and justify it.", "mentalModel": "One application, three consumption paths: public API, managed platform in your cloud, or open weights you or a provider host."},
+    {"id": "M11.2", "title": "Platform anatomy: Bedrock, Vertex AI & Azure AI Foundry", "sessions": 2, "topics": [
+      {"t": "The shape all three share", "d": "Catalog, endpoints, identity, network boundary and one bill."},
+      {"t": "Reading a model catalog", "d": "Providers, regions and pinned or retired versions."},
+      {"t": "Invoking through the platform", "d": "Platform request formats, unified converse-style APIs and passthrough."},
+      {"t": "Same ideas, different vocabulary", "d": "Mapping terms across Bedrock, Vertex AI and Azure AI Foundry."},
+      {"t": "Calling a hosted model", "d": "Call from code and inspect response, usage and cost reporting."},
+      {"t": "Swapping models inside one catalog", "d": "Compare models without changing auth, network or billing."},
+      {"t": "What the platform does not give you", "d": "Prompt quality, retrieval design, evals and product behavior stay yours."}
+    ], "tryIt": "Run one prompt on a closed model and an open-weight model in the same catalog and compare quality, latency and price per thousand tokens.", "outcome": "Work on one managed platform and map its concepts onto the other two.", "mentalModel": null},
+    {"id": "M11.3", "title": "Identity, networking & tenancy", "sessions": 2, "topics": [
+      {"t": "Cloud identity instead of API keys", "d": "Roles, service accounts and workload identity."},
+      {"t": "Least privilege for model access", "d": "Scope models, regions and actions per app or team."},
+      {"t": "Auditing who invoked what", "d": "Audit trails and why regulated settings need them."},
+      {"t": "Private connectivity, no public egress", "d": "Private paths to models and their costs."},
+      {"t": "Tenant isolation on shared infrastructure", "d": "Separate accounts, scoped credentials and tenant-safe retrieval."},
+      {"t": "Encryption & customer-managed keys", "d": "Key management options including CMKs."}
+    ], "tryIt": "Invoke a model over a private network path with no public egress, then confirm from logs that the request stayed inside the account.", "outcome": "Deploy a workload whose identity, network and tenancy would pass a security review.", "mentalModel": null},
+    {"id": "M11.4", "title": "Regions, residency & compliance", "sessions": 1, "topics": [
+      {"t": "Models exist per region", "d": "Regional availability often decides which models you can use."},
+      {"t": "Data residency & localization", "d": "Residency rules, including Indian localization expectations."},
+      {"t": "Retention & training terms in writing", "d": "What is logged, for how long, who sees it and training use."},
+      {"t": "Connecting back to governance", "d": "Link to governance requirements on residency and deletion."},
+      {"t": "When your model is not in your region", "d": "Cross-region inference, another model or a documented exception."}
+    ], "tryIt": null, "outcome": "State exactly where data goes, where it is processed, how long it is kept and under whose terms.", "mentalModel": null},
+    {"id": "M11.5", "title": "Capacity, quotas & cost", "sessions": 2, "topics": [
+      {"t": "On-demand vs provisioned throughput", "d": "How commitments change price and limits."},
+      {"t": "Reading the quota model", "d": "RPM, TPM, concurrency and per-model regional limits."},
+      {"t": "Planning for burst traffic", "d": "Queues, backpressure and batch endpoints."},
+      {"t": "Defending a quota increase", "d": "Request increases with traffic evidence."},
+      {"t": "Cost per request, end to end", "d": "Tokens, retrieval calls and managed components."},
+      {"t": "Attributing spend per team or tenant", "d": "Tagging and billing views."},
+      {"t": "Budgets & runaway-cost alerts", "d": "Catch runaway loops before the invoice."},
+      {"t": "Which pricing model wins at your volume", "d": "On-demand vs committed vs self-hosted."}
+    ], "tryIt": "Price one week of real traffic three ways: on-demand, committed capacity, and open weights on your own inference.", "outcome": "Size capacity and forecast spend, and know where each pricing model wins.", "mentalModel": null},
+    {"id": "M11.6", "title": "Open-weight model platforms", "sessions": 2, "topics": [
+      {"t": "The open-weight hosting ladder", "d": "Hubs, serverless providers, GPU platforms and your own servers."},
+      {"t": "Model hubs & checkpoint trust", "d": "Cards, licenses, gating and checkpoint trust on Hugging Face."},
+      {"t": "Serverless inference providers", "d": "Per-token providers like Together, Fireworks, Groq or Replicate."},
+      {"t": "GPU compute platforms", "d": "Modal, Baseten or RunPod run hardware; you bring the serving stack."},
+      {"t": "Serving it yourself with vLLM", "d": "vLLM, TGI or Ollama; continuous batching and KV-cache reuse."},
+      {"t": "Per-token vs per-GPU-hour", "d": "The utilization point where renting GPUs wins."},
+      {"t": "Cold starts & scale-to-zero", "d": "Cheap idle deployments respond slowly at first."},
+      {"t": "Sizing hardware for a model", "d": "Memory from params, precision, quantization and KV cache."},
+      {"t": "What hosting open weights buys", "d": "Predictable cost, data in your boundary and version control."},
+      {"t": "Open vs closed on your own task", "d": "Evaluate both on your task before assuming."}
+    ], "tryIt": "Serve one small open-weight model via a serverless provider, a GPU platform and locally, then compare setup effort, latency and cost per thousand requests.", "outcome": "Run an open-weight model on the right rung of the hosting ladder.", "mentalModel": "Open weights are a ladder: someone else's API, then someone else's GPUs, then your own GPUs."},
+    {"id": "M11.7", "title": "Model routers & LLM gateways", "sessions": 2, "topics": [
+      {"t": "One endpoint, many providers", "d": "A gateway holds credentials and accepts one request format."},
+      {"t": "Hosted routers vs self-hosted proxies", "d": "OpenRouter/Portkey vs LiteLLM and cloud gateways."},
+      {"t": "Routing rules & automatic failover", "d": "Route by task, cost, context, latency, region or risk."},
+      {"t": "Virtual keys, budgets & quotas", "d": "Per-team keys, budgets and rate limits."},
+      {"t": "One view of usage and cost", "d": "Unified reporting across providers."},
+      {"t": "The router is on the critical path", "d": "It needs its own availability and a bypass plan."},
+      {"t": "Differences a router cannot hide", "d": "Tool formats, structured output, limits and prompt behavior."},
+      {"t": "Caching at the gateway", "d": "Exact and semantic caching and what must never be cached."},
+      {"t": "When a router earns its place", "d": "Multiple providers, teams or governed spend."},
+      {"t": "Routing changes who answers", "d": "A rule change swaps models without code, so evals must run."}
+    ], "tryIt": "Place a router in front of two providers, force the primary to fail, and confirm the fallback answers within your latency budget.", "outcome": "Route model traffic with failover, spend control and unified usage.", "mentalModel": null},
+    {"id": "M11.8", "title": "Managed building blocks: build or buy", "sessions": 3, "topics": [
+      {"t": "Managed retrieval & knowledge bases", "d": "Ingestion, chunking, embedding and retrieval as configuration."},
+      {"t": "Managed retrieval vs your own stack", "d": "Control, tuning, eval depth and cost at your corpus size."},
+      {"t": "Managed agent & workflow runtimes", "d": "Their assumptions about tools, memory and orchestration."},
+      {"t": "Managed guardrails", "d": "Content filters, topic limits and redaction vs your own checks."},
+      {"t": "Managed evaluation", "d": "Do managed metrics answer your eval questions?"},
+      {"t": "Managed fine-tuning & distillation", "d": "Available bases, where weights live and portability."},
+      {"t": "Deciding layer by layer", "d": "Buying one layer does not commit you to the rest."},
+      {"t": "What to judge each candidate on", "d": "Control, transparency, eval depth, cost and auditability."},
+      {"t": "Measuring the portability cost", "d": "Prompts move easily; indexes, agents and guardrail configs do not."},
+      {"t": "When buying is the honest call", "d": "Small teams, standard cases and deadlines."}
+    ], "tryIt": "Rebuild one component of an existing app on a managed equivalent, then compare quality, cost and the control you gave up.", "outcome": "Make defensible build-or-buy decisions per layer.", "mentalModel": "Buy the plumbing you cannot differentiate on, build the layer your product is judged by."},
+    {"id": "M11.9", "title": "Portability, lock-in & migration", "sessions": 2, "topics": [
+      {"t": "What travels and what does not", "d": "Prompts, evals and code travel; managed indexes and agent definitions do not."},
+      {"t": "Keeping an abstraction in place", "d": "A model swap becomes config, not a rewrite."},
+      {"t": "The real costs of lock-in", "d": "Availability, feature pace, negotiating power and re-proving safety."},
+      {"t": "Migration as an evaluation exercise", "d": "Re-run evals before, during and after the move."},
+      {"t": "Catalog lag & deprecation", "d": "Catalogs trail the frontier and retire versions on their schedule."},
+      {"t": "Running two platforms in parallel", "d": "Route by capability, region, cost or availability."},
+      {"t": "Multi-cloud, honestly", "d": "Resilience and leverage vs duplicated evaluation and ops."}
+    ], "tryIt": null, "outcome": "Adopt a platform without being trapped by it.", "mentalModel": null},
+    {"id": "M11.10", "title": "Capstone: Deploy on a Managed Platform", "sessions": 1, "topics": [
+      {"t": "Redeploy an app you already built", "d": "Same behavior, new plumbing."},
+      {"t": "Cloud identity, no API key", "d": "Least-privilege model access via cloud identity."},
+      {"t": "Private path & recorded data handling", "d": "Private network path; location, retention and terms recorded."},
+      {"t": "One component bought, one built", "d": "With a defensible reason for each."},
+      {"t": "Re-run your evals after the move", "d": "Report quality, latency and cost changes."},
+      {"t": "A gateway with a working fallback", "d": "Or a justification for direct calls."},
+      {"t": "Capacity sizing & budget alert", "d": "Plus the volume where another pricing model wins."},
+      {"t": "A platform decision record", "d": "Workload, constraints, choices and exit plan on one page."}
+    ], "tryIt": null, "outcome": "The same app running where a regulated employer could run it, with every platform decision documented.", "mentalModel": null}
+  ],
+  "links": []
+}

@@ -1,0 +1,130 @@
+{
+  "id": 0,
+  "title": "Software Engineering Fundamentals",
+  "phase": "Foundations",
+  "summary": "Build, debug, and deploy real software before adding LLMs, as the engineering base for everything that follows.",
+  "interviewWeight": 9,
+  "jobWeight": 10,
+  "sessionCount": 22,
+  "prerequisites": [],
+  "outcome": "Ship a real, tested, containerized web service without any AI in the product, and use a coding agent with disciplined verification while building it.",
+  "project": {
+    "title": "Ship a No-AI REST Service",
+    "deliverables": [
+      "Build a complete app with Python, FastAPI, PostgreSQL, Git, Docker and deployment, with no LLM dependency in the product",
+      "Pick a small, realistic domain (tasks, bookmarks, expenses, inventory, notes, support tickets)",
+      "Implement multiple REST endpoints with validated schemas and persistent CRUD",
+      "Integrate at least one external API, using async where it fits",
+      "Handle validation failures, missing resources, external-service errors and unexpected errors cleanly",
+      "Add automated tests, env-var configuration and useful logging",
+      "Keep a clean Git repo with a README covering setup and usage",
+      "Package with Docker and deploy to a public URL",
+      "Verify the deployed API with OpenAPI docs, curl or an API client",
+      "Use a coding agent for meaningful parts of the build and review every diff before accepting",
+      "Validate generated code with tests, type checks, linting, logs and manual calls",
+      "Explain the architecture and key code paths without the agent",
+      "Document one AI failure: what it proposed, why it was wrong, how you caught it, and the lesson"
+    ]
+  },
+  "modules": [
+    {"id": "M0.1", "title": "Python for AI Engineering", "sessions": 4, "topics": [
+      {"t": "Clean, idiomatic Python", "d": "Functions, classes, modules, comprehensions, exceptions and standard-library utilities."},
+      {"t": "Core data structures", "d": "Choosing among lists, tuples, sets, dicts, iterators and generators."},
+      {"t": "Type hints & typed models", "d": "Type hints, dataclass/Pydantic-style models and static analysis for explicit interfaces."},
+      {"t": "Mutability, scope & failure modes", "d": "References, scope, exceptions, context managers and common Python pitfalls."},
+      {"t": "Files, paths, env vars & serialization", "d": "Files, paths, environment variables, JSON, CSV and basic serialization."},
+      {"t": "Sync vs async execution", "d": "async/await for concurrent network and API calls without blocking."},
+      {"t": "Environments & dependencies with uv", "d": "Virtual environments, pyproject.toml and lockfiles with uv."},
+      {"t": "Modules & packages", "d": "Structuring larger programs into modules and packages."},
+      {"t": "Unit tests and debugging", "d": "pytest basics, stack traces, logs and breakpoints."}
+    ], "tryIt": null, "outcome": "Build a small multi-file Python app that is typed, tested, dependency-managed and makes concurrent API calls.", "mentalModel": null},
+    {"id": "M0.2", "title": "The Web: HTTP, REST & JSON", "sessions": 3, "topics": [
+      {"t": "The HTTP request/response cycle", "d": "URL, method, headers, body, server processing, response and status code."},
+      {"t": "Methods & idempotency", "d": "GET, POST, PUT/PATCH, DELETE and what idempotency means in practice."},
+      {"t": "Status codes", "d": "Status families and common codes such as 200, 201, 400, 401, 403, 404, 409, 429, 500."},
+      {"t": "Headers, params, bodies & cookies", "d": "Headers, query and path params, request bodies, content types and cookies."},
+      {"t": "Working with JSON", "d": "Producing, parsing, validating and transforming JSON."},
+      {"t": "RESTful resource design", "d": "Designing clean endpoints for a simple application."},
+      {"t": "Authentication basics", "d": "API keys, bearer tokens, auth headers and keeping secrets out of URLs and clients."},
+      {"t": "Inspecting APIs with curl & Postman", "d": "Debugging APIs with curl, Postman/Bruno or Python HTTP clients."}
+    ], "tryIt": null, "outcome": "Read unfamiliar API docs, build requests by hand, interpret responses and design a sensible REST API.", "mentalModel": null},
+    {"id": "M0.3", "title": "Building APIs with FastAPI", "sessions": 3, "topics": [
+      {"t": "Routes, parameters & response models", "d": "Routes, path/query params, request bodies and response models."},
+      {"t": "Validation with Pydantic", "d": "Pydantic models for validation, serialization and typed I/O."},
+      {"t": "Dependency injection", "d": "Reusable dependencies via FastAPI's DI system."},
+      {"t": "Status codes & error responses", "d": "Correct status codes and consistent error payloads."},
+      {"t": "Clean exception handling", "d": "Handling exceptions so stack traces never leak to clients."},
+      {"t": "Generated OpenAPI docs", "d": "Automatic OpenAPI/Swagger docs and how schemas are derived."},
+      {"t": "Sync vs async endpoints", "d": "When to write sync or async endpoints."},
+      {"t": "Calling external services without blocking", "d": "Calling HTTP services from async endpoints without stalling the server."},
+      {"t": "Startup, config & middleware", "d": "Lifespan events, env-var config and basic middleware."},
+      {"t": "Testing endpoints", "d": "pytest with FastAPI's TestClient."}
+    ], "tryIt": null, "outcome": "Build a documented, validated, testable API that talks to at least one external service.", "mentalModel": null},
+    {"id": "M0.4", "title": "Data & Persistence Basics", "sessions": 2, "topics": [
+      {"t": "Relational data modeling", "d": "Tables, keys, relationships and basic normalization."},
+      {"t": "SQL with PostgreSQL", "d": "CRUD, filtering, sorting, grouping, joins and aggregations in PostgreSQL."},
+      {"t": "Indexes & query performance", "d": "What indexes do and how query shape affects performance."},
+      {"t": "Connecting a database to the app", "d": "Wiring PostgreSQL into a FastAPI app with a driver or ORM."},
+      {"t": "Credentials outside source code", "d": "Loading DB credentials from the environment, never from code."}
+    ], "tryIt": null, "outcome": "Build an API whose data survives restarts and supports real CRUD backed by PostgreSQL.", "mentalModel": null},
+    {"id": "M0.5", "title": "Git & Collaboration", "sessions": 2, "topics": [
+      {"t": "Repos, commits, branches & remotes", "d": "Repositories, commits, branches, remotes, diffs and the staging area."},
+      {"t": "The branch → PR → merge workflow", "d": "Branch, commit, push, open a PR, review and merge."},
+      {"t": "Commit messages & history", "d": "Useful commit messages and inspecting history."},
+      {"t": "Resolving merge conflicts", "d": "Resolving conflicts confidently."},
+      {"t": "Keeping secrets out with .gitignore", "d": "Excluding secrets, venvs, generated files and local config."},
+      {"t": "Writing a README", "d": "Purpose, install, config, run, test and API usage."},
+      {"t": "Code review & protected branches", "d": "Reviews, pull requests and protected main branches."}
+    ], "tryIt": null, "outcome": "Hand your repo to another developer who can understand, run and contribute without you.", "mentalModel": null},
+    {"id": "M0.6", "title": "AI-Assisted Software Development", "sessions": 5, "topics": [
+      {"t": "Autocomplete → assistants → agents", "d": "From autocomplete to chat assistants to agents that read, edit, run and iterate."},
+      {"t": "AI-assisted engineering vs vibe coding", "d": "Directing and verifying AI work versus accepting whatever it generates."},
+      {"t": "Explore, implement & debug with an agent", "d": "Using a coding agent such as Claude Code to explore, change and debug a repo."},
+      {"t": "The verification loop", "d": "Context, generate, review diff, test, debug, review, accept."},
+      {"t": "Minimum useful context", "d": "Giving the agent only what the task needs."},
+      {"t": "CLAUDE.md as project memory", "d": "Keeping conventions, commands and testing notes in a project instruction file."},
+      {"t": "Spec-driven development & planning", "d": "Write a spec, review a plan, then let the agent change code."},
+      {"t": "Slash commands & Skills", "d": "Turning repeated prompts into commands and on-demand skills."},
+      {"t": "Skills worth building", "d": "Skills for review, test generation, docs, refactoring and conventions."},
+      {"t": "Delegating to subagents", "d": "Handing review, testing, debugging or research to subagents."},
+      {"t": "External systems through MCP", "d": "Connecting agents to databases, APIs and docs via MCP."},
+      {"t": "Hooks for deterministic checks", "d": "Hooks that always run formatting, linting and tests."},
+      {"t": "Plugins as capability bundles", "d": "Packaging commands, skills, hooks and agents into plugins."},
+      {"t": "Skills that transfer across agents", "d": "Context, specs, planning, delegation and verification carry over to other agents."}
+    ], "tryIt": "Build a small multi-file app with a coding agent: write a spec and plan, add one command or skill, one subagent, one MCP integration and one hook. Review every diff, run the tests and fix at least one thing the agent got wrong.", "outcome": "Use a coding agent as an engineering collaborator, with planning and verification around every meaningful change.", "mentalModel": "AI coding skill multiplies engineering fundamentals; it does not replace them."},
+    {"id": "M0.7", "title": "Containers & Deployment", "sessions": 2, "topics": [
+      {"t": "App vs environment vs machine", "d": "Separating the application, its environment and the host."},
+      {"t": "Containers & images", "d": "What images and containers are and why Docker helps reproducibility."},
+      {"t": "Writing and running a Dockerfile", "d": "Build and run an image, expose ports, pass env vars safely."},
+      {"t": "Layers, logs & startup failures", "d": "Image layers, .dockerignore, container logs and common startup failures."},
+      {"t": "Containerizing a FastAPI app", "d": "Packaging a FastAPI service with its config and dependencies."},
+      {"t": "Deploying to a public URL", "d": "Deploying to a cloud platform with a reachable URL."},
+      {"t": "Production env vars & secrets", "d": "Managing production config separately from local development."}
+    ], "tryIt": null, "outcome": "Containerize and deploy a local service, and debug it when production behaves differently.", "mentalModel": null},
+    {"id": "M0.8", "title": "Capstone: Ship a No-AI REST Service", "sessions": 1, "topics": [
+      {"t": "The full no-AI stack", "d": "Python, FastAPI, PostgreSQL, Git, Docker and deployment, without an LLM in the product."},
+      {"t": "Choosing a realistic domain", "d": "A small but realistic domain such as tasks, bookmarks or expenses."},
+      {"t": "REST endpoints with persistent CRUD", "d": "Multiple validated endpoints with persistent CRUD."},
+      {"t": "An external API integration", "d": "At least one external API, async where appropriate."},
+      {"t": "Handling every failure path", "d": "Validation, missing resources, upstream errors and unexpected errors."},
+      {"t": "Tests, config & logging", "d": "Automated tests, env-var config and useful logs."},
+      {"t": "Clean repo and README", "d": "Tidy structure and a README with setup and usage."},
+      {"t": "Docker packaging & deployment", "d": "Docker image deployed to a public URL."},
+      {"t": "Verifying the deployed API", "d": "Checking the live API with OpenAPI docs, curl or a client."},
+      {"t": "Coding agent during the build", "d": "Use an agent for real build work; the no-AI rule is about the product."},
+      {"t": "Diff review before accepting", "d": "Review every meaningful generated change as a diff."},
+      {"t": "Validating generated code", "d": "Tests, type checks, linting, logs and manual calls."},
+      {"t": "Explain it without the agent", "d": "Walk through the architecture and key paths yourself."},
+      {"t": "Document one AI failure", "d": "What the agent proposed, why it failed, how you caught it and the lesson."}
+    ], "tryIt": null, "outcome": "A real service another person can clone, run, test, call over HTTP and inspect.", "mentalModel": null}
+  ],
+  "links": [
+    {"label": "Python (CampusX One)", "url": "https://learnwith.campusx.in/courses/Data-Science-Mentorship-Program-DSMP-20-653f50d1e4b0d2eae855480a", "modules": ["M0.1"]},
+    {"label": "Git & GitHub (CampusX One)", "url": "https://learnwith.campusx.in/courses/Data-Science-Mentorship-Program-DSMP-20-653f50d1e4b0d2eae855480a", "modules": ["M0.5"]},
+    {"label": "SQL (CampusX One)", "url": "https://learnwith.campusx.in/courses/Data-Science-Mentorship-Program-DSMP-20-653f50d1e4b0d2eae855480a", "modules": ["M0.4"]},
+    {"label": "Docker for Machine Learning (CampusX One)", "url": "https://learnwith.campusx.in/courses/Docker-for-Machine-Learning-68a022773f7a067efc5df47e", "modules": ["M0.7"]},
+    {"label": "FastAPI (CampusX One)", "url": "https://learnwith.campusx.in/courses/FastAPI-6873cb2075f40c2715c809fe", "modules": ["M0.3"]},
+    {"label": "Web & API Development using Flask (CampusX One)", "url": "https://learnwith.campusx.in/courses/Web-and-API-Development-using-Flask-6839ae3fb109825d2ca6526d", "modules": ["M0.2"]},
+    {"label": "Agentic Coding using Claude Code (CampusX YouTube playlist)", "url": "https://www.youtube.com/playlist?list=PLKnIA16_RmvaYH3poI0oJvbDF4zEvpq8W", "modules": ["M0.6"]}
+  ]
+}

@@ -1,0 +1,4415 @@
+{
+  "M0.1": [
+    {
+      "type": "course",
+      "title": "Python (CampusX One, DSMP)",
+      "url": "https://learnwith.campusx.in/courses/Data-Science-Mentorship-Program-DSMP-20-653f50d1e4b0d2eae855480a",
+      "free": false
+    },
+    {
+      "type": "docs",
+      "title": "A conceptual overview of asyncio (Python docs)",
+      "url": "https://docs.python.org/3/howto/a-conceptual-overview-of-asyncio.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "uv documentation",
+      "url": "https://docs.astral.sh/uv/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "pytest: Get started",
+      "url": "https://docs.pytest.org/en/stable/getting-started.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Pydantic: Models",
+      "url": "https://docs.pydantic.dev/latest/concepts/models/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Python for AI Engineering explained",
+      "url": "https://www.youtube.com/results?search_query=Python%20for%20AI%20Engineering%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.2": [
+    {
+      "type": "docs",
+      "title": "Overview of HTTP (MDN)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "HTTP messages (MDN)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Messages",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "HTTP reference: methods, status codes, headers (MDN)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Web & API Development using Flask (CampusX One)",
+      "url": "https://learnwith.campusx.in/courses/Web-and-API-Development-using-Flask-6839ae3fb109825d2ca6526d",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: The Web: HTTP, REST & JSON explained",
+      "url": "https://www.youtube.com/results?search_query=The%20Web%3A%20HTTP%2C%20REST%20%26%20JSON%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.3": [
+    {
+      "type": "docs",
+      "title": "FastAPI tutorial / user guide",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "FastAPI: Response model",
+      "url": "https://fastapi.tiangolo.com/tutorial/response-model/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Pydantic: Models",
+      "url": "https://docs.pydantic.dev/latest/concepts/models/",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "FastAPI (CampusX One)",
+      "url": "https://learnwith.campusx.in/courses/FastAPI-6873cb2075f40c2715c809fe",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Building APIs with FastAPI explained",
+      "url": "https://www.youtube.com/results?search_query=Building%20APIs%20with%20FastAPI%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.4": [
+    {
+      "type": "docs",
+      "title": "PostgreSQL tutorial (official)",
+      "url": "https://www.postgresql.org/docs/current/tutorial.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "PostgreSQL: The SQL language, introduction",
+      "url": "https://www.postgresql.org/docs/current/tutorial-sql-intro.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "FastAPI: SQL (relational) databases",
+      "url": "https://fastapi.tiangolo.com/tutorial/sql-databases/",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "SQL (CampusX One, DSMP)",
+      "url": "https://learnwith.campusx.in/courses/Data-Science-Mentorship-Program-DSMP-20-653f50d1e4b0d2eae855480a",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Data & Persistence Basics explained",
+      "url": "https://www.youtube.com/results?search_query=Data%20%26%20Persistence%20Basics%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.5": [
+    {
+      "type": "docs",
+      "title": "Pro Git (free book)",
+      "url": "https://git-scm.com/book/en/v2",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Git: Learn",
+      "url": "https://git-scm.com/learn",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Git & GitHub (CampusX One, DSMP)",
+      "url": "https://learnwith.campusx.in/courses/Data-Science-Mentorship-Program-DSMP-20-653f50d1e4b0d2eae855480a",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Git & Collaboration explained",
+      "url": "https://www.youtube.com/results?search_query=Git%20%26%20Collaboration%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.6": [
+    {
+      "type": "docs",
+      "title": "Claude Code overview",
+      "url": "https://code.claude.com/docs/en/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Extend Claude Code: skills, subagents, hooks, MCP, plugins",
+      "url": "https://code.claude.com/docs/en/features-overview",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Using CLAUDE.md files",
+      "url": "https://claude.com/blog/using-claude-md-files",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "Agentic Coding using Claude Code (CampusX playlist)",
+      "url": "https://www.youtube.com/playlist?list=PLKnIA16_RmvaYH3poI0oJvbDF4zEvpq8W",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: AI-Assisted Software Development explained",
+      "url": "https://www.youtube.com/results?search_query=AI-Assisted%20Software%20Development%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.7": [
+    {
+      "type": "docs",
+      "title": "Docker: Get started",
+      "url": "https://docs.docker.com/get-started/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Docker workshop",
+      "url": "https://docs.docker.com/get-started/workshop/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Using uv in Docker",
+      "url": "https://docs.astral.sh/uv/guides/integration/docker/",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Docker for Machine Learning (CampusX One)",
+      "url": "https://learnwith.campusx.in/courses/Docker-for-Machine-Learning-68a022773f7a067efc5df47e",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Containers & Deployment explained",
+      "url": "https://www.youtube.com/results?search_query=Containers%20%26%20Deployment%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M0.8": [
+    {
+      "type": "docs",
+      "title": "FastAPI: Full stack template",
+      "url": "https://fastapi.tiangolo.com/project-generation/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "FastAPI: Testing a database",
+      "url": "https://fastapi.tiangolo.com/how-to/testing-database/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Docker Compose quickstart",
+      "url": "https://docs.docker.com/compose/gettingstarted/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Ship a No-AI REST Service project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Ship%20a%20No-AI%20REST%20Service%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.1": [
+    {
+      "type": "video",
+      "title": "Intro to Large Language Models (Andrej Karpathy)",
+      "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "Large Language Models explained briefly (3Blue1Brown)",
+      "url": "https://www.3blue1brown.com/lessons/mini-llm/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: LLM fundamentals (6-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/llm-fundamentals/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: What an LLM Actually Is explained",
+      "url": "https://www.youtube.com/results?search_query=What%20an%20LLM%20Actually%20Is%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.2": [
+    {
+      "type": "video",
+      "title": "Let's build the GPT Tokenizer (Andrej Karpathy)",
+      "url": "https://www.youtube.com/watch?v=zduSFxRajkE",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "HF LLM Course: Building a tokenizer, block by block",
+      "url": "https://huggingface.co/learn/llm-course/en/chapter6/8",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Tokenization explained",
+      "url": "https://www.youtube.com/results?search_query=Tokenization%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.3": [
+    {
+      "type": "video",
+      "title": "Transformers, the tech behind LLMs (3Blue1Brown)",
+      "url": "https://www.3blue1brown.com/lessons/gpt/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "Attention in transformers, step by step (3Blue1Brown)",
+      "url": "https://www.3blue1brown.com/lessons/attention/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "The Illustrated Transformer (Jay Alammar)",
+      "url": "https://jalammar.github.io/illustrated-transformer/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "Let's build GPT: from scratch, in code (Andrej Karpathy)",
+      "url": "https://www.youtube.com/watch?v=kCc8FmEb1nY",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Inside an LLM: Embeddings, Attention & Transformers explained",
+      "url": "https://www.youtube.com/results?search_query=Inside%20an%20LLM%3A%20Embeddings%2C%20Attention%20%26%20Transformers%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.4": [
+    {
+      "type": "video",
+      "title": "Deep Dive into LLMs like ChatGPT (Andrej Karpathy)",
+      "url": "https://www.youtube.com/watch?v=7xTGNNLPyMI",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Training language models to follow instructions with human feedback (InstructGPT)",
+      "url": "https://arxiv.org/abs/2203.02155",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Hugging Face LLM Course",
+      "url": "https://huggingface.co/learn/llm-course/en/chapter1/1",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: How LLMs Learn explained",
+      "url": "https://www.youtube.com/results?search_query=How%20LLMs%20Learn%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.5": [
+    {
+      "type": "video",
+      "title": "Deep Dive into LLMs like ChatGPT (Andrej Karpathy)",
+      "url": "https://www.youtube.com/watch?v=7xTGNNLPyMI",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "HF LLM Course: Behind the pipeline",
+      "url": "https://huggingface.co/learn/llm-course/chapter2/2",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Generation configurations: temperature, top-k, top-p, test-time compute (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/01/16/sampling.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: How LLM Inference Works explained",
+      "url": "https://www.youtube.com/results?search_query=How%20LLM%20Inference%20Works%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.6": [
+    {
+      "type": "article",
+      "title": "Generation configurations: temperature, top-k, top-p, test-time compute (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/01/16/sampling.html",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "HF LLM Course: Behind the pipeline",
+      "url": "https://huggingface.co/learn/llm-course/chapter2/2",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Sampling & Generation Parameters explained",
+      "url": "https://www.youtube.com/results?search_query=Sampling%20%26%20Generation%20Parameters%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.7": [
+    {
+      "type": "docs",
+      "title": "Extended thinking (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Why We Think (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2025-05-01-thinking/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Generation configurations: temperature, top-k, top-p, test-time compute (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/01/16/sampling.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Reasoning Models & Test-Time Compute explained",
+      "url": "https://www.youtube.com/results?search_query=Reasoning%20Models%20%26%20Test-Time%20Compute%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.8": [
+    {
+      "type": "docs",
+      "title": "Context windows (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Lost in the Middle: How Language Models Use Long Contexts",
+      "url": "https://arxiv.org/pdf/2307.03172",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: The Context Window explained",
+      "url": "https://www.youtube.com/results?search_query=The%20Context%20Window%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.9": [
+    {
+      "type": "article",
+      "title": "Extrinsic Hallucinations in LLMs (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2024-07-07-hallucination/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Common pitfalls when building generative AI applications (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: LLM Capabilities & Failure Modes explained",
+      "url": "https://www.youtube.com/results?search_query=LLM%20Capabilities%20%26%20Failure%20Modes%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.10": [
+    {
+      "type": "docs",
+      "title": "Models overview (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/models/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Model cards (Hugging Face Hub docs)",
+      "url": "https://huggingface.co/docs/hub/model-cards",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Artificial Analysis: models by intelligence, speed and price",
+      "url": "https://artificialanalysis.ai/models",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Understanding the Model Landscape explained",
+      "url": "https://www.youtube.com/results?search_query=Understanding%20the%20Model%20Landscape%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.11": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis LLM leaderboard",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "MTEB: Massive Text Embedding Benchmark",
+      "url": "https://huggingface.co/blog/mteb",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Common pitfalls when building generative AI applications (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Benchmarks & Leaderboards explained",
+      "url": "https://www.youtube.com/results?search_query=Benchmarks%20%26%20Leaderboards%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M1.12": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis: models by intelligence, speed and price",
+      "url": "https://artificialanalysis.ai/models",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Models overview (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/models/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Model cards (Hugging Face Hub docs)",
+      "url": "https://huggingface.co/docs/hub/model-cards",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Choosing the Right Model explained",
+      "url": "https://www.youtube.com/results?search_query=Choosing%20the%20Right%20Model%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.1": [
+    {
+      "type": "docs",
+      "title": "Using the Messages API (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Function calling (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/function-calling",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: building with LLM APIs (11-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/building-with-llm-apis/",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "GenAI using Open Source Models (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: First API calls & conversation state explained",
+      "url": "https://www.youtube.com/results?search_query=First%20API%20calls%20%26%20conversation%20state%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.2": [
+    {
+      "type": "docs",
+      "title": "Streaming messages (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/streaming",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Streaming API responses (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/streaming-responses",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangChain: Streaming",
+      "url": "https://docs.langchain.com/oss/python/langchain/streaming/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Streaming explained",
+      "url": "https://www.youtube.com/results?search_query=Streaming%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.3": [
+    {
+      "type": "docs",
+      "title": "LangChain quickstart",
+      "url": "https://python.langchain.com/docs/get_started/introduction",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "Introduction to LangChain (CampusX)",
+      "url": "https://www.youtube.com/watch?v=nlz9j-r0U9U",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "LangChain Components (CampusX)",
+      "url": "https://www.youtube.com/watch?v=-xSJA8-o6Eg",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "GenAI using LangChain (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: LangChain fundamentals explained",
+      "url": "https://www.youtube.com/results?search_query=LangChain%20fundamentals%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.4": [
+    {
+      "type": "docs",
+      "title": "Structured outputs (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Structured model outputs (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/structured-outputs",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Pydantic: Models",
+      "url": "https://docs.pydantic.dev/latest/concepts/models/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Structured outputs explained",
+      "url": "https://www.youtube.com/results?search_query=Structured%20outputs%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.5": [
+    {
+      "type": "docs",
+      "title": "Tool use with Claude",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "How to implement tool use (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/implement-tool-use",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Function calling (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/function-calling",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Function / tool calling explained",
+      "url": "https://www.youtube.com/results?search_query=Function%20%2F%20tool%20calling%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.6": [
+    {
+      "type": "article",
+      "title": "Writing effective tools for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "How to implement tool use (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/implement-tool-use",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Function calling (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/function-calling",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Designing good tools explained",
+      "url": "https://www.youtube.com/results?search_query=Designing%20good%20tools%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.7": [
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building LLM applications for production (Chip Huyen)",
+      "url": "https://huyenchip.com/2023/04/11/llm-engineering.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Thinking in LangGraph",
+      "url": "https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Multi-step LLM workflows explained",
+      "url": "https://www.youtube.com/results?search_query=Multi-step%20LLM%20workflows%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.8": [
+    {
+      "type": "docs",
+      "title": "Coroutines and tasks (Python docs)",
+      "url": "https://docs.python.org/3/library/asyncio-task.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "A conceptual overview of asyncio (Python docs)",
+      "url": "https://docs.python.org/3/howto/a-conceptual-overview-of-asyncio.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Async, concurrency & batching explained",
+      "url": "https://www.youtube.com/results?search_query=Async%2C%20concurrency%20%26%20batching%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.9": [
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Coroutines and tasks (Python docs)",
+      "url": "https://docs.python.org/3/library/asyncio-task.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Robustness: retries, timeouts & fallbacks explained",
+      "url": "https://www.youtube.com/results?search_query=Robustness%3A%20retries%2C%20timeouts%20%26%20fallbacks%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.10": [
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MLflow: token usage and cost tracking",
+      "url": "https://mlflow.org/docs/latest/genai/tracing/token-usage-cost/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MLflow tracing for GenAI",
+      "url": "https://mlflow.org/docs/latest/genai/tracing/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Cost, usage & observability explained",
+      "url": "https://www.youtube.com/results?search_query=Cost%2C%20usage%20%26%20observability%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.11": [
+    {
+      "type": "docs",
+      "title": "LlamaIndex: High-level concepts",
+      "url": "https://developers.llamaindex.ai/python/framework/getting_started/concepts/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph overview",
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "DSPy: Program, don't prompt",
+      "url": "https://dspy.ai/current/getting-started/program-dont-prompt/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Runtimes, frameworks, and harnesses (LangChain docs)",
+      "url": "https://docs.langchain.com/oss/python/concepts/products",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Other orchestration frameworks explained",
+      "url": "https://www.youtube.com/results?search_query=Other%20orchestration%20frameworks%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M2.12": [
+    {
+      "type": "docs",
+      "title": "Tool use with Claude",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangChain: Streaming",
+      "url": "https://docs.langchain.com/oss/python/langchain/streaming/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Streaming Tool-Using Assistant project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Streaming%20Tool-Using%20Assistant%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.1": [
+    {
+      "type": "docs",
+      "title": "Prompt engineering overview (Claude docs)",
+      "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Prompting best practices (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: prompt engineering (7-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/prompt-engineering/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Anatomy of a prompt explained",
+      "url": "https://www.youtube.com/results?search_query=Anatomy%20of%20a%20prompt%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.2": [
+    {
+      "type": "article",
+      "title": "Prompt Engineering (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Prompting best practices (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Prompt Engineering (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Zero-shot & few-shot prompting explained",
+      "url": "https://www.youtube.com/results?search_query=Zero-shot%20%26%20few-shot%20prompting%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.3": [
+    {
+      "type": "article",
+      "title": "Prompt Engineering (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Extended thinking (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Why We Think (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2025-05-01-thinking/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Reasoning & decomposition explained",
+      "url": "https://www.youtube.com/results?search_query=Reasoning%20%26%20decomposition%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.4": [
+    {
+      "type": "docs",
+      "title": "Giving Claude a role with a system prompt",
+      "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/system-prompts",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Prompting best practices (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: System prompt design explained",
+      "url": "https://www.youtube.com/results?search_query=System%20prompt%20design%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.5": [
+    {
+      "type": "docs",
+      "title": "Structured outputs (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Structured model outputs (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/structured-outputs",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Prompting best practices (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Controlling output explained",
+      "url": "https://www.youtube.com/results?search_query=Controlling%20output%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.6": [
+    {
+      "type": "article",
+      "title": "Evals: getting started (Hamel Husain)",
+      "url": "https://hamel.dev/notes/llm/evals/start/new-to-evals/index.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Prompt reliability & debugging explained",
+      "url": "https://www.youtube.com/results?search_query=Prompt%20reliability%20%26%20debugging%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.7": [
+    {
+      "type": "docs",
+      "title": "Prompt caching (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: Prompt management",
+      "url": "https://langfuse.com/docs/prompt-management/get-started",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Prompt versioning, cost & caching explained",
+      "url": "https://www.youtube.com/results?search_query=Prompt%20versioning%2C%20cost%20%26%20caching%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.8": [
+    {
+      "type": "article",
+      "title": "The lethal trifecta (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Aug/9/bay-area-ai/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OWASP Top 10 for LLM Applications 2025",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Prompt injection basics explained",
+      "url": "https://www.youtube.com/results?search_query=Prompt%20injection%20basics%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M3.9": [
+    {
+      "type": "article",
+      "title": "Evals: getting started (Hamel Husain)",
+      "url": "https://hamel.dev/notes/llm/evals/start/new-to-evals/index.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: Prompt management",
+      "url": "https://langfuse.com/docs/prompt-management/get-started",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Getting started with MLflow for GenAI",
+      "url": "https://mlflow.org/docs/3.5.1/genai/getting-started/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Optimize a Real Prompt project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Optimize%20a%20Real%20Prompt%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.1": [
+    {
+      "type": "docs",
+      "title": "LlamaIndex: High-level concepts",
+      "url": "https://developers.llamaindex.ai/python/framework/getting_started/concepts/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Retrieval Augmented Generation series (Pinecone)",
+      "url": "https://www.pinecone.io/learn/series/rag/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "PDF support (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/pdf-support",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Data ingestion & document processing explained",
+      "url": "https://www.youtube.com/results?search_query=Data%20ingestion%20%26%20document%20processing%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.2": [
+    {
+      "type": "article",
+      "title": "Retrieval Augmented Generation series (Pinecone)",
+      "url": "https://www.pinecone.io/learn/series/rag/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LlamaIndex: Building RAG from scratch",
+      "url": "https://developers.llamaindex.ai/python/framework/optimizing/building_rag_from_scratch/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Build a semantic search engine with LangChain",
+      "url": "https://docs.langchain.com/oss/python/langchain/knowledge-base",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Chunking strategies explained",
+      "url": "https://www.youtube.com/results?search_query=Chunking%20strategies%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.3": [
+    {
+      "type": "docs",
+      "title": "Sentence Transformers documentation",
+      "url": "https://sbert.net/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "MTEB: Massive Text Embedding Benchmark",
+      "url": "https://huggingface.co/blog/mteb",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "The Illustrated Transformer (Jay Alammar)",
+      "url": "https://jalammar.github.io/illustrated-transformer/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Embeddings fundamentals explained",
+      "url": "https://www.youtube.com/results?search_query=Embeddings%20fundamentals%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.4": [
+    {
+      "type": "docs",
+      "title": "Sentence Transformers: Semantic search",
+      "url": "https://sbert.net/examples/sentence_transformer/applications/semantic-search/README.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Sentence Transformers documentation",
+      "url": "https://sbert.net/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Similarity & semantic search explained",
+      "url": "https://www.youtube.com/results?search_query=Similarity%20%26%20semantic%20search%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.5": [
+    {
+      "type": "repo",
+      "title": "pgvector/pgvector",
+      "url": "https://github.com/pgvector/pgvector",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Qdrant documentation",
+      "url": "https://qdrant.tech/documentation/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Filtering in vector search: when to use what (Qdrant)",
+      "url": "https://qdrant.tech/articles/vector-search-filtering/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Vector databases & ANN search explained",
+      "url": "https://www.youtube.com/results?search_query=Vector%20databases%20%26%20ANN%20search%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.6": [
+    {
+      "type": "docs",
+      "title": "Reciprocal rank fusion (Elasticsearch docs)",
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "What is hybrid search? (Elastic)",
+      "url": "https://www.elastic.co/what-is/hybrid-search",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Hybrid search in Qdrant",
+      "url": "https://qdrant.tech/articles/hybrid-search/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Qdrant: Hybrid search",
+      "url": "https://qdrant.tech/documentation/search/text-search/hybrid-search/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Sparse & hybrid retrieval explained",
+      "url": "https://www.youtube.com/results?search_query=Sparse%20%26%20hybrid%20retrieval%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.7": [
+    {
+      "type": "docs",
+      "title": "Qdrant: Hybrid search",
+      "url": "https://qdrant.tech/documentation/search/text-search/hybrid-search/",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "pgvector/pgvector",
+      "url": "https://github.com/pgvector/pgvector",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Reciprocal rank fusion (Elasticsearch docs)",
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Build a Hybrid Search Engine project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Build%20a%20Hybrid%20Search%20Engine%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.8": [
+    {
+      "type": "paper",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "url": "https://arxiv.org/abs/2005.11401",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Retrieval Augmented Generation series (Pinecone)",
+      "url": "https://www.pinecone.io/learn/series/rag/",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Advanced RAG (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: RAG (32-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/rag/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: RAG architecture & when to use it explained",
+      "url": "https://www.youtube.com/results?search_query=RAG%20architecture%20%26%20when%20to%20use%20it%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.9": [
+    {
+      "type": "docs",
+      "title": "LlamaIndex: Building RAG from scratch",
+      "url": "https://developers.llamaindex.ai/python/framework/optimizing/building_rag_from_scratch/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Build a semantic search engine with LangChain",
+      "url": "https://docs.langchain.com/oss/python/langchain/knowledge-base",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+      "url": "https://arxiv.org/pdf/2312.10997",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Baseline RAG from scratch explained",
+      "url": "https://www.youtube.com/results?search_query=Baseline%20RAG%20from%20scratch%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.10": [
+    {
+      "type": "article",
+      "title": "Rerankers and two-stage retrieval (Pinecone)",
+      "url": "https://www.pinecone.io/learn/series/rag/rerankers/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Sentence Transformers: Retrieve & re-rank",
+      "url": "https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Sentence Transformers: Cross-encoders",
+      "url": "https://www.sbert.net/examples/cross_encoder/applications/README.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Reranking explained",
+      "url": "https://www.youtube.com/results?search_query=Reranking%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.11": [
+    {
+      "type": "paper",
+      "title": "Precise Zero-Shot Dense Retrieval without Relevance Labels (HyDE)",
+      "url": "https://arxiv.org/abs/2212.10496",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Advanced RAG techniques (Pinecone)",
+      "url": "https://www.pinecone.io/learn/advanced-rag-techniques/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Reciprocal rank fusion (Elasticsearch docs)",
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Query transformation & RAG-Fusion explained",
+      "url": "https://www.youtube.com/results?search_query=Query%20transformation%20%26%20RAG-Fusion%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.12": [
+    {
+      "type": "docs",
+      "title": "PDF support (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/pdf-support",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Extrinsic Hallucinations in LLMs (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2024-07-07-hallucination/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Ragas: Faithfulness",
+      "url": "https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Grounding, citations & abstention explained",
+      "url": "https://www.youtube.com/results?search_query=Grounding%2C%20citations%20%26%20abstention%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.13": [
+    {
+      "type": "paper",
+      "title": "Self-RAG: Learning to Retrieve, Generate, and Critique",
+      "url": "https://arxiv.org/pdf/2310.11511",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Corrective Retrieval Augmented Generation (CRAG)",
+      "url": "https://arxiv.org/html/2401.15884",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "microsoft/graphrag",
+      "url": "https://github.com/microsoft/graphrag",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+      "url": "https://arxiv.org/pdf/2312.10997",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: RAG variants & advanced patterns explained",
+      "url": "https://www.youtube.com/results?search_query=RAG%20variants%20%26%20advanced%20patterns%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.14": [
+    {
+      "type": "docs",
+      "title": "LlamaIndex: Introduction to RAG",
+      "url": "https://developers.llamaindex.ai/python/framework/understanding/rag/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Build a semantic search engine with LangChain",
+      "url": "https://docs.langchain.com/oss/python/langchain/knowledge-base",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LlamaIndex: High-level concepts",
+      "url": "https://developers.llamaindex.ai/python/framework/getting_started/concepts/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: RAG with frameworks explained",
+      "url": "https://www.youtube.com/results?search_query=RAG%20with%20frameworks%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M4.15": [
+    {
+      "type": "docs",
+      "title": "DeepEval: RAG evaluation quickstart",
+      "url": "https://deepeval.com/docs/getting-started-rag",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "FastAPI tutorial / user guide",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Advanced RAG techniques (Pinecone)",
+      "url": "https://www.pinecone.io/learn/advanced-rag-techniques/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Deploy an Advanced RAG Application project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Deploy%20an%20Advanced%20RAG%20Application%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.1": [
+    {
+      "type": "article",
+      "title": "Agents (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/07/agents.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "LLM Powered Autonomous Agents (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2023-06-23-agent/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: agents (27-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/agents/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: What is an agent? explained",
+      "url": "https://www.youtube.com/results?search_query=What%20is%20an%20agent%3F%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.2": [
+    {
+      "type": "paper",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "url": "https://arxiv.org/abs/2210.03629",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "LLM Powered Autonomous Agents (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2023-06-23-agent/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Agents (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/07/agents.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: ReAct, planning & reflection explained",
+      "url": "https://www.youtube.com/results?search_query=ReAct%2C%20planning%20%26%20reflection%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.3": [
+    {
+      "type": "article",
+      "title": "Writing effective tools for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Tool use with Claude",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Tools for agents explained",
+      "url": "https://www.youtube.com/results?search_query=Tools%20for%20agents%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.4": [
+    {
+      "type": "docs",
+      "title": "What is the Model Context Protocol?",
+      "url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MCP architecture overview",
+      "url": "https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MCP specification",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MCP spec: Tools",
+      "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "MCP (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: MCP (Model Context Protocol) explained",
+      "url": "https://www.youtube.com/results?search_query=MCP%20(Model%20Context%20Protocol)%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.5": [
+    {
+      "type": "docs",
+      "title": "LangGraph: Persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "LLM Powered Autonomous Agents (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2023-06-23-agent/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Memory basics explained",
+      "url": "https://www.youtube.com/results?search_query=Memory%20basics%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.6": [
+    {
+      "type": "article",
+      "title": "How we built our multi-agent research system (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "ADK: Multi-agent systems",
+      "url": "https://google.github.io/adk-docs/agents/multi-agents/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Agent2Agent (A2A) protocol specification",
+      "url": "https://a2a-protocol.org/latest/specification/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Multi-agent architectures explained",
+      "url": "https://www.youtube.com/results?search_query=Multi-agent%20architectures%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.7": [
+    {
+      "type": "docs",
+      "title": "LangGraph overview",
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph: Persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph: Interrupts (human-in-the-loop)",
+      "url": "https://docs.langchain.com/oss/python/langgraph/interrupts",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Introduction to LangGraph (LangChain Academy, free)",
+      "url": "https://academy.langchain.com/courses/intro-to-langgraph",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "LangGraph (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Building agents with LangGraph explained",
+      "url": "https://www.youtube.com/results?search_query=Building%20agents%20with%20LangGraph%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.8": [
+    {
+      "type": "docs",
+      "title": "E2B sandbox quickstart",
+      "url": "https://e2b.dev/docs/quickstart",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Modal guide",
+      "url": "https://modal.com/docs/guide",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Code execution with MCP (Anthropic)",
+      "url": "https://anthropic.com/engineering/code-execution-with-mcp",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Sandboxed execution explained",
+      "url": "https://www.youtube.com/results?search_query=Sandboxed%20execution%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.9": [
+    {
+      "type": "docs",
+      "title": "LangGraph: Interrupts (human-in-the-loop)",
+      "url": "https://docs.langchain.com/oss/python/langgraph/interrupts",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Agents (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/07/agents.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building agents with the Claude Agent SDK (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Agent reliability, UX & failure recovery explained",
+      "url": "https://www.youtube.com/results?search_query=Agent%20reliability%2C%20UX%20%26%20failure%20recovery%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.10": [
+    {
+      "type": "docs",
+      "title": "OpenAI Agents SDK",
+      "url": "https://openai.github.io/openai-agents-python/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Agent Development Kit (Google ADK)",
+      "url": "https://google.github.io/adk-docs/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "CrewAI introduction",
+      "url": "https://docs.crewai.com/en/introduction",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Agno: What are agents?",
+      "url": "https://docs.agno.com/agents/overview",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "CrewAI (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Agent frameworks & libraries explained",
+      "url": "https://www.youtube.com/results?search_query=Agent%20frameworks%20%26%20libraries%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M5.11": [
+    {
+      "type": "course",
+      "title": "Deep Research with LangGraph (LangChain Academy)",
+      "url": "https://academy.langchain.com/courses/deep-research-with-langgraph",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "How we built our multi-agent research system (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "What is the Model Context Protocol?",
+      "url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Build a Production-Style Agent project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Build%20a%20Production-Style%20Agent%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.1": [
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Lost in the Middle: How Language Models Use Long Contexts",
+      "url": "https://arxiv.org/pdf/2307.03172",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Context windows (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: The context window as a resource explained",
+      "url": "https://www.youtube.com/results?search_query=The%20context%20window%20as%20a%20resource%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.2": [
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Context windows (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Context selection & assembly explained",
+      "url": "https://www.youtube.com/results?search_query=Context%20selection%20%26%20assembly%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.3": [
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph: Persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Compression & compaction explained",
+      "url": "https://www.youtube.com/results?search_query=Compression%20%26%20compaction%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.4": [
+    {
+      "type": "article",
+      "title": "Effective harnesses for long-running agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph: Persistence",
+      "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Memory & state offloading explained",
+      "url": "https://www.youtube.com/results?search_query=Memory%20%26%20state%20offloading%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.5": [
+    {
+      "type": "paper",
+      "title": "Lost in the Middle: How Language Models Use Long Contexts",
+      "url": "https://arxiv.org/pdf/2307.03172",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Context windows (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Long-context strategies explained",
+      "url": "https://www.youtube.com/results?search_query=Long-context%20strategies%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.6": [
+    {
+      "type": "article",
+      "title": "Writing effective tools for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/writing-tools-for-agents",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Code execution with MCP (Anthropic)",
+      "url": "https://anthropic.com/engineering/code-execution-with-mcp",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Tool context management explained",
+      "url": "https://www.youtube.com/results?search_query=Tool%20context%20management%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.7": [
+    {
+      "type": "docs",
+      "title": "Prompt caching (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Context caching & efficiency explained",
+      "url": "https://www.youtube.com/results?search_query=Context%20caching%20%26%20efficiency%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.8": [
+    {
+      "type": "article",
+      "title": "Effective harnesses for long-running agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Harness design for long-running apps (Anthropic)",
+      "url": "https://anthropic.com/engineering/harness-design-long-running-apps",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Harness Engineering for Self-Improvement (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2026-07-04-harness/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Best practices for Claude Code",
+      "url": "https://code.claude.com/docs/en/best-practices",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Harness engineering explained",
+      "url": "https://www.youtube.com/results?search_query=Harness%20engineering%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M6.9": [
+    {
+      "type": "article",
+      "title": "Effective harnesses for long-running agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Effective context engineering for AI agents (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Harness design for long-running apps (Anthropic)",
+      "url": "https://anthropic.com/engineering/harness-design-long-running-apps",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Context-Managed Long-Horizon Agent project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Context-Managed%20Long-Horizon%20Agent%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.1": [
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Evals: getting started (Hamel Husain)",
+      "url": "https://hamel.dev/notes/llm/evals/start/new-to-evals/index.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Common pitfalls when building generative AI applications (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Introduction to LLM evaluations explained",
+      "url": "https://www.youtube.com/results?search_query=Introduction%20to%20LLM%20evaluations%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.2": [
+    {
+      "type": "article",
+      "title": "Using LLM-as-a-judge for evaluation (Hamel Husain)",
+      "url": "https://hamel.dev/blog/posts/llm-judge/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "DeepEval: Introduction to LLM evaluation metrics",
+      "url": "https://deepeval.com/docs/metrics-introduction",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "An LLM-as-judge won't save the product (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/eval-process/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Evaluation methods & paradigms explained",
+      "url": "https://www.youtube.com/results?search_query=Evaluation%20methods%20%26%20paradigms%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.3": [
+    {
+      "type": "video",
+      "title": "Why Your AI Application Needs Multiple Eval Pipelines (CampusX)",
+      "url": "https://www.youtube.com/watch?v=DcZ-XCk-O_M",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Offline vs online evaluations explained",
+      "url": "https://www.youtube.com/results?search_query=Offline%20vs%20online%20evaluations%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.4": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis LLM leaderboard",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "MTEB: Massive Text Embedding Benchmark",
+      "url": "https://huggingface.co/blog/mteb",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Common pitfalls when building generative AI applications (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Model evaluations & benchmarking explained",
+      "url": "https://www.youtube.com/results?search_query=Model%20evaluations%20%26%20benchmarking%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.5": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis LLM leaderboard",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Artificial Analysis: models by intelligence, speed and price",
+      "url": "https://artificialanalysis.ai/models",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: The evolution of knowledge benchmarks explained",
+      "url": "https://www.youtube.com/results?search_query=The%20evolution%20of%20knowledge%20benchmarks%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.6": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis: models by intelligence, speed and price",
+      "url": "https://artificialanalysis.ai/models",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Evals: getting started (Hamel Husain)",
+      "url": "https://hamel.dev/notes/llm/evals/start/new-to-evals/index.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Prompt caching (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Custom model evaluations explained",
+      "url": "https://www.youtube.com/results?search_query=Custom%20model%20evaluations%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.7": [
+    {
+      "type": "docs",
+      "title": "Introduction to DeepEval",
+      "url": "https://deepeval.com/docs/introduction",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Getting started with MLflow for GenAI",
+      "url": "https://mlflow.org/docs/3.5.1/genai/getting-started/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Quickstart for GitHub Actions",
+      "url": "https://docs.github.com/en/actions/get-started/quickstart",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Building an eval suite & regression testing explained",
+      "url": "https://www.youtube.com/results?search_query=Building%20an%20eval%20suite%20%26%20regression%20testing%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.8": [
+    {
+      "type": "docs",
+      "title": "DeepEval: RAG evaluation quickstart",
+      "url": "https://deepeval.com/docs/getting-started-rag",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "DeepEval: Using the RAG triad",
+      "url": "https://deepeval.com/guides/guides-rag-triad",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Ragas: Available metrics",
+      "url": "https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Ragas: Faithfulness",
+      "url": "https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: RAG Evals explained",
+      "url": "https://www.youtube.com/results?search_query=RAG%20Evals%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M7.9": [
+    {
+      "type": "docs",
+      "title": "DeepEval: Introduction to LLM evaluation metrics",
+      "url": "https://deepeval.com/docs/metrics-introduction",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "How we built our multi-agent research system (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Agent Evals explained",
+      "url": "https://www.youtube.com/results?search_query=Agent%20Evals%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.1": [
+    {
+      "type": "docs",
+      "title": "OWASP Top 10 for LLM Applications 2025",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "The lethal trifecta (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Aug/9/bay-area-ai/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: AI threat model explained",
+      "url": "https://www.youtube.com/results?search_query=AI%20threat%20model%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.2": [
+    {
+      "type": "article",
+      "title": "The lethal trifecta (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Aug/9/bay-area-ai/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Agents Rule of Two and The Attacker Moves Second (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Nov/2/new-prompt-injection-papers/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OWASP GenAI: LLM risks",
+      "url": "https://genai.owasp.org/llm-top-10/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Prompt injection & data exfiltration explained",
+      "url": "https://www.youtube.com/results?search_query=Prompt%20injection%20%26%20data%20exfiltration%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.3": [
+    {
+      "type": "docs",
+      "title": "NeMo Guardrails overview",
+      "url": "https://docs.nvidia.com/nemo/guardrails/latest/index.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Guardrails AI: Validators",
+      "url": "https://guardrailsai.com/guardrails/docs/concepts/validators",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OWASP Top 10 for LLM Applications 2025",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Jailbreaks, guardrails & moderation explained",
+      "url": "https://www.youtube.com/results?search_query=Jailbreaks%2C%20guardrails%20%26%20moderation%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.4": [
+    {
+      "type": "article",
+      "title": "Agents Rule of Two and The Attacker Moves Second (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Nov/2/new-prompt-injection-papers/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "E2B sandbox quickstart",
+      "url": "https://e2b.dev/docs/quickstart",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph: Interrupts (human-in-the-loop)",
+      "url": "https://docs.langchain.com/oss/python/langgraph/interrupts",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Agent & tool security explained",
+      "url": "https://www.youtube.com/results?search_query=Agent%20%26%20tool%20security%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.5": [
+    {
+      "type": "docs",
+      "title": "OWASP GenAI: LLM risks",
+      "url": "https://genai.owasp.org/llm-top-10/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "The lethal trifecta (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Aug/9/bay-area-ai/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Filtering in vector search: when to use what (Qdrant)",
+      "url": "https://qdrant.tech/articles/vector-search-filtering/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: RAG & knowledge security explained",
+      "url": "https://www.youtube.com/results?search_query=RAG%20%26%20knowledge%20security%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.6": [
+    {
+      "type": "repo",
+      "title": "microsoft/presidio (PII detection & anonymization)",
+      "url": "https://github.com/microsoft/presidio",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OWASP Top 10 for LLM Applications 2025",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Data privacy, PII & secrets explained",
+      "url": "https://www.youtube.com/results?search_query=Data%20privacy%2C%20PII%20%26%20secrets%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.7": [
+    {
+      "type": "repo",
+      "title": "NVIDIA/garak (LLM vulnerability scanner)",
+      "url": "https://github.com/NVIDIA/garak",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OWASP Top 10 for LLM Applications 2025",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Red teaming AI systems explained",
+      "url": "https://www.youtube.com/results?search_query=Red%20teaming%20AI%20systems%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.8": [
+    {
+      "type": "article",
+      "title": "EU AI Act: high-level summary",
+      "url": "https://artificialintelligenceact.eu/high-level-summary/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Digital Personal Data Protection Act, 2023 (MeitY, PDF)",
+      "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Responsible AI & governance explained",
+      "url": "https://www.youtube.com/results?search_query=Responsible%20AI%20%26%20governance%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M8.9": [
+    {
+      "type": "repo",
+      "title": "NVIDIA/garak (LLM vulnerability scanner)",
+      "url": "https://github.com/NVIDIA/garak",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "microsoft/presidio (PII detection & anonymization)",
+      "url": "https://github.com/microsoft/presidio",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "NeMo Guardrails overview",
+      "url": "https://docs.nvidia.com/nemo/guardrails/latest/index.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Red-Team & Secure an Agentic RAG App project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Red-Team%20%26%20Secure%20an%20Agentic%20RAG%20App%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.1": [
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building LLM applications for production (Chip Huyen)",
+      "url": "https://huyenchip.com/2023/04/11/llm-engineering.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Engineering: Building Applications with Foundation Models (Chip Huyen, book)",
+      "url": "https://www.amazon.in/AI-Engineering-Building-Applications-Foundation/dp/9355426666",
+      "free": false
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: shipping to production (17-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/shipping-to-production/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: The AI system design framework explained",
+      "url": "https://www.youtube.com/results?search_query=The%20AI%20system%20design%20framework%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.2": [
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Advanced RAG techniques (Pinecone)",
+      "url": "https://www.pinecone.io/learn/advanced-rag-techniques/",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "microsoft/graphrag",
+      "url": "https://github.com/microsoft/graphrag",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Context & knowledge architecture explained",
+      "url": "https://www.youtube.com/results?search_query=Context%20%26%20knowledge%20architecture%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.3": [
+    {
+      "type": "docs",
+      "title": "LiteLLM: Router & load balancing",
+      "url": "https://docs.litellm.ai/docs/routing",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OpenRouter: Provider routing",
+      "url": "https://openrouter.ai/docs/guides/routing/provider-selection",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Model routing & gateways explained",
+      "url": "https://www.youtube.com/results?search_query=Model%20routing%20%26%20gateways%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.4": [
+    {
+      "type": "docs",
+      "title": "Streaming messages (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/streaming",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Coroutines and tasks (Python docs)",
+      "url": "https://docs.python.org/3/library/asyncio-task.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Latency & inference optimization explained",
+      "url": "https://www.youtube.com/results?search_query=Latency%20%26%20inference%20optimization%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.5": [
+    {
+      "type": "docs",
+      "title": "Prompt caching (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Caching architecture explained",
+      "url": "https://www.youtube.com/results?search_query=Caching%20architecture%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.6": [
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "NeMo Guardrails overview",
+      "url": "https://docs.nvidia.com/nemo/guardrails/latest/index.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Reliability, guardrails & graceful degradation explained",
+      "url": "https://www.youtube.com/results?search_query=Reliability%2C%20guardrails%20%26%20graceful%20degradation%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.7": [
+    {
+      "type": "docs",
+      "title": "Thinking in LangGraph",
+      "url": "https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: AI pipeline orchestration explained",
+      "url": "https://www.youtube.com/results?search_query=AI%20pipeline%20orchestration%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.8": [
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "An LLM-as-judge won't save the product (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/eval-process/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Monitoring, feedback & continuous improvement explained",
+      "url": "https://www.youtube.com/results?search_query=Monitoring%2C%20feedback%20%26%20continuous%20improvement%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.9": [
+    {
+      "type": "article",
+      "title": "How we built our multi-agent research system (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Engineering: Building Applications with Foundation Models (Chip Huyen, book)",
+      "url": "https://www.amazon.in/AI-Engineering-Building-Applications-Foundation/dp/9355426666",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: AI system design case studies explained",
+      "url": "https://www.youtube.com/results?search_query=AI%20system%20design%20case%20studies%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M9.10": [
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Engineering: Building Applications with Foundation Models (Chip Huyen, book)",
+      "url": "https://www.amazon.in/AI-Engineering-Building-Applications-Foundation/dp/9355426666",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: AI System Design Document project tutorial",
+      "url": "https://www.youtube.com/results?search_query=AI%20System%20Design%20Document%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.1": [
+    {
+      "type": "article",
+      "title": "MLOps guide (Chip Huyen)",
+      "url": "https://huyenchip.com/mlops/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: shipping to production (17-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/shipping-to-production/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: What LLMOps adds explained",
+      "url": "https://www.youtube.com/results?search_query=What%20LLMOps%20adds%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.2": [
+    {
+      "type": "docs",
+      "title": "MLflow: version tracking for GenAI apps",
+      "url": "https://mlflow.org/docs/3.5.1/genai/version-tracking/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: Prompt management",
+      "url": "https://langfuse.com/docs/prompt-management/get-started",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Preparing your apps for production explained",
+      "url": "https://www.youtube.com/results?search_query=Preparing%20your%20apps%20for%20production%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.3": [
+    {
+      "type": "docs",
+      "title": "Getting started with MLflow for GenAI",
+      "url": "https://mlflow.org/docs/3.5.1/genai/getting-started/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MLflow: version tracking for GenAI apps",
+      "url": "https://mlflow.org/docs/3.5.1/genai/version-tracking/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: Prompt management",
+      "url": "https://langfuse.com/docs/prompt-management/get-started",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: Link prompts to traces",
+      "url": "https://langfuse.com/docs/prompt-management/features/link-to-traces",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Experiment tracking & prompt versioning explained",
+      "url": "https://www.youtube.com/results?search_query=Experiment%20tracking%20%26%20prompt%20versioning%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.4": [
+    {
+      "type": "docs",
+      "title": "Introduction to DeepEval",
+      "url": "https://deepeval.com/docs/introduction",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "DeepEval: Introduction to LLM evaluation metrics",
+      "url": "https://deepeval.com/docs/metrics-introduction",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Quickstart for GitHub Actions",
+      "url": "https://docs.github.com/en/actions/get-started/quickstart",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Evaluation as a release gate explained",
+      "url": "https://www.youtube.com/results?search_query=Evaluation%20as%20a%20release%20gate%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.5": [
+    {
+      "type": "docs",
+      "title": "Guardrails AI: Validators",
+      "url": "https://guardrailsai.com/guardrails/docs/concepts/validators",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "NeMo Guardrails overview",
+      "url": "https://docs.nvidia.com/nemo/guardrails/latest/index.html",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "microsoft/presidio (PII detection & anonymization)",
+      "url": "https://github.com/microsoft/presidio",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Runtime guardrails explained",
+      "url": "https://www.youtube.com/results?search_query=Runtime%20guardrails%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.6": [
+    {
+      "type": "docs",
+      "title": "FastAPI tutorial / user guide",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Server-sent events (MDN)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Build a basic LLM chat app (Streamlit)",
+      "url": "https://docs.streamlit.io/develop/tutorials/chat-and-llm-apps/build-conversational-apps",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "st.write_stream (Streamlit)",
+      "url": "https://docs.streamlit.io/develop/api-reference/write-magic/st.write_stream",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Docker Compose quickstart",
+      "url": "https://docs.docker.com/compose/gettingstarted/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Application serving & containerization explained",
+      "url": "https://www.youtube.com/results?search_query=Application%20serving%20%26%20containerization%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.7": [
+    {
+      "type": "docs",
+      "title": "Quickstart for GitHub Actions",
+      "url": "https://docs.github.com/en/actions/get-started/quickstart",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Docker: Get started",
+      "url": "https://docs.docker.com/get-started/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: CI/CD with GitHub Actions explained",
+      "url": "https://www.youtube.com/results?search_query=CI%2FCD%20with%20GitHub%20Actions%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.8": [
+    {
+      "type": "docs",
+      "title": "What is CodeDeploy? (AWS)",
+      "url": "https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "CodeDeploy with EC2 Auto Scaling (AWS)",
+      "url": "https://docs.aws.amazon.com/codedeploy/latest/userguide/integrations-aws-auto-scaling.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Deployment on AWS explained",
+      "url": "https://www.youtube.com/results?search_query=Deployment%20on%20AWS%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.9": [
+    {
+      "type": "docs",
+      "title": "Get started with Grafana and Prometheus",
+      "url": "https://grafana.com/docs/grafana/latest/fundamentals/getting-started/first-dashboards/get-started-grafana-prometheus/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Grafana support for Prometheus",
+      "url": "https://prometheus.io/docs/visualization/grafana/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Monitoring & observability explained",
+      "url": "https://www.youtube.com/results?search_query=Monitoring%20%26%20observability%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.10": [
+    {
+      "type": "article",
+      "title": "MLOps guide (Chip Huyen)",
+      "url": "https://huyenchip.com/mlops/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: Prompt management",
+      "url": "https://langfuse.com/docs/prompt-management/get-started",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Incidents, rollbacks & change management explained",
+      "url": "https://www.youtube.com/results?search_query=Incidents%2C%20rollbacks%20%26%20change%20management%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M10.11": [
+    {
+      "type": "docs",
+      "title": "Quickstart for GitHub Actions",
+      "url": "https://docs.github.com/en/actions/get-started/quickstart",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "What is CodeDeploy? (AWS)",
+      "url": "https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse documentation",
+      "url": "https://langfuse.com/docs",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Introduction to DeepEval",
+      "url": "https://deepeval.com/docs/introduction",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: LLMOps Project project tutorial",
+      "url": "https://www.youtube.com/results?search_query=LLMOps%20Project%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.1": [
+    {
+      "type": "docs",
+      "title": "What is Amazon Bedrock?",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Vertex AI generative AI overview",
+      "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "What is Microsoft (Azure AI) Foundry?",
+      "url": "https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: The three ways to consume a model explained",
+      "url": "https://www.youtube.com/results?search_query=The%20three%20ways%20to%20consume%20a%20model%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.2": [
+    {
+      "type": "docs",
+      "title": "What is Amazon Bedrock?",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Amazon Bedrock: Converse API",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Vertex AI generative AI overview",
+      "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "What is Microsoft (Azure AI) Foundry?",
+      "url": "https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-azure-ai-foundry",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Platform anatomy: Bedrock, Vertex AI & Azure AI Foundry explained",
+      "url": "https://www.youtube.com/results?search_query=Platform%20anatomy%3A%20Bedrock%2C%20Vertex%20AI%20%26%20Azure%20AI%20Foundry%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.3": [
+    {
+      "type": "docs",
+      "title": "Get started with AI architecture design (Azure)",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/ai-get-started",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Amazon Bedrock: inference endpoints",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/endpoints.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Identity, networking & tenancy explained",
+      "url": "https://www.youtube.com/results?search_query=Identity%2C%20networking%20%26%20tenancy%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.4": [
+    {
+      "type": "docs",
+      "title": "Amazon Bedrock: inference endpoints",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/endpoints.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Digital Personal Data Protection Act, 2023 (MeitY, PDF)",
+      "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "EU AI Act: high-level summary",
+      "url": "https://artificialintelligenceact.eu/high-level-summary/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Regions, residency & compliance explained",
+      "url": "https://www.youtube.com/results?search_query=Regions%2C%20residency%20%26%20compliance%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.5": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis: models by intelligence, speed and price",
+      "url": "https://artificialanalysis.ai/models",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Budgets & rate limits",
+      "url": "https://docs.litellm.ai/docs/proxy/users",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "What is Amazon Bedrock?",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Capacity, quotas & cost explained",
+      "url": "https://www.youtube.com/results?search_query=Capacity%2C%20quotas%20%26%20cost%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.6": [
+    {
+      "type": "docs",
+      "title": "Hugging Face Hub documentation",
+      "url": "https://huggingface.co/docs/hub/index",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Text Generation Inference (Hugging Face)",
+      "url": "https://huggingface.co/docs/text-generation-inference/index",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "vLLM: LoRA adapters",
+      "url": "https://docs.vllm.ai/en/latest/features/lora/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Modal guide",
+      "url": "https://modal.com/docs/guide",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Open-weight model platforms explained",
+      "url": "https://www.youtube.com/results?search_query=Open-weight%20model%20platforms%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.7": [
+    {
+      "type": "docs",
+      "title": "LiteLLM: Router & load balancing",
+      "url": "https://docs.litellm.ai/docs/routing",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OpenRouter quickstart",
+      "url": "https://openrouter.ai/docs/quickstart",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "OpenRouter: Provider routing",
+      "url": "https://openrouter.ai/docs/guides/routing/provider-selection",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Model routers & LLM gateways explained",
+      "url": "https://www.youtube.com/results?search_query=Model%20routers%20%26%20LLM%20gateways%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.8": [
+    {
+      "type": "docs",
+      "title": "What is Amazon Bedrock?",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Vertex AI generative AI overview",
+      "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Managed building blocks: build or buy explained",
+      "url": "https://www.youtube.com/results?search_query=Managed%20building%20blocks%3A%20build%20or%20buy%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.9": [
+    {
+      "type": "docs",
+      "title": "LiteLLM: Router & load balancing",
+      "url": "https://docs.litellm.ai/docs/routing",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Portability, lock-in & migration explained",
+      "url": "https://www.youtube.com/results?search_query=Portability%2C%20lock-in%20%26%20migration%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M11.10": [
+    {
+      "type": "docs",
+      "title": "Amazon Bedrock: Converse API",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Introduction to DeepEval",
+      "url": "https://deepeval.com/docs/introduction",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Deploy on a Managed Platform project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Deploy%20on%20a%20Managed%20Platform%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.1": [
+    {
+      "type": "docs",
+      "title": "Images and vision (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/images-vision",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Vision (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Audio and voice (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/audio",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Beyond text: what a multimodal model is explained",
+      "url": "https://www.youtube.com/results?search_query=Beyond%20text%3A%20what%20a%20multimodal%20model%20is%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.2": [
+    {
+      "type": "docs",
+      "title": "Vision (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Images and vision (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/images-vision",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Vision: how images become tokens explained",
+      "url": "https://www.youtube.com/results?search_query=Vision%3A%20how%20images%20become%20tokens%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.3": [
+    {
+      "type": "docs",
+      "title": "Vision (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Extrinsic Hallucinations in LLMs (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2024-07-07-hallucination/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Vision: capabilities & failure modes explained",
+      "url": "https://www.youtube.com/results?search_query=Vision%3A%20capabilities%20%26%20failure%20modes%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.4": [
+    {
+      "type": "docs",
+      "title": "PDF support (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/pdf-support",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "ColPali: Efficient Document Retrieval with Vision Language Models",
+      "url": "https://arxiv.org/html/2407.01449v5",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Images and vision (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/images-vision",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Vision: documents, charts & visual RAG explained",
+      "url": "https://www.youtube.com/results?search_query=Vision%3A%20documents%2C%20charts%20%26%20visual%20RAG%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.5": [
+    {
+      "type": "docs",
+      "title": "Diffusers documentation",
+      "url": "https://huggingface.co/docs/diffusers/index",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Diffusers: Inpainting",
+      "url": "https://huggingface.co/docs/diffusers/using-diffusers/inpaint",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Introduction to Stable Diffusion (HF computer vision course)",
+      "url": "https://huggingface.co/learn/computer-vision-course/unit5/generative-models/diffusion-models/stable-diffusion",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "The Illustrated Stable Diffusion (Jay Alammar)",
+      "url": "https://jalammar.github.io/illustrated-stable-diffusion/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Vision: image & video generation explained",
+      "url": "https://www.youtube.com/results?search_query=Vision%3A%20image%20%26%20video%20generation%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.6": [
+    {
+      "type": "paper",
+      "title": "Robust Speech Recognition via Large-Scale Weak Supervision (Whisper)",
+      "url": "https://arxiv.org/pdf/2212.04356",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Audio and voice (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/audio",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Audio: how sound becomes tokens explained",
+      "url": "https://www.youtube.com/results?search_query=Audio%3A%20how%20sound%20becomes%20tokens%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.7": [
+    {
+      "type": "repo",
+      "title": "openai/whisper model card",
+      "url": "https://github.com/openai/whisper/blob/main/model-card.md",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Speech to text / file transcription (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/speech-to-text",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "hexgrad/kokoro (TTS)",
+      "url": "https://github.com/hexgrad/kokoro",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Audio: speech to text & text to speech explained",
+      "url": "https://www.youtube.com/results?search_query=Audio%3A%20speech%20to%20text%20%26%20text%20to%20speech%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.8": [
+    {
+      "type": "docs",
+      "title": "Realtime conversations (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/realtime-conversations",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Voice agents (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/voice-agents",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiveKit: AI voice agents",
+      "url": "https://docs.livekit.io/agents/voice-agent/",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "snakers4/silero-vad",
+      "url": "https://github.com/snakers4/silero-vad",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Audio: realtime voice agents explained",
+      "url": "https://www.youtube.com/results?search_query=Audio%3A%20realtime%20voice%20agents%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.9": [
+    {
+      "type": "paper",
+      "title": "Learning Transferable Visual Models From Natural Language Supervision (CLIP)",
+      "url": "https://arxiv.org/pdf/2103.00020",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Sentence Transformers documentation",
+      "url": "https://sbert.net/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Cross-modal search & retrieval explained",
+      "url": "https://www.youtube.com/results?search_query=Cross-modal%20search%20%26%20retrieval%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.10": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis: models by intelligence, speed and price",
+      "url": "https://artificialanalysis.ai/models",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Audio and voice (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/audio",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Vision (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Choosing a multimodal model explained",
+      "url": "https://www.youtube.com/results?search_query=Choosing%20a%20multimodal%20model%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.11": [
+    {
+      "type": "article",
+      "title": "How we built our multi-agent research system (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "Deep Research with LangGraph (LangChain Academy)",
+      "url": "https://academy.langchain.com/courses/deep-research-with-langgraph",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Deep research & long-horizon scenarios explained",
+      "url": "https://www.youtube.com/results?search_query=Deep%20research%20%26%20long-horizon%20scenarios%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.12": [
+    {
+      "type": "repo",
+      "title": "ggml-org/whisper.cpp",
+      "url": "https://github.com/ggml-org/whisper.cpp",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Hugging Face Hub documentation",
+      "url": "https://huggingface.co/docs/hub/index",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: On-device & edge modalities explained",
+      "url": "https://www.youtube.com/results?search_query=On-device%20%26%20edge%20modalities%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M12.13": [
+    {
+      "type": "docs",
+      "title": "LiveKit Agents",
+      "url": "https://docs.livekit.io/agents/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "PDF support (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/pdf-support",
+      "free": true
+    },
+    {
+      "type": "repo",
+      "title": "openai/whisper model card",
+      "url": "https://github.com/openai/whisper/blob/main/model-card.md",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Ship a Multimodal Build project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Ship%20a%20Multimodal%20Build%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.1": [
+    {
+      "type": "docs",
+      "title": "Model optimization: evals, fine-tuning, distillation (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/model-optimization",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Axolotl: Which fine-tuning method should I use?",
+      "url": "https://docs.axolotl.ai/docs/choosing_method.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "100 Days of AI Engineering: shipping to production (17-day track)",
+      "url": "https://ai-engineer-roadmap-2026.vercel.app/100-days/shipping-to-production/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Should you fine-tune? explained",
+      "url": "https://www.youtube.com/results?search_query=Should%20you%20fine-tune%3F%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.2": [
+    {
+      "type": "docs",
+      "title": "Unsloth: Fine-tuning LLMs guide",
+      "url": "https://unsloth.ai/docs/get-started/fine-tuning-llms-guide",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "TRL quickstart",
+      "url": "https://huggingface.co/docs/trl/quickstart",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Data curation for fine-tuning explained",
+      "url": "https://www.youtube.com/results?search_query=Data%20curation%20for%20fine-tuning%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.3": [
+    {
+      "type": "docs",
+      "title": "TRL quickstart",
+      "url": "https://huggingface.co/docs/trl/quickstart",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Unsloth: Fine-tuning LLMs guide",
+      "url": "https://unsloth.ai/docs/get-started/fine-tuning-llms-guide",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "TRL: Reducing memory usage",
+      "url": "https://huggingface.co/docs/trl/reducing_memory_usage",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Supervised Fine-Tuning (SFT) explained",
+      "url": "https://www.youtube.com/results?search_query=Supervised%20Fine-Tuning%20(SFT)%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.4": [
+    {
+      "type": "paper",
+      "title": "LoRA: Low-Rank Adaptation of Large Language Models",
+      "url": "https://arxiv.org/abs/2106.09685",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+      "url": "https://arxiv.org/abs/2305.14314",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "PEFT: LoRA",
+      "url": "https://huggingface.co/docs/peft/en/package_reference/lora",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Unsloth: LoRA hyperparameters guide",
+      "url": "https://unsloth.ai/docs/get-started/fine-tuning-llms-guide/lora-hyperparameters-guide",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Axolotl documentation",
+      "url": "https://docs.axolotl.ai/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: LoRA & QLoRA explained",
+      "url": "https://www.youtube.com/results?search_query=LoRA%20%26%20QLoRA%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.5": [
+    {
+      "type": "paper",
+      "title": "Direct Preference Optimization",
+      "url": "https://arxiv.org/abs/2305.18290",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "TRL quickstart",
+      "url": "https://huggingface.co/docs/trl/quickstart",
+      "free": true
+    },
+    {
+      "type": "paper",
+      "title": "Training language models to follow instructions with human feedback (InstructGPT)",
+      "url": "https://arxiv.org/abs/2203.02155",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Preference tuning & DPO explained",
+      "url": "https://www.youtube.com/results?search_query=Preference%20tuning%20%26%20DPO%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.6": [
+    {
+      "type": "docs",
+      "title": "Reinforcement fine-tuning (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Reward Hacking in Reinforcement Learning (Lilian Weng)",
+      "url": "https://lilianweng.github.io/posts/2024-11-28-reward-hacking/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Reinforcement Fine-Tuning (RFT) explained",
+      "url": "https://www.youtube.com/results?search_query=Reinforcement%20Fine-Tuning%20(RFT)%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.7": [
+    {
+      "type": "docs",
+      "title": "Model optimization: evals, fine-tuning, distillation (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/model-optimization",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "TRL quickstart",
+      "url": "https://huggingface.co/docs/trl/quickstart",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Distillation explained",
+      "url": "https://www.youtube.com/results?search_query=Distillation%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.8": [
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Introduction to DeepEval",
+      "url": "https://deepeval.com/docs/introduction",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Model optimization: evals, fine-tuning, distillation (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/model-optimization",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Evaluating fine-tunes explained",
+      "url": "https://www.youtube.com/results?search_query=Evaluating%20fine-tunes%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.9": [
+    {
+      "type": "docs",
+      "title": "vLLM: LoRA adapters",
+      "url": "https://docs.vllm.ai/en/latest/features/lora/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "TRL: PEFT integration",
+      "url": "https://huggingface.co/docs/trl/peft_integration",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Router & load balancing",
+      "url": "https://docs.litellm.ai/docs/routing",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Serving the adapter explained",
+      "url": "https://www.youtube.com/results?search_query=Serving%20the%20adapter%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M13.10": [
+    {
+      "type": "docs",
+      "title": "Unsloth: Fine-tuning LLMs guide",
+      "url": "https://unsloth.ai/docs/get-started/fine-tuning-llms-guide",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "vLLM: LoRA adapters",
+      "url": "https://docs.vllm.ai/en/latest/features/lora/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: A LoRA That Beats a Prompted Baseline project tutorial",
+      "url": "https://www.youtube.com/results?search_query=A%20LoRA%20That%20Beats%20a%20Prompted%20Baseline%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.1": [
+    {
+      "type": "docs",
+      "title": "LlamaIndex: Introduction to RAG",
+      "url": "https://developers.llamaindex.ai/python/framework/understanding/rag/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "FastAPI tutorial / user guide",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "DeepEval: RAG evaluation quickstart",
+      "url": "https://deepeval.com/docs/getting-started-rag",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Document Q&A platform explained",
+      "url": "https://www.youtube.com/results?search_query=Document%20Q%26A%20platform%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.2": [
+    {
+      "type": "docs",
+      "title": "Structured outputs (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Tool use with Claude",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Resume ↔ JD screening agent explained",
+      "url": "https://www.youtube.com/results?search_query=Resume%20%E2%86%94%20JD%20screening%20agent%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.3": [
+    {
+      "type": "course",
+      "title": "Deep Research with LangGraph (LangChain Academy)",
+      "url": "https://academy.langchain.com/courses/deep-research-with-langgraph",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LangGraph overview",
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Multi-agent research report system explained",
+      "url": "https://www.youtube.com/results?search_query=Multi-agent%20research%20report%20system%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.4": [
+    {
+      "type": "docs",
+      "title": "What is the Model Context Protocol?",
+      "url": "https://modelcontextprotocol.io/docs/2026-07-28/getting-started/intro",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "MCP spec: Tools",
+      "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: MCP server for a real tool explained",
+      "url": "https://www.youtube.com/results?search_query=MCP%20server%20for%20a%20real%20tool%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.5": [
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Budgets & rate limits",
+      "url": "https://docs.litellm.ai/docs/proxy/users",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Monitored production API explained",
+      "url": "https://www.youtube.com/results?search_query=Monitored%20production%20API%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.6": [
+    {
+      "type": "docs",
+      "title": "LiveKit: AI voice agents",
+      "url": "https://docs.livekit.io/agents/voice-agent/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Vision (Claude docs)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Voice or multimodal build explained",
+      "url": "https://www.youtube.com/results?search_query=Voice%20or%20multimodal%20build%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M14.7": [
+    {
+      "type": "article",
+      "title": "Machine Learning Interviews Book (Chip Huyen)",
+      "url": "https://huyenchip.com/ml-interviews-book/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Pro Git (free book)",
+      "url": "https://git-scm.com/book/en/v2",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Portfolio & positioning explained",
+      "url": "https://www.youtube.com/results?search_query=Portfolio%20%26%20positioning%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.1": [
+    {
+      "type": "article",
+      "title": "Machine Learning Interviews Book (Chip Huyen)",
+      "url": "https://huyenchip.com/ml-interviews-book/",
+      "free": true
+    },
+    {
+      "type": "course",
+      "title": "AI Engineer Interview Prep (CampusX One)",
+      "url": "https://learnwith.campusx.in/#cxo-pricing",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Interview strategy & role positioning explained",
+      "url": "https://www.youtube.com/results?search_query=Interview%20strategy%20%26%20role%20positioning%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.2": [
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Advanced RAG techniques (Pinecone)",
+      "url": "https://www.pinecone.io/learn/advanced-rag-techniques/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "DeepEval: RAG evaluation quickstart",
+      "url": "https://deepeval.com/docs/getting-started-rag",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Production RAG interview scenarios explained",
+      "url": "https://www.youtube.com/results?search_query=Production%20RAG%20interview%20scenarios%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.3": [
+    {
+      "type": "article",
+      "title": "Agents (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/07/agents.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "How we built our multi-agent research system (Anthropic)",
+      "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Agents Rule of Two and The Attacker Moves Second (Simon Willison)",
+      "url": "https://simonwillison.net/2025/Nov/2/new-prompt-injection-papers/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Agentic AI interview scenarios explained",
+      "url": "https://www.youtube.com/results?search_query=Agentic%20AI%20interview%20scenarios%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.4": [
+    {
+      "type": "docs",
+      "title": "Axolotl: Which fine-tuning method should I use?",
+      "url": "https://docs.axolotl.ai/docs/choosing_method.html",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Model optimization: evals, fine-tuning, distillation (OpenAI docs)",
+      "url": "https://developers.openai.com/api/docs/guides/model-optimization",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "vLLM: LoRA adapters",
+      "url": "https://docs.vllm.ai/en/latest/features/lora/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Fine-tuning & model adaptation interviews explained",
+      "url": "https://www.youtube.com/results?search_query=Fine-tuning%20%26%20model%20adaptation%20interviews%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.5": [
+    {
+      "type": "article",
+      "title": "MLOps guide (Chip Huyen)",
+      "url": "https://huyenchip.com/mlops/",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "LiteLLM: Fallbacks (provider failover)",
+      "url": "https://docs.litellm.ai/docs/proxy/reliability",
+      "free": true
+    },
+    {
+      "type": "docs",
+      "title": "Langfuse: LLM observability & tracing",
+      "url": "https://langfuse.com/docs/observability/overview",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: LLMOps & production debugging interviews explained",
+      "url": "https://www.youtube.com/results?search_query=LLMOps%20%26%20production%20debugging%20interviews%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.6": [
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Patterns for building LLM-based systems & products (Eugene Yan)",
+      "url": "https://eugeneyan.com/writing/llm-patterns/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Engineering: Building Applications with Foundation Models (Chip Huyen, book)",
+      "url": "https://www.amazon.in/AI-Engineering-Building-Applications-Foundation/dp/9355426666",
+      "free": false
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: AI system-design interviews explained",
+      "url": "https://www.youtube.com/results?search_query=AI%20system-design%20interviews%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.7": [
+    {
+      "type": "docs",
+      "title": "Artificial Analysis LLM leaderboard",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "AI Evals: everything you need to know (Hamel Husain & Shreya Shankar)",
+      "url": "https://hamel.dev/blog/posts/evals-faq/",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Staying current without chasing hype explained",
+      "url": "https://www.youtube.com/results?search_query=Staying%20current%20without%20chasing%20hype%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.8": [
+    {
+      "type": "article",
+      "title": "Machine Learning Interviews Book (Chip Huyen)",
+      "url": "https://huyenchip.com/ml-interviews-book/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Common pitfalls when building generative AI applications (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Project & portfolio defense explained",
+      "url": "https://www.youtube.com/results?search_query=Project%20%26%20portfolio%20defense%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.9": [
+    {
+      "type": "article",
+      "title": "Machine Learning Interviews Book (Chip Huyen)",
+      "url": "https://huyenchip.com/ml-interviews-book/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Common pitfalls when building generative AI applications (Chip Huyen)",
+      "url": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Behavioral communication for AI engineers explained",
+      "url": "https://www.youtube.com/results?search_query=Behavioral%20communication%20for%20AI%20engineers%20explained",
+      "free": true,
+      "searchLink": true
+    }
+  ],
+  "M15.10": [
+    {
+      "type": "article",
+      "title": "Machine Learning Interviews Book (Chip Huyen)",
+      "url": "https://huyenchip.com/ml-interviews-book/",
+      "free": true
+    },
+    {
+      "type": "article",
+      "title": "Building a generative AI platform (Chip Huyen)",
+      "url": "https://huyenchip.com/2024/07/25/genai-platform.html",
+      "free": true
+    },
+    {
+      "type": "video",
+      "title": "YouTube search: Full Mock GenAI Interview Loop project tutorial",
+      "url": "https://www.youtube.com/results?search_query=Full%20Mock%20GenAI%20Interview%20Loop%20project%20tutorial",
+      "free": true,
+      "searchLink": true
+    }
+  ]
+}

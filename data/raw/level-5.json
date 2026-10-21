@@ -1,0 +1,128 @@
+{
+  "id": 5,
+  "title": "AI Agents",
+  "phase": "Agentic",
+  "summary": "Systems where models choose their next action, use tools, keep state, recover from failures and collaborate with other agents.",
+  "interviewWeight": 9,
+  "jobWeight": 7,
+  "sessionCount": 22,
+  "prerequisites": [4],
+  "outcome": "Build a real agent that combines planning, tools, state, failure recovery and controlled autonomy, not just an LLM in a loop.",
+  "project": {
+    "title": "Production-Style Agent",
+    "deliverables": [
+      "Pick one: research agent (planner → researcher → analyst → writer), MCP server + agent for a real service, or a coding/data agent with sandboxed execution",
+      "At least 3 useful tools",
+      "Multi-step autonomous execution",
+      "Explicit state",
+      "Stopping conditions",
+      "Failure recovery",
+      "Logs and progress visibility",
+      "At least one human approval point for consequential actions",
+      "Built in one agent framework, with the underlying loop explained from first principles"
+    ]
+  },
+  "modules": [
+    {"id": "M5.1", "title": "What is an agent?", "sessions": 1, "topics": [
+      {"t": "The agent loop", "d": "Goal, decide, act, observe, repeat, finish."},
+      {"t": "Call vs chain vs workflow vs agent", "d": "Distinguished by who decides the next step."},
+      {"t": "Where agents are useful", "d": "Open-ended, multi-step tasks with unpredictable paths."},
+      {"t": "When a workflow is better", "d": "Deterministic flows are simpler, cheaper and more reliable."},
+      {"t": "The components of an agent", "d": "Model, instructions, tools, state/memory, loop and stopping conditions."}
+    ], "tryIt": null, "outcome": "Decide whether a problem genuinely needs an agent.", "mentalModel": null},
+    {"id": "M5.2", "title": "ReAct, planning & reflection", "sessions": 2, "topics": [
+      {"t": "The ReAct pattern", "d": "Alternate reasoning about an action and taking it."},
+      {"t": "Writing the loop by hand first", "d": "A manual agent loop before any framework."},
+      {"t": "Step-by-step vs plan-first", "d": "Incremental execution vs upfront planning."},
+      {"t": "Decomposing and revising plans", "d": "Split goals and update plans as information arrives."},
+      {"t": "Reflection & self-correction", "d": "Review and correct when actions fail."},
+      {"t": "Stopping conditions & loop protection", "d": "Max steps and guards against repetition."},
+      {"t": "What planning costs", "d": "Planning and reflection add latency and cost."}
+    ], "tryIt": null, "outcome": "Build an agent that solves a multi-step task without a hard-coded path.", "mentalModel": null},
+    {"id": "M5.3", "title": "Tools for agents", "sessions": 2, "topics": [
+      {"t": "From tool calling to agentic tool use", "d": "The model repeatedly chooses among capabilities."},
+      {"t": "Designing tools for agents", "d": "Clear names, schemas, typed args, useful outputs and errors."},
+      {"t": "Improving selection & arguments", "d": "Raising accuracy of tool choice and argument values."},
+      {"t": "Sequential, parallel & repeated calls", "d": "Dependent, concurrent and repeated invocations."},
+      {"t": "Recovering from tool failures", "d": "Retry, recover or pick an alternative."},
+      {"t": "Limiting tool-result size", "d": "Keep results from flooding the context."},
+      {"t": "Read-only vs consequential tools", "d": "Confirmation and permission checks for risky actions."}
+    ], "tryIt": null, "outcome": "Give an agent useful capabilities without uncontrolled access.", "mentalModel": null},
+    {"id": "M5.4", "title": "MCP (Model Context Protocol)", "sessions": 3, "topics": [
+      {"t": "Why MCP exists", "d": "A standard way to connect AI apps to tools, resources and prompts."},
+      {"t": "Host → client → server", "d": "The architecture and each component's job."},
+      {"t": "Tool calling vs MCP", "d": "Tool calling requests actions; MCP standardizes how capabilities are exposed."},
+      {"t": "Building an MCP server", "d": "Expose tools/resources from a database, filesystem, SaaS app or API."},
+      {"t": "Schemas, transports & auth", "d": "Capabilities, errors, stdio/HTTP transports and authentication."},
+      {"t": "Building and connecting a client", "d": "An MCP client connected to one or more servers."},
+      {"t": "Permissions & untrusted servers", "d": "Trust boundaries and the risk of untrusted servers."}
+    ], "tryIt": null, "outcome": "Build a reusable MCP integration that exposes a real system to AI apps.", "mentalModel": null},
+    {"id": "M5.5", "title": "Memory basics", "sessions": 2, "topics": [
+      {"t": "History, state, short- & long-term memory", "d": "Distinguishing these four ideas."},
+      {"t": "Short-term memory", "d": "Information kept within a conversation or task."},
+      {"t": "Long-term memory", "d": "Persistent or retrieval-backed memory across sessions."},
+      {"t": "Storing what is worth keeping", "d": "Facts, preferences and outcomes rather than every message."},
+      {"t": "Retrieving only relevant memories", "d": "Fetch memories on demand instead of injecting everything."},
+      {"t": "Write → retrieve → update → forget", "d": "Basic memory operations."},
+      {"t": "Trimming & summarizing growth", "d": "Managing growing conversations."},
+      {"t": "Offloading comes later", "d": "Deeper offloading lives in Context Engineering."}
+    ], "tryIt": null, "outcome": "Build an agent that remembers relevant information during and across sessions.", "mentalModel": null},
+    {"id": "M5.6", "title": "Multi-agent architectures", "sessions": 3, "topics": [
+      {"t": "Why more than one agent", "d": "Different tools, instructions, models, permissions or expertise."},
+      {"t": "Common patterns", "d": "Overview of multi-agent topologies."},
+      {"t": "Orchestrator → workers", "d": "A coordinator delegates to workers."},
+      {"t": "Sequential handoffs", "d": "Agents pass work along in order."},
+      {"t": "Parallel specialists", "d": "Specialists work on subtasks concurrently."},
+      {"t": "Hierarchical supervisor/worker", "d": "Multi-level supervision."},
+      {"t": "Building an orchestrator", "d": "Decompose and delegate to specialists."},
+      {"t": "Passing state & aggregating output", "d": "Sharing context and combining results."},
+      {"t": "Worker failure & escalation", "d": "Retries, reassignment and escalation."},
+      {"t": "What goes wrong with many agents", "d": "Duplication, coordination overhead, context growth, latency and cost."},
+      {"t": "A2A vs MCP", "d": "A2A connects agents to agents; MCP connects agents to tools."},
+      {"t": "When one strong agent is better", "d": "One capable agent with several tools often wins."}
+    ], "tryIt": null, "outcome": "Use multi-agent designs only when specialization justifies the complexity.", "mentalModel": null},
+    {"id": "M5.7", "title": "Building agents with LangGraph", "sessions": 3, "topics": [
+      {"t": "What LangGraph is for", "d": "Low-level runtime for long-running, stateful agents."},
+      {"t": "State, nodes & edges", "d": "Modeling execution as a graph."},
+      {"t": "Building nodes", "d": "Nodes for model calls, tools, processing and decisions."},
+      {"t": "Conditional edges", "d": "Choosing the next step dynamically."},
+      {"t": "Loops for retries & iteration", "d": "Repeated tool use and iterative execution."},
+      {"t": "Checkpointing & persistence", "d": "Saving execution state to survive interruptions."},
+      {"t": "Resuming long runs", "d": "Continue from a checkpoint rather than restarting."},
+      {"t": "Human-in-the-loop interrupts", "d": "Pause for approval or intervention."},
+      {"t": "Inspecting state to debug", "d": "Understand why a path was taken."},
+      {"t": "When a graph beats a loop", "d": "When explicit graphs give more control."}
+    ], "tryIt": null, "outcome": "Build a controllable, stateful, resumable agent with explicit execution logic.", "mentalModel": null},
+    {"id": "M5.8", "title": "Sandboxed execution", "sessions": 1, "topics": [
+      {"t": "Why generated code must not run in-process", "d": "Keep generated code out of the production app."},
+      {"t": "Sandboxes: E2B, Modal & containers", "d": "Running code in isolated environments."},
+      {"t": "Restricting filesystem, network & time", "d": "Limit filesystem, network, credentials, runtime and compute."},
+      {"t": "Capturing output safely", "d": "Collect stdout, stderr, files and errors; return only what is needed."},
+      {"t": "Reducing the blast radius", "d": "Limit the damage executable actions can do."}
+    ], "tryIt": null, "outcome": "Give an agent code execution without exposing the host.", "mentalModel": null},
+    {"id": "M5.9", "title": "Agent reliability, UX & failure recovery", "sessions": 2, "topics": [
+      {"t": "Common agent failures", "d": "Wrong tools, bad args, loops, incomplete plans and context growth."},
+      {"t": "Step, time, retry & cost budgets", "d": "Limits on steps, time, retries and spend."},
+      {"t": "Idempotent operations", "d": "Retries that do not repeat side effects."},
+      {"t": "Persisting state to resume", "d": "Enough saved state to continue after interruption."},
+      {"t": "Fallbacks & human escalation", "d": "Alternatives and handoff when the agent cannot proceed safely."},
+      {"t": "Surfacing progress to users", "d": "Show current task, actions, results and approvals."},
+      {"t": "Cancel, pause, resume, redirect", "d": "User control over long-running work."},
+      {"t": "Understandable without exposing reasoning", "d": "Clear execution without leaking private reasoning."}
+    ], "tryIt": null, "outcome": "Build agents that fail predictably, recover gracefully and keep users in control.", "mentalModel": null},
+    {"id": "M5.10", "title": "Agent frameworks & libraries", "sessions": 2, "topics": [
+      {"t": "One agent, several frameworks", "d": "Implement one small agent across frameworks."},
+      {"t": "LangGraph", "d": "Graph-based, stateful orchestration with persistence and HITL."},
+      {"t": "Google ADK", "d": "Google's open-source agent framework with sessions, tools and A2A."},
+      {"t": "CrewAI", "d": "Crews for collaborating agents and Flows for controlled workflows."},
+      {"t": "Agno", "d": "Agents, Teams and Workflows plus a production runtime."},
+      {"t": "OpenAI Agents SDK", "d": "Code-first agents with tools, handoffs, guardrails and tracing."},
+      {"t": "Compare them on", "d": "Abstraction, control, state, multi-agent, MCP/A2A, observability and flexibility."}
+    ], "tryIt": null, "outcome": "Choose an agent framework by architecture rather than popularity.", "mentalModel": null},
+    {"id": "M5.11", "title": "Capstone: Build a Production-Style Agent", "sessions": 1, "topics": [
+      {"t": "Choosing a substantial project", "d": "Research agent, MCP-powered agent or coding/data agent."},
+      {"t": "Capstone requirements", "d": "3+ tools, multi-step execution, state, stopping, recovery, logs, an approval point and one framework explained."}
+    ], "tryIt": null, "outcome": "A real agent showing planning, tools, state, recovery and controlled autonomy.", "mentalModel": null}
+  ],
+  "links": []
+}

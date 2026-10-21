@@ -1,0 +1,106 @@
+{
+  "id": 7,
+  "title": "LLM Evaluations",
+  "phase": "Evaluation & Trust",
+  "summary": "Design, run and automate evaluations for models and LLM applications so quality, safety and reliability are measured, not guessed.",
+  "interviewWeight": 8,
+  "jobWeight": 10,
+  "sessionCount": 17,
+  "prerequisites": [4, 5],
+  "outcome": "Build and run offline and online evaluations covering retrieval, agents, safety, cost and latency so every change is measured.",
+  "project": null,
+  "modules": [
+    {"id": "M7.1", "title": "Introduction to LLM evaluations", "sessions": 1, "topics": [
+      {"t": "Pitfalls of vibe testing", "d": "Why informal spot-checks fail, with real incidents such as the Air Canada chatbot case."},
+      {"t": "Deterministic vs probabilistic testing", "d": "How testing non-deterministic systems differs from classic tests."},
+      {"t": "Model evals vs application evals", "d": "Core model capability vs complete application workflows."},
+      {"t": "The end-to-end evaluation workflow", "d": "Task, criteria, dataset, execution, analysis and iteration."}
+    ], "tryIt": null, "outcome": "Explain why LLM evaluation is needed and how it differs from traditional testing.", "mentalModel": null},
+    {"id": "M7.2", "title": "Evaluation methods & paradigms", "sessions": 1, "topics": [
+      {"t": "Programmatic, human & LLM-as-a-Judge", "d": "The three main ways to execute evaluations."},
+      {"t": "Reference-based vs reference-free", "d": "Scoring against known answers vs judging without them."},
+      {"t": "When a Golden Dataset is required", "d": "When you need an answer key vs judge-only scoring."},
+      {"t": "Matching method to behaviour", "d": "Deterministic, semantic, subjective or operational behavior."}
+    ], "tryIt": null, "outcome": "Pick the right evaluation method for a testing scenario.", "mentalModel": null},
+    {"id": "M7.3", "title": "Offline vs online evaluations", "sessions": 2, "topics": [
+      {"t": "Offline suites for pre-release testing", "d": "Version comparison, experiments and regression prevention."},
+      {"t": "Post-deployment production risks", "d": "Unexpected inputs, emergent failures, shifting behavior and drift."},
+      {"t": "System metrics vs quality metrics", "d": "Latency, tokens and errors vs LLM-computed quality scores."},
+      {"t": "Continuous online evaluation pipeline", "d": "Logging, sampling, dashboards and alerts."},
+      {"t": "Feeding failures back offline", "d": "Add production failures to the offline dataset."}
+    ], "tryIt": null, "outcome": "Design a two-layer strategy that catches regressions before and after release.", "mentalModel": null},
+    {"id": "M7.4", "title": "Model evaluations & benchmarking", "sessions": 1, "topics": [
+      {"t": "Core LLM capabilities", "d": "Knowledge, reasoning, math, coding, instruction following, long context, safety and tool use."},
+      {"t": "Anatomy of a benchmark", "d": "Dataset, prompts, run config, scoring and aggregation."},
+      {"t": "Public leaderboards", "d": "How leaderboards compare foundation models."},
+      {"t": "Benchmark pitfalls", "d": "Contamination, saturation, overfitting and configuration gaming."}
+    ], "tryIt": null, "outcome": "Assess public benchmarks critically.", "mentalModel": null},
+    {"id": "M7.5", "title": "The evolution of knowledge benchmarks", "sessions": 1, "topics": [
+      {"t": "From MMLU to harder knowledge tests", "d": "MMLU and TruthfulQA toward tougher factual tests."},
+      {"t": "Human exams as benchmarks", "d": "Exams such as AGIEval to compare humans and models."},
+      {"t": "GPQA, MMLU-Pro, SimpleQA, HLE", "d": "Harder benchmarks including Humanity's Last Exam."},
+      {"t": "Why benchmarks keep getting harder", "d": "Frontier models saturate older datasets."}
+    ], "tryIt": null, "outcome": "Know which knowledge benchmarks still discriminate between frontier models.", "mentalModel": null},
+    {"id": "M7.6", "title": "Custom model evaluations", "sessions": 1, "topics": [
+      {"t": "Evaluating on your actual task", "d": "Test models on the task your app needs."},
+      {"t": "Shortlisting candidate models", "d": "Filter by capability, latency, context and cost."},
+      {"t": "Building a custom eval dataset", "d": "A task-specific dataset, e.g. for Text-to-SQL."},
+      {"t": "Like-for-like model comparison", "d": "Identical inputs, prompts, parameters and scoring."},
+      {"t": "Estimating usage & token cost", "d": "Projecting cost, including prompt caching."},
+      {"t": "Quality / latency / cost trade-off", "d": "The best task-specific balance, not top general rank."}
+    ], "tryIt": null, "outcome": "Select the most capable, cost-effective model for a specific application.", "mentalModel": null},
+    {"id": "M7.7", "title": "Building an eval suite & regression testing", "sessions": 2, "topics": [
+      {"t": "Component, pipeline & application levels", "d": "Structuring evals by what is being tested."},
+      {"t": "Versioning tests, configs & results", "d": "Version cases, configs, prompts, models and results."},
+      {"t": "Experiment tracking & baselines", "d": "Compare new versions to baselines."},
+      {"t": "CI/CD quality gates", "d": "Block shipping when key metrics regress."},
+      {"t": "Self-improving golden dataset", "d": "Feed production edge cases back in."},
+      {"t": "Quality alongside latency & cost", "d": "Track all three together."}
+    ], "tryIt": null, "outcome": "Build an automated suite that prevents regressions and grows from real usage.", "mentalModel": null},
+    {"id": "M7.8", "title": "RAG Evals", "sessions": 5, "topics": [
+      {"t": "Four levels of RAG evaluation", "d": "Component, pipeline, application and safety levels."},
+      {"t": "Evaluating the retriever alone", "d": "Does retrieval find what is needed to answer?"},
+      {"t": "Diagnosing missed & noisy retrieval", "d": "Missing relevant context or too many irrelevant chunks."},
+      {"t": "Retrieval metrics", "d": "Contextual recall, contextual precision, Recall@k and ranking-aware metrics."},
+      {"t": "Building the Golden Dataset", "d": "By hand, with LLMs or with DeepEval synthesizers."},
+      {"t": "Evaluating the generator alone", "d": "Known-good context; check faithfulness and relevance."},
+      {"t": "Detecting unfaithful answers", "d": "Unsupported claims, irrelevance and context misuse."},
+      {"t": "Component tests with DeepEval & RAGAS", "d": "What each framework's metrics measure."},
+      {"t": "The full retrieve → generate pipeline", "d": "Retrieval, assembly and generation evaluated together."},
+      {"t": "The RAG Triad", "d": "Context relevance, faithfulness (groundedness) and answer relevance."},
+      {"t": "When good components interact badly", "d": "Strong parts can make a weak pipeline."},
+      {"t": "Diagnosing pipeline-level failures", "d": "E.g. high retrieval precision but low overall contextual relevance."},
+      {"t": "Locating the root failure", "d": "Retrieval, assembled context or generation?"},
+      {"t": "Evaluating from the user's perspective", "d": "Judge the system as users experience it."},
+      {"t": "Factual correctness", "d": "Is the final answer correct given the evidence?"},
+      {"t": "Answer completeness", "d": "Does it cover every important part of the request?"},
+      {"t": "Tone, format & citation behaviour", "d": "Tone, persona, format, citations and instruction following."},
+      {"t": "Operational metrics per query", "d": "Latency, tokens, cost and error rates."},
+      {"t": "Harmful & disallowed responses", "d": "Harmful, illegal, biased or disallowed outputs."},
+      {"t": "PII protection & redaction", "d": "Contact details, credentials and payment data protected."},
+      {"t": "Direct & indirect prompt injection", "d": "Injected instructions, including inside retrieved docs."},
+      {"t": "Jailbreak attempts", "d": "Do guardrail bypasses succeed?"},
+      {"t": "Poisoned retrieval content", "d": "Can malicious documents leak data or override instructions?"}
+    ], "tryIt": null, "outcome": "Evaluate a RAG app across retrieval, generation, pipeline, user quality, operations and safety.", "mentalModel": null},
+    {"id": "M7.9", "title": "Agent Evals", "sessions": 3, "topics": [
+      {"t": "Six dimensions of agent evaluation", "d": "Decisions, trajectories, tool use, completion, recovery and safety."},
+      {"t": "Why the final answer is not enough", "d": "Output checks miss how the agent got there."},
+      {"t": "Tool selection", "d": "Right tool for each situation?"},
+      {"t": "Tool argument correctness", "d": "Accurate, well-formed arguments?"},
+      {"t": "Trajectory quality", "d": "Does the action sequence suit the task?"},
+      {"t": "Loops, redundancy & early exit", "d": "Unnecessary calls, loops, wrong order and premature stops."},
+      {"t": "Task-completion success rate", "d": "Success on complex multi-step requests."},
+      {"t": "Injecting realistic failures", "d": "Simulated tool errors, outages, malformed results and missing data."},
+      {"t": "Noticing failure & choosing recovery", "d": "Does the agent detect failure and respond sensibly?"},
+      {"t": "Retry, fall back, replan, escalate", "d": "Testing each recovery path."},
+      {"t": "Measuring recovery, not just success", "d": "Success under failure, not only ideal conditions."},
+      {"t": "Unauthorized & destructive actions", "d": "Does it attempt forbidden or destructive actions?"},
+      {"t": "Approval gates & permission boundaries", "d": "Testing HITL gates and limits."},
+      {"t": "Resistance to prompt injection", "d": "Injections that hijack tool use."},
+      {"t": "Secret extraction & scope escape", "d": "Attempts to leak secrets or exceed scope."},
+      {"t": "Cybersecurity capability benchmarks", "d": "Benchmarks for high-risk computer-use capability."},
+      {"t": "Outcome quality vs execution efficiency", "d": "Quality alongside steps, latency, tool calls, tokens and cost."}
+    ], "tryIt": null, "outcome": "Evaluate an agent's decisions, tool use, efficiency, recovery and security boundaries.", "mentalModel": null}
+  ],
+  "links": []
+}

@@ -1,0 +1,85 @@
+{
+  "id": 8,
+  "title": "AI Security",
+  "phase": "Evaluation & Trust",
+  "summary": "Protect LLM, RAG and agent systems from model-specific attacks, unsafe actions, data leaks and compliance risk.",
+  "interviewWeight": 5,
+  "jobWeight": 7,
+  "sessionCount": 15,
+  "prerequisites": [7],
+  "outcome": "Threat-model, defend and red-team LLM, RAG and agent systems so they stay safe when the model makes a bad decision.",
+  "project": {
+    "title": "Red-Team & Secure an Agentic RAG App",
+    "deliverables": [
+      "Attack an existing app with direct and indirect prompt injection",
+      "Attack it with malicious retrieved documents",
+      "Attempt jailbreaks and private-data extraction",
+      "Attempt tool misuse and unauthorized actions",
+      "Add least-privilege tools and permission checks",
+      "Add guardrails plus PII and secrets protection",
+      "Add approval gates and sandboxing",
+      "Add security regression tests for every vulnerability found"
+    ]
+  },
+  "modules": [
+    {"id": "M8.1", "title": "AI threat model", "sessions": 1, "topics": [
+      {"t": "How the attack surface changes", "d": "Risk grows when models read untrusted content, access data, call tools and act."},
+      {"t": "Trust boundaries", "d": "Where trust changes across prompts, retrieval, tools, memory and outputs."},
+      {"t": "Model output is untrusted", "d": "Validate outputs and actions before trusting them."}
+    ], "tryIt": null, "outcome": "Threat-model an LLM app before adding defenses.", "mentalModel": null},
+    {"id": "M8.2", "title": "Prompt injection & data exfiltration", "sessions": 3, "topics": [
+      {"t": "Direct vs indirect injection", "d": "From the user vs hidden in docs, pages, emails, chunks or tool outputs."},
+      {"t": "What injection attacks attempt", "d": "Override instructions, manipulate tools, expose context or redirect goals."},
+      {"t": "Untrusted input + tools + an exit path", "d": "The risky combination that enables exfiltration."},
+      {"t": "Layered defences", "d": "Separation, least privilege, authz checks, restricted tools, confirmation and output validation."},
+      {"t": "Why \"ignore malicious instructions\" fails", "d": "Prompt wording is not a reliable security boundary."}
+    ], "tryIt": null, "outcome": "Build apps that stay safe even when malicious instructions reach the model.", "mentalModel": null},
+    {"id": "M8.3", "title": "Jailbreaks, guardrails & moderation", "sessions": 2, "topics": [
+      {"t": "Jailbreaks vs injection", "d": "How they differ and common jailbreak patterns."},
+      {"t": "Input & output guardrails", "d": "Checks, moderation, validation and policy enforcement."},
+      {"t": "Why one layer is not enough", "d": "Limits of model-based guardrails; defense in depth."},
+      {"t": "Testing against obfuscated input", "d": "Adversarial and obfuscated inputs, not just normal ones."}
+    ], "tryIt": null, "outcome": "Reduce unsafe behavior without relying on one defensive prompt.", "mentalModel": null},
+    {"id": "M8.4", "title": "Agent & tool security", "sessions": 2, "topics": [
+      {"t": "Least privilege for agents", "d": "Only the tools and permissions the task needs."},
+      {"t": "Read-only vs consequential actions", "d": "Reads vs sending, changing, deleting, buying or running code."},
+      {"t": "Validating tool use outside the LLM", "d": "Check tool choice, args, permissions and outputs independently."},
+      {"t": "Human approval for irreversible actions", "d": "Human sign-off for sensitive operations."},
+      {"t": "Step, runtime & cost limits", "d": "Caps that prevent runaway execution."},
+      {"t": "Sandboxing generated code", "d": "Isolate generated code; treat generated SQL, commands and URLs as untrusted."}
+    ], "tryIt": null, "outcome": "Give agents autonomy without unrestricted control over real systems.", "mentalModel": null},
+    {"id": "M8.5", "title": "RAG & knowledge security", "sessions": 1, "topics": [
+      {"t": "Retrieved documents are data, not instructions", "d": "Retrieved content is untrusted."},
+      {"t": "Retrieval poisoning", "d": "Malicious instructions planted in indexed documents."},
+      {"t": "Document-level permissions", "d": "Users retrieve only what they may see."},
+      {"t": "Preventing cross-tenant leakage", "d": "No data crossing users or tenants via vectors or memory."},
+      {"t": "Preserving provenance", "d": "Keep source information attached to content."}
+    ], "tryIt": null, "outcome": "Secure the knowledge layer beneath a RAG app.", "mentalModel": null},
+    {"id": "M8.6", "title": "Data privacy, PII & secrets", "sessions": 2, "topics": [
+      {"t": "Identifying sensitive data", "d": "PII, credentials, financial data, conversations and confidential business data."},
+      {"t": "Redaction & minimization", "d": "Mask or remove sensitive data before it reaches models."},
+      {"t": "Keeping PII out of logs & traces", "d": "No unnecessary sensitive data in logs, traces, memory, vectors or eval sets."},
+      {"t": "Retention, deletion & residency", "d": "Retention, deletion, location, access and provider risk."},
+      {"t": "Private connectivity & zero retention", "d": "Private endpoints, no public egress and zero-retention terms."},
+      {"t": "Protecting secrets from the model", "d": "Keep secrets away from the model unless strictly necessary."}
+    ], "tryIt": null, "outcome": "Minimize sensitive information exposed across an AI system.", "mentalModel": null},
+    {"id": "M8.7", "title": "Red teaming AI systems", "sessions": 2, "topics": [
+      {"t": "Building adversarial test suites", "d": "Injection, jailbreaks, malicious docs, tool misuse and data extraction."},
+      {"t": "Attacking RAG through the corpus", "d": "Plant malicious content in retrievable docs."},
+      {"t": "Attacking agents through their tools", "d": "Make agents exceed permissions, misuse tools or loop."},
+      {"t": "Vulnerabilities become regression tests", "d": "Every finding becomes a permanent test."},
+      {"t": "Attack-success & leakage rates", "d": "Track attack success, leakage and unsafe-action rates."}
+    ], "tryIt": null, "outcome": "Test defenses adversarially instead of assuming they work.", "mentalModel": null},
+    {"id": "M8.8", "title": "Responsible AI & governance", "sessions": 1, "topics": [
+      {"t": "Bias, transparency & human oversight", "d": "Hallucination, fairness, transparency, accountability and oversight."},
+      {"t": "Documenting use, limits & risks", "d": "Intended use, limitations, risks, evaluations and controls."},
+      {"t": "The EU AI Act & India's DPDP", "d": "Practical implications of both frameworks."},
+      {"t": "Auditability", "d": "Versions, logs, approvals and evaluation records."}
+    ], "tryIt": null, "outcome": "Recognize when an AI app creates governance or compliance obligations.", "mentalModel": null},
+    {"id": "M8.9", "title": "Capstone: Red-Team & Secure an Agentic RAG App", "sessions": 1, "topics": [
+      {"t": "Attack an app you already built", "d": "Injection, malicious docs, jailbreaks, extraction, tool misuse and unauthorized actions."},
+      {"t": "Add security controls", "d": "Least privilege, permission checks, guardrails, PII protection, approvals, sandboxing and regression tests."}
+    ], "tryIt": null, "outcome": "An agentic RAG app that stays safe under malicious input.", "mentalModel": null}
+  ],
+  "links": []
+}

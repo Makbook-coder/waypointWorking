@@ -1,0 +1,126 @@
+{
+  "id": 10,
+  "title": "LLMOps: From Development to Production",
+  "phase": "Production",
+  "summary": "Run the earlier RAG app and agent in production with versioning, evaluation gates, guardrails, containers, AWS deployment and monitoring.",
+  "interviewWeight": 7,
+  "jobWeight": 9,
+  "sessionCount": 23,
+  "prerequisites": [0, 4, 5, 7, 8],
+  "outcome": "Deploy and operate an LLM app where every change is versioned and evaluated before release, and health, quality and cost are visible while it runs.",
+  "project": {
+    "title": "LLMOps Project",
+    "deliverables": [
+      "Take a RAG or agent app through the full lifecycle of this level",
+      "Version prompts in a registry with a production label; track experiment runs with params, metrics and artifacts",
+      "Gate every change in CI with the eval suite and show it blocking a deliberately regressed prompt",
+      "Run behind input, output and agent guardrails with every block logged",
+      "Serve as a streaming FastAPI backend with a Streamlit frontend, packaged with Docker Compose",
+      "Build and push commit-tagged images with GitHub Actions; deploy to EC2 via CodeDeploy behind a load balancer with Auto Scaling and Secrets Manager",
+      "Grafana dashboards with at least one working alert; traces with per-step cost and latency",
+      "Demonstrate one rollback (prompt or image) and write a runbook for one incident type"
+    ]
+  },
+  "modules": [
+    {"id": "M10.1", "title": "What LLMOps adds", "sessions": 1, "topics": [
+      {"t": "LLMOps vs MLOps", "d": "What carries over from MLOps and what is new."},
+      {"t": "Application vs model LLMOps", "d": "Running products on existing models vs training and hosting models."},
+      {"t": "Why LLM systems are hard to operate", "d": "Non-determinism, behavior change without code change, provider updates and per-request cost."},
+      {"t": "What a release consists of", "d": "Code, prompts, model version, retrieval config, index and tools versioned together."},
+      {"t": "Operating RAG vs agents", "d": "Stale indexes and retrieval drift vs runaway loops and tool failures."},
+      {"t": "The lifecycle of this level", "d": "Track, evaluate, guard, serve, ship, deploy, monitor, improve."}
+    ], "tryIt": "List every change that could alter your RAG app's answers tomorrow without a code edit, and note which ones you could currently detect.", "outcome": "Explain what must be versioned, tested and watched for an LLM app to be safe to change.", "mentalModel": "Code + prompts + model + data + tools = one release, and every part can change behavior."},
+    {"id": "M10.2", "title": "Preparing your apps for production", "sessions": 1, "topics": [
+      {"t": "Reuse your Level 4 and 5 apps", "d": "The RAG app and agent are the two systems you will operate."},
+      {"t": "Configuration, not code", "d": "Model, prompts, retrieval params and tools as config."},
+      {"t": "Pinned model & dependency versions", "d": "A rebuild later produces the same system."},
+      {"t": "Traceable from the first request", "d": "Request ID, prompt version and model version on everything."},
+      {"t": "The Level 7 eval set as yardstick", "d": "A fixed benchmark for all later changes."}
+    ], "tryIt": "Change chunk size and model through configuration alone, and confirm no code had to change.", "outcome": "Two apps where every behavior-changing setting is explicit, versioned and recorded.", "mentalModel": null},
+    {"id": "M10.3", "title": "Experiment tracking & prompt versioning", "sessions": 2, "topics": [
+      {"t": "Experiments in MLflow", "d": "Log params such as chunk size, top-k, model, temperature and tools."},
+      {"t": "Scores, prompts & outputs per run", "d": "Eval scores as metrics; prompts, configs and samples as artifacts."},
+      {"t": "Comparing runs", "d": "Side-by-side to see which change moved quality, latency or cost."},
+      {"t": "A baseline before changes", "d": "Record baselines before touching anything."},
+      {"t": "A prompt registry", "d": "Versioned, reviewed prompts deployed apart from code (e.g. Langfuse)."},
+      {"t": "Staging & production labels", "d": "Promote by moving labels, not editing text in place."},
+      {"t": "Runtime fetch with a fallback", "d": "Cached fetch with a pinned fallback if the registry is down."},
+      {"t": "Rollback by moving a label", "d": "Point production back at the previous version."},
+      {"t": "Traces linked to prompt versions", "d": "Tie each trace to the prompt version behind it."}
+    ], "tryIt": "Ship a second prompt version behind the staging label, compare it to production on the eval set, then promote or reject it.", "outcome": "Keep a reproducible history of prompts and configs and change either without a deploy.", "mentalModel": null},
+    {"id": "M10.4", "title": "Evaluation as a release gate", "sessions": 2, "topics": [
+      {"t": "The eval suite as DeepEval tests", "d": "Turn the eval suite into automated tests in a standard runner."},
+      {"t": "RAG & agent metrics", "d": "Faithfulness, answer relevance, contextual precision; tool selection, completion, step efficiency."},
+      {"t": "Per-metric thresholds", "d": "Fail the build when a metric drops below its threshold."},
+      {"t": "Reviewed synthetic cases", "d": "Generated cases reviewed by a person before joining the suite."},
+      {"t": "Handling non-determinism", "d": "Repeat runs, tolerance bands and fixed sampling settings."},
+      {"t": "Fast subset vs full suite", "d": "Quick subset per change; full suite before release."},
+      {"t": "Prompt & model changes gated too", "d": "Same gate for prompts, models and retrieval changes."},
+      {"t": "Gated runs logged in MLflow", "d": "Metric history shows which release moved it."}
+    ], "tryIt": "Deliberately weaken a prompt, push it, and confirm the gate blocks it with a report naming the failed metric.", "outcome": "Stop any quality-lowering change from reaching production unnoticed.", "mentalModel": null},
+    {"id": "M10.5", "title": "Runtime guardrails", "sessions": 2, "topics": [
+      {"t": "Level 8 threats as runtime checks", "d": "Checks on every request, before and after the model."},
+      {"t": "Schema validation & re-asking", "d": "Guardrails AI validators that re-ask on failure."},
+      {"t": "Topical rails with NeMo Guardrails", "d": "Topical and conversational rails and when they beat a validator."},
+      {"t": "Input & output checks", "d": "Injection and PII on input; ungrounded, off-topic and leaked secrets on output."},
+      {"t": "Agent tool, step & spend limits", "d": "Validate tool args; cap steps, retries and spend."},
+      {"t": "Guardrail latency & false positives", "d": "Measure latency cost and wrongful blocks."},
+      {"t": "Logging every block", "d": "Log blocks and re-asks for review and tuning."}
+    ], "tryIt": "Send ten injection attempts and ten legitimate edge cases through the guarded app, then count wrongful blocks in each direction.", "outcome": "Run both apps behind measured input, output and agent guardrails.", "mentalModel": null},
+    {"id": "M10.6", "title": "Application serving & containerization", "sessions": 3, "topics": [
+      {"t": "A FastAPI backend", "d": "App logic in a typed, validated FastAPI service."},
+      {"t": "Streaming with server-sent events", "d": "Tokens streamed via SSE."},
+      {"t": "Timeouts & disconnects", "d": "Stop token use when the client disconnects."},
+      {"t": "Health & readiness endpoints", "d": "Report whether the provider and vector DB are reachable."},
+      {"t": "A thin Streamlit frontend", "d": "UI that only renders and calls the backend."},
+      {"t": "Showing streams & errors", "d": "Plain-language errors, timeouts and guardrail blocks."},
+      {"t": "Docker images", "d": "Small, reproducible images for backend and frontend."},
+      {"t": "The stack in Docker Compose", "d": "Backend, frontend and vector DB together."},
+      {"t": "Secrets at runtime, not in images", "d": "Secrets from the environment, never baked in."}
+    ], "tryIt": "Start the full stack with one Docker Compose command on a clean machine and confirm streaming works through every layer.", "outcome": "Serve both apps as a streaming, containerized stack that runs anywhere.", "mentalModel": null},
+    {"id": "M10.7", "title": "CI/CD with GitHub Actions", "sessions": 2, "topics": [
+      {"t": "Tests → eval gate → build", "d": "Unit tests, eval gate, then image build, in that order."},
+      {"t": "Commit-tagged images", "d": "Tag images with the commit; push only gate-passing images."},
+      {"t": "Pipeline secrets", "d": "Credentials as pipeline secrets, out of logs and fork builds."},
+      {"t": "Manual approval for production", "d": "Staging auto-deploys; production needs approval."},
+      {"t": "Rollback to a known tag", "d": "Redeploy a known tag rather than rebuilding."}
+    ], "tryIt": "Open a pull request that changes only a prompt and follow it through the gate, build and push.", "outcome": "Automate the path from commit to a tested, tagged, deployable image.", "mentalModel": "Push → unit tests → eval gate → build & tag → registry → staging → approve → production"},
+    {"id": "M10.8", "title": "Deployment on AWS", "sessions": 3, "topics": [
+      {"t": "EC2 with an IAM role", "d": "Docker on EC2 with an IAM role instead of stored keys."},
+      {"t": "Secrets Manager", "d": "Provider keys loaded from Secrets Manager at start."},
+      {"t": "Releases with CodeDeploy", "d": "Pull a tagged image and replace containers, gated by health checks."},
+      {"t": "In-place vs blue/green", "d": "Release styles with automatic rollback."},
+      {"t": "Load balancer & streaming timeouts", "d": "ALB with an idle timeout long enough for streams."},
+      {"t": "Auto Scaling groups", "d": "Add or remove instances with load."},
+      {"t": "Scale on concurrency, not CPU", "d": "LLM apps mostly wait on the provider."},
+      {"t": "Provider rate limits cap first", "d": "Size scaling with provider limits in view."}
+    ], "tryIt": "Load-test the deployed app until it scales out, then work out whether instances or the provider's rate limit was the bottleneck.", "outcome": "Run both apps on AWS with automated, health-checked releases and scaling.", "mentalModel": null},
+    {"id": "M10.9", "title": "Monitoring & observability", "sessions": 3, "topics": [
+      {"t": "Prometheus & Node Exporter", "d": "Instance CPU, memory, disk and network metrics."},
+      {"t": "Application metrics", "d": "Requests, latency percentiles, errors, model calls, tokens and blocks."},
+      {"t": "Grafana dashboards", "d": "Health, traffic, latency, errors and spend together."},
+      {"t": "Alerts that need a human", "d": "Error spikes, latency over budget, failed scaling and spend limits."},
+      {"t": "Tracing in Langfuse", "d": "Per-step latency and cost through retrieval, model and tools."},
+      {"t": "Online evals & user feedback", "d": "Evals on sampled live traffic plus user feedback."},
+      {"t": "Failures back into the suite", "d": "Production failures become new eval cases."}
+    ], "tryIt": "Find the most expensive request from the past day in your traces and explain where its tokens went.", "outcome": "See health, behavior, cost and quality of the live system and feed findings back.", "mentalModel": null},
+    {"id": "M10.10", "title": "Incidents, rollbacks & change management", "sessions": 1, "topics": [
+      {"t": "LLM-specific incidents", "d": "Provider outages, silent model updates, prompt regressions, stale indexes, runaway agents and cost spikes."},
+      {"t": "The lever for each cause", "d": "Model fallback, prompt rollback, image rollback, index rebuild or spend cap."},
+      {"t": "Runbooks", "d": "Signal, first action and decision owner per incident type."},
+      {"t": "Re-evaluate on model changes", "d": "Re-run evals whenever the provider announces a change."},
+      {"t": "Blameless reviews", "d": "Review each incident and add the case to the eval suite."}
+    ], "tryIt": "Simulate a provider outage in staging and time how long the app takes to fall back and recover.", "outcome": "Detect, contain and recover from LLM-specific incidents with a practiced response.", "mentalModel": null},
+    {"id": "M10.11", "title": "Capstone: LLMOps Project", "sessions": 3, "topics": [
+      {"t": "One app, the whole lifecycle", "d": "Take the agent or RAG app through every stage of this level."},
+      {"t": "Versioned prompts & tracked runs", "d": "Registry with a production label; runs with params, metrics and artifacts."},
+      {"t": "A CI gate that blocks a regression", "d": "Show the gate stopping a deliberately regressed prompt."},
+      {"t": "Guardrails with logged blocks", "d": "Input, output and agent guardrails, every block logged."},
+      {"t": "A streaming stack in Compose", "d": "FastAPI + Streamlit, packaged with Docker Compose."},
+      {"t": "CI/CD to EC2 via CodeDeploy", "d": "Commit-tagged images deployed behind a load balancer with Auto Scaling and Secrets Manager."},
+      {"t": "Dashboards, alerts & traces", "d": "Grafana, a working alert and per-step traces."},
+      {"t": "A rollback & a runbook", "d": "One rollback demonstrated; one runbook written."}
+    ], "tryIt": null, "outcome": "A deployed LLM app where every change is versioned and evaluated, with health, quality and cost visible.", "mentalModel": null}
+  ],
+  "links": []
+}

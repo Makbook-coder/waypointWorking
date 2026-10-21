@@ -1,0 +1,111 @@
+{
+  "id": 1,
+  "title": "LLM 101",
+  "phase": "Foundations",
+  "summary": "A working mental model of how LLMs generate text, why they behave as they do, and how to pick the right model for a task.",
+  "interviewWeight": 8,
+  "jobWeight": 7,
+  "sessionCount": 15,
+  "prerequisites": [],
+  "outcome": "Explain how LLMs work and why they behave as they do, and choose and use the right model for a task.",
+  "project": null,
+  "modules": [
+    {"id": "M1.1", "title": "What an LLM Actually Is", "sessions": 1, "topics": [
+      {"t": "Next-token prediction", "d": "Generation as a loop of predicting, choosing and appending the next token."},
+      {"t": "What an LLM is not", "d": "Not a database, search engine, deterministic program or store of canned answers."},
+      {"t": "Why one model does many tasks", "d": "One model can write, summarize, translate, code, answer and classify."},
+      {"t": "Where capability comes from", "d": "Better data, more compute, larger models and better training."}
+    ], "tryIt": "Run the same prompt several times to see variation, and guess the next word before asking the model.", "outcome": "Explain simply that an LLM generates text by repeatedly predicting a likely next token.", "mentalModel": null},
+    {"id": "M1.2", "title": "Tokenization", "sessions": 1, "topics": [
+      {"t": "Characters, words & tokens", "d": "Token IDs and why tokenizers split the same text differently."},
+      {"t": "Tokenizing across languages & code", "d": "How English, rare words, numbers, code, emoji and Hindi/Hinglish tokenize."},
+      {"t": "Why tokens drive cost and latency", "d": "Tokens link to pricing, context usage, latency and spelling/counting errors."}
+    ], "tryIt": "Compare token counts for an English paragraph, its Hindi translation, some source code and a list of numbers.", "outcome": "Explain why texts with similar word counts can differ greatly in tokens and cost.", "mentalModel": null},
+    {"id": "M1.3", "title": "Inside an LLM: Embeddings, Attention & Transformers", "sessions": 3, "topics": [
+      {"t": "From token IDs to embeddings", "d": "Tokens become vectors that change across transformer layers."},
+      {"t": "What parameter counts mean", "d": "What sizes like 8B, 70B and 400B+ signify."},
+      {"t": "Why bigger is not automatically better", "d": "More parameters add capacity but do not guarantee better results."},
+      {"t": "The intuition behind attention", "d": "A token gathers information from relevant tokens in context."},
+      {"t": "Queries, keys, values & causal attention", "d": "Q, K, V, attention scores and causal masking without the math."},
+      {"t": "Dense models", "d": "Every parameter participates in every token."},
+      {"t": "Mixture-of-Experts & routing", "d": "A router activates only a few expert sub-networks per token."},
+      {"t": "Total vs active parameters", "d": "Why a big MoE can be cheaper to run than a dense model of equal total size."},
+      {"t": "What MoE changes in practice", "d": "All experts must fit in memory, but per-token compute is smaller."},
+      {"t": "Reading MoE model cards", "d": "Interpreting labels like 8x7B and total vs active parameters."}
+    ], "tryIt": "Look at an attention visualization for a sentence with an ambiguous pronoun and reason about what the pronoun should attend to.", "outcome": "Describe what happens between a token entering the model and next-token probabilities coming out.", "mentalModel": "Text → tokens → embeddings → transformer layers with attention → next-token probabilities"},
+    {"id": "M1.4", "title": "How LLMs Learn", "sessions": 2, "topics": [
+      {"t": "Pretraining & self-supervision", "d": "Next-token prediction on huge corpora supplies its own training signal."},
+      {"t": "What pretraining teaches", "d": "Grammar, facts, patterns, code syntax and problem-solving patterns."},
+      {"t": "Memorization vs generalization", "d": "Why a model can answer questions it never saw verbatim."},
+      {"t": "The post-training pipeline", "d": "Pretraining, SFT, preference/RL training, then deployment."},
+      {"t": "SFT, RLHF & preference optimization", "d": "Conceptual view of SFT, RLHF, RLAIF, preference optimization and safety tuning."},
+      {"t": "Why chat models behave as they do", "d": "Post-training explains instruction following, refusals and hedging."}
+    ], "tryIt": "Compare a base model and an instruction-tuned model on identical prompts.", "outcome": "Explain why a pretrained model may know a lot yet be a poor assistant.", "mentalModel": null},
+    {"id": "M1.5", "title": "How LLM Inference Works", "sessions": 1, "topics": [
+      {"t": "What happens after you send a prompt", "d": "Process input, predict, generate, repeat."},
+      {"t": "Prefill vs decode", "d": "Prefill processes the input; decode generates tokens one at a time."},
+      {"t": "Tokens, TTFT & total latency", "d": "Input/output tokens, time to first token, tokens per second and total latency."},
+      {"t": "KV caching", "d": "Caching past attention keys/values so earlier tokens are not recomputed."},
+      {"t": "Why inference mechanics drive cost", "d": "Long prompts, long outputs and reasoning models change latency and cost."}
+    ], "tryIt": null, "outcome": "Explain why generating 2,000 output tokens takes far longer than 50, even with the same input.", "mentalModel": null},
+    {"id": "M1.6", "title": "Sampling & Generation Parameters", "sessions": 1, "topics": [
+      {"t": "From probabilities to a chosen token", "d": "Picking the emitted token from the probability distribution."},
+      {"t": "Temperature, top-p, top-k & penalties", "d": "Greedy decoding, temperature, top-p, top-k, max tokens, stop sequences and penalties."},
+      {"t": "Matching randomness to the task", "d": "Low randomness for extraction and QA, higher for brainstorming."},
+      {"t": "Differences across model APIs", "d": "APIs expose different controls; some reasoning models offer few."}
+    ], "tryIt": "Run the same prompt at several temperatures and compare consistency, creativity and correctness.", "outcome": "Choose generation settings deliberately based on the task.", "mentalModel": null},
+    {"id": "M1.7", "title": "Reasoning Models & Test-Time Compute", "sessions": 1, "topics": [
+      {"t": "Why some models think longer", "d": "Some models spend much more compute before answering."},
+      {"t": "Test-time compute & thinking budgets", "d": "Reasoning effort, thinking budgets and internal reasoning tokens."},
+      {"t": "Where reasoning helps", "d": "Hard math, complex code, planning and constraint-heavy problems."},
+      {"t": "Where reasoning is unnecessary", "d": "Sentiment, simple extraction, rewriting and plain summaries."},
+      {"t": "The quality / cost / latency trade-off", "d": "More reasoning can raise quality but usually costs time and money."},
+      {"t": "Prompting reasoning models", "d": "State goal, context, constraints and what good looks like rather than step-by-step cues."}
+    ], "tryIt": "Run the same problems through a fast general model and a reasoning model and compare accuracy, latency and cost.", "outcome": "Recognize when extra reasoning compute is worth paying for.", "mentalModel": null},
+    {"id": "M1.8", "title": "The Context Window", "sessions": 1, "topics": [
+      {"t": "What occupies the context window", "d": "Instructions, history, documents, examples, tool outputs and generated text."},
+      {"t": "Context ≠ knowledge ≠ memory", "d": "What is in context vs what the model learned vs long-term memory."},
+      {"t": "What goes wrong in long contexts", "d": "Truncation, attention dilution and lost-in-the-middle effects."},
+      {"t": "Why a big window is not enough", "d": "A large window does not mean every token is used equally well."}
+    ], "tryIt": "Place a key fact at the start, middle and end of a long document and compare how well it is retrieved.", "outcome": "Decide whether a task needs a bigger window or better selection of what goes in.", "mentalModel": null},
+    {"id": "M1.9", "title": "LLM Capabilities & Failure Modes", "sessions": 1, "topics": [
+      {"t": "Common strengths", "d": "Summarizing, transforming, extracting, classifying, coding, translating and few-shot adaptation."},
+      {"t": "Common failure modes", "d": "Hallucination, arithmetic slips, brittle reasoning, prompt sensitivity, stale knowledge and confident errors."},
+      {"t": "Why hallucination happens", "d": "Models produce likely continuations without verifying claims."},
+      {"t": "Asking \"how reliably?\" instead of \"can it?\"", "d": "Judge performance under your application's real conditions."}
+    ], "tryIt": "Write 10 questions covering known, unknown, misleading and under-specified cases, and observe how confident the model is.", "outcome": "Predict which tasks suit LLMs and which need extra safeguards.", "mentalModel": null},
+    {"id": "M1.10", "title": "Understanding the Model Landscape", "sessions": 1, "topics": [
+      {"t": "Closed and API models", "d": "Frontier capability and convenience vs privacy, vendor dependence and control."},
+      {"t": "Open-weight models", "d": "Self-hosting, customization and the operational burden that comes with it."},
+      {"t": "Managed platforms & hosted open weights", "d": "Cloud platforms serving models in your account and providers hosting open weights."},
+      {"t": "Other useful distinctions", "d": "Small vs large, dense vs MoE, reasoning vs not, text-only vs multimodal."},
+      {"t": "There is no universally best LLM", "d": "The best model depends on the workload."},
+      {"t": "Knowledge cutoffs", "d": "New information must come through context, retrieval or tools."},
+      {"t": "Versions, snapshots & deprecations", "d": "Pin versions and re-test when models change or retire."},
+      {"t": "Open-weight licensing", "d": "Permissive, restricted and non-commercial licenses differ in what you can ship."}
+    ], "tryIt": null, "outcome": "Compare two models on architecture, capability and deployment, not leaderboard rank alone.", "mentalModel": null},
+    {"id": "M1.11", "title": "Benchmarks & Leaderboards", "sessions": 1, "topics": [
+      {"t": "What a benchmark is", "d": "A fixed task set and scoring method for comparing models."},
+      {"t": "Benchmarks quoted on model cards", "d": "Knowledge, reasoning, coding and math tests such as MMLU and GPQA."},
+      {"t": "Kinds of leaderboard", "d": "Human-preference rankings, capability/cost dashboards and open-model boards."},
+      {"t": "Why rank does not transfer", "d": "Different prompts, tasks and definitions of 'good' limit transfer to your app."},
+      {"t": "What inflates published scores", "d": "Contamination, saturation, overfitting to public tests and favorable settings."},
+      {"t": "From leaderboard to shortlist", "d": "Use benchmarks to narrow the field, then test on your own examples."}
+    ], "tryIt": "Shortlist three leaderboard models for a task, then compare published scores with results on ten of your own examples.", "outcome": "Read benchmarks critically and turn them into a shortlist, not a decision.", "mentalModel": null},
+    {"id": "M1.12", "title": "Choosing the Right Model", "sessions": 1, "topics": [
+      {"t": "Eight dimensions for model choice", "d": "The criteria used to evaluate candidate models."},
+      {"t": "Capability", "d": "Can the model do the task at all?"},
+      {"t": "Quality", "d": "How reliably does it do your specific task?"},
+      {"t": "Latency", "d": "How quickly does it respond?"},
+      {"t": "Cost", "d": "What each request costs at expected volume."},
+      {"t": "Context", "d": "Can it accept the input you need to send?"},
+      {"t": "Modalities", "d": "Text, images, audio or video needs."},
+      {"t": "Privacy & deployment", "d": "Public API, managed platform or self-hosted."},
+      {"t": "Product features", "d": "Structured outputs, tool calling, streaming and caching."},
+      {"t": "Reading model cards & pricing pages", "d": "Critically reading cards, pricing, context specs and API docs."},
+      {"t": "Why benchmarks alone are not enough", "d": "Benchmarks should not decide model selection by themselves."},
+      {"t": "The selection workflow", "d": "Define task, list requirements, shortlist, test, measure, inspect failures, choose."}
+    ], "tryIt": null, "outcome": "Select models from application requirements and measured performance, not popularity.", "mentalModel": null}
+  ],
+  "links": []
+}
