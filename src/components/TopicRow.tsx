@@ -4,10 +4,11 @@ import { useState } from "react";
 import { store, type Confidence } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
 import type { TopicNote } from "@/lib/topic-notes";
+import { linkTerms } from "@/lib/glossary";
 import type { Topic } from "@/lib/types";
 import { topicVideo } from "@/lib/youtube";
 import { BookmarkButton } from "./BookmarkButton";
-import { InlineCode } from "./InlineCode";
+import { Segments } from "./GlossaryText";
 import { NoteEditor } from "./NoteEditor";
 import { TutorPanel } from "./TutorPanel";
 
@@ -122,12 +123,15 @@ export function TopicRow({
 }
 
 function ExplainSimply({ note }: { note: TopicNote }) {
-  const rows: [string, string][] = [
-    ["In plain words", note.simple],
-    ["Think of it like", note.analogy],
-    ["Example", note.example],
-    ["Watch out for", note.mistake],
-  ];
+  const rows = (
+    [
+      ["In plain words", note.simple],
+      ["Think of it like", note.analogy],
+      ["Example", note.example],
+      ["Watch out for", note.mistake],
+    ] as [string, string][]
+  ).filter(([, text]) => text);
+  const linked = linkTerms(rows.map(([, text]) => text));
   return (
     <details className="group/simple mt-1.5">
       <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted hover:text-ink [&::-webkit-details-marker]:hidden">
@@ -135,14 +139,12 @@ function ExplainSimply({ note }: { note: TopicNote }) {
         Explain simply
       </summary>
       <dl className="mt-2 space-y-2 rounded-md border border-line bg-bg p-3 text-sm leading-relaxed">
-        {rows
-          .filter(([, text]) => text)
-          .map(([label, text]) => (
-            <div key={label}>
-              <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</dt>
-              <dd><InlineCode text={text} /></dd>
-            </div>
-          ))}
+        {rows.map(([label], i) => (
+          <div key={label}>
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</dt>
+            <dd><Segments segments={linked[i]} /></dd>
+          </div>
+        ))}
       </dl>
     </details>
   );
