@@ -7,12 +7,15 @@ import { APPLIED_L5 } from "./l5";
 import { APPLIED_L6 } from "./l6";
 import { APPLIED_L7 } from "./l7";
 import { APPLIED_L8 } from "./l8";
+import { APPLIED_L9 } from "./l9";
+import { APPLIED_L10 } from "./l10";
+import { APPLIED_L11 } from "./l11";
 import type { AppliedModule } from "./types";
 
 /** Levels whose every non-capstone module has an "In practice" section. */
-export const APPLIED_LEVELS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+export const APPLIED_LEVELS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 /** When the source links were last fetched and read. */
 export const APPLIED_SOURCES_CHECKED = "2026-10-21";
 
-export const APPLIED_SOURCES: AppliedModule[] = [...APPLIED_L0, ...APPLIED_L1, ...APPLIED_L2, ...APPLIED_L3, ...APPLIED_L4, ...APPLIED_L5, ...APPLIED_L6, ...APPLIED_L7, ...APPLIED_L8];
+export const APPLIED_SOURCES: AppliedModule[] = [...APPLIED_L0, ...APPLIED_L1, ...APPLIED_L2, ...APPLIED_L3, ...APPLIED_L4, ...APPLIED_L5, ...APPLIED_L6, ...APPLIED_L7, ...APPLIED_L8, ...APPLIED_L9, ...APPLIED_L10, ...APPLIED_L11];
