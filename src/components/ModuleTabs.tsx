@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { CodingItem, ExerciseItem, InterviewItem, MiniProjectItem, Module, PracticeItem, ProjectItem, QuizItem, Resource, ScenarioItem } from "@/lib/types";
 import type { SourcedInterviewItem } from "@/lib/sourced";
 import { getNote, type ModuleNote } from "@/lib/notes";
+import type { Lab } from "@/lib/lab-steps";
 import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
@@ -12,6 +13,7 @@ import { CodingCard } from "./CodingCard";
 import { ExerciseCard } from "./ExerciseCard";
 import { InlineCode } from "./InlineCode";
 import { InterviewCard } from "./InterviewCard";
+import { LabCard } from "./LabCard";
 import { MiniProjectCard } from "./MiniProjectCard";
 import { NoteEditor } from "./NoteEditor";
 import { ProjectChecklist } from "./ProjectChecklist";
@@ -33,6 +35,7 @@ export function ModuleTabs({
   sourced = [],
   color,
   topicNotes = {},
+  labs = [],
 }: {
   module: Module;
   resources: Resource[];
@@ -40,6 +43,7 @@ export function ModuleTabs({
   sourced?: SourcedInterviewItem[];
   color: string;
   topicNotes?: Record<string, TopicNote>;
+  labs?: Lab[];
 }) {
   const [tab, setTab] = useState<Tab>("learn");
   const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, resources: null, practice: null, notes: null });
@@ -68,7 +72,7 @@ export function ModuleTabs({
   }
 
   const quizzes = practice.filter((p): p is QuizItem => p.type === "quiz");
-  const counts: Record<Tab, number | null> = { learn: mod.topics.length, resources: resources.length, practice: practice.length, notes: null };
+  const counts: Record<Tab, number | null> = { learn: mod.topics.length, resources: resources.length, practice: practice.length + labs.length, notes: null };
 
   return (
     <div>
@@ -98,7 +102,7 @@ export function ModuleTabs({
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
         {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
-        {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} />}
+        {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} labs={labs} />}
         {tab === "notes" && (
           <div className="max-w-3xl">
             <NoteEditor itemKey={`module:${mod.id}`} label={`Notes for ${mod.id}`} rows={16} />
@@ -229,16 +233,22 @@ function ResourcesPanel({ mod, resources }: { mod: Module; resources: Resource[]
   );
 }
 
-function PracticePanel({ mod, practice, sourced, quizzes, color }: { mod: Module; practice: PracticeItem[]; sourced: SourcedInterviewItem[]; quizzes: QuizItem[]; color: string }) {
+function PracticePanel({ mod, practice, sourced, quizzes, color, labs }: { mod: Module; practice: PracticeItem[]; sourced: SourcedInterviewItem[]; quizzes: QuizItem[]; color: string; labs: Lab[] }) {
   const exercises = practice.filter((p): p is ExerciseItem => p.type === "exercise");
   const scenarios = practice.filter((p): p is ScenarioItem => p.type === "scenario");
   const projects = practice.filter((p): p is ProjectItem => p.type === "project");
   const coding = practice.filter((p): p is CodingItem => p.type === "coding");
   const minis = practice.filter((p): p is MiniProjectItem => p.type === "mini");
   const interview = practice.filter((p): p is InterviewItem => p.type === "interview");
-  if (practice.length === 0 && sourced.length === 0) return <EmptyState>No practice items for {mod.id}.</EmptyState>;
+  if (practice.length === 0 && sourced.length === 0 && labs.length === 0) return <EmptyState>No practice items for {mod.id}.</EmptyState>;
   return (
     <div className="space-y-8">
+      {labs.map((l) => (
+        <section key={l.id} aria-labelledby={`lab-${l.id}`} className="max-w-4xl">
+          <SectionTitle id={`lab-${l.id}`}>Guided lab · build it step by step</SectionTitle>
+          <LabCard lab={l} color={color} />
+        </section>
+      ))}
       {quizzes.length > 0 && (
         <section aria-labelledby="quiz-h" className="max-w-3xl">
           <SectionTitle id="quiz-h">Quiz · {quizzes.length} questions</SectionTitle>

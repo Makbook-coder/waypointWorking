@@ -11,6 +11,7 @@ import { getPractice, getResources } from "@/lib/content-data";
 import { getLevel, getModule, getPhase, levelHref, moduleHref, moduleIdFromParam, modules } from "@/lib/data";
 import { PHASE_STYLE } from "@/lib/phase";
 import { getSourcedForModule } from "@/lib/sourced";
+import { labsForModule } from "@/lib/labs";
 import { moduleTopicIds } from "@/lib/progress";
 
 type Props = { params: Promise<{ id: string }> };
@@ -80,6 +81,7 @@ export default async function ModulePage({ params }: Props) {
         sourced={getSourcedForModule(mod.id)}
         color={style.var}
         topicNotes={topicNotesFor(mod.topics.map((t) => t.id))}
+        labs={labsForModule(mod.id)}
       />
 
       <nav aria-label="Module navigation" className="mt-8 flex justify-between gap-4 text-sm">
