@@ -6,8 +6,10 @@ import { useAIRequest } from "@/lib/ai/use-ai";
 import { MAX_ANSWER_LENGTH, store } from "@/lib/store";
 import { useUserState } from "@/lib/use-store";
 import type { ScenarioItem } from "@/lib/types";
+import { scenarioLadder } from "@/lib/hints";
 import { AIBadge, AIBlockerNote, AIErrorNote, AIGradeResult } from "./AIKit";
 import { BookmarkButton } from "./BookmarkButton";
+import { StuckLadder } from "./StuckLadder";
 import { TutorPanel } from "./TutorPanel";
 import { Badge, ghostButtonClass } from "./ui";
 
@@ -172,15 +174,17 @@ export function ScenarioCard({
         </div>
       )}
 
-      <button type="button" aria-expanded={showHints} className="mt-3 text-sm underline underline-offset-2" onClick={() => setShowHints((h) => !h)}>
-        {showHints ? "Hide" : "Show"} what a strong answer covers
-      </button>
-      {showHints && (
-        <ul className="mt-2 list-disc space-y-1 rounded-md bg-surface-2 py-3 pl-8 pr-3 text-sm">
-          {item.hints.map((h) => (
-            <li key={h}>{h}</li>
-          ))}
-        </ul>
+      {showHints ? (
+        <div className="mt-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted">What a strong answer covers</p>
+          <ul className="mt-1 list-disc space-y-1 rounded-md bg-surface-2 py-3 pl-8 pr-3 text-sm">
+            {item.hints.map((h) => (
+              <li key={h}>{h}</li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <StuckLadder rungs={scenarioLadder(item)} resetKey={item.id} />
       )}
 
       <fieldset className="mt-4">

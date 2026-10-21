@@ -4,7 +4,9 @@ import { useId } from "react";
 import { store } from "@/lib/store";
 import type { MiniProjectItem } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
+import { buildLadder } from "@/lib/hints";
 import { BookmarkButton } from "./BookmarkButton";
+import { StuckLadder } from "./StuckLadder";
 import { Badge, ProgressBar } from "./ui";
 
 /** A per-module build: one step per topic. Steps share projectChecks; "complete" shares exercises. */
@@ -53,6 +55,20 @@ export function MiniProjectCard({ item, context, color }: { item: MiniProjectIte
         <span className="font-semibold">Done when: </span>
         {item.doneWhen}
       </div>
+      <details className="mt-3 text-sm">
+        <summary className="cursor-pointer text-muted">How to set this up on your computer (or in Colab)</summary>
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-muted">
+          <li>Make a folder for it and open a terminal there.</li>
+          <li>
+            Create a virtual environment: <code className="font-mono">python -m venv .venv</code>, then activate it (<code className="font-mono">source .venv/bin/activate</code>, or <code className="font-mono">.venv\Scripts\activate</code> on Windows).
+          </li>
+          <li>Install only what a step needs, one package at a time, and write it into requirements.txt.</li>
+          <li>Start with one file, main.py, and get step 1 printing something before you touch step 2.</li>
+          <li>If an API key is needed, put it in a .env file that is listed in .gitignore, never in the code.</li>
+          <li>No setup at all: open colab.new and do each step in its own cell.</li>
+        </ol>
+      </details>
+      <StuckLadder rungs={buildLadder(item)} resetKey={item.id} />
       <div className="mt-3 flex items-center gap-2">
         <input id={`${uid}-done`} type="checkbox" checked={complete} onChange={(e) => store.setExerciseDone(item.id, e.target.checked)} className="h-5 w-5 cursor-pointer accent-[var(--ink)]" />
         <label htmlFor={`${uid}-done`} className="cursor-pointer text-sm">

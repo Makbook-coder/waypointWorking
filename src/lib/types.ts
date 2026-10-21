@@ -134,6 +134,10 @@ export interface CodingItem extends PracticeBase {
   solution: string;
   tests: CodingTest[];
   checklist: string[];
+  /** "Stuck? start here": two nudges before the reference solution */
+  hints: [string, string];
+  /** "debug" tasks start from broken code that you fix */
+  kind: "build" | "debug";
 }
 
 /** A conceptual interview question with a model answer and the points a strong answer covers. */
