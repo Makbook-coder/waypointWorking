@@ -1,22 +1,32 @@
 // "Explain simply" notes: one beginner-level note per topic, authored in content/topic-notes/.
 import { TOPIC_NOTE_SOURCES } from "../../content/topic-notes";
+import { getTopicDepth, type TopicDepth } from "./topic-depth";
 
 export interface TopicNote {
   simple: string;
   analogy: string;
   example: string;
   mistake: string;
+  /** Developer and interview wording and the full topic page sections, when written. */
+  depth?: TopicDepth;
 }
 
 export const topicNotes: Record<string, TopicNote> = Object.fromEntries(
   TOPIC_NOTE_SOURCES.map(([id, simple, analogy, example, mistake]) => [id, { simple, analogy, example, mistake }]),
 );
 
-export const getTopicNote = (topicId: string): TopicNote | undefined => topicNotes[topicId];
+const withDepth = (id: string): TopicNote | undefined => {
+  const note = topicNotes[id];
+  if (!note) return undefined;
+  const depth = getTopicDepth(id);
+  return depth ? { ...note, depth } : note;
+};
+
+export const getTopicNote = (topicId: string): TopicNote | undefined => withDepth(topicId);
 
 /** The notes for a set of topics, for passing from a server page to client components. */
 export function topicNotesFor(topicIds: string[]): Record<string, TopicNote> {
-  return Object.fromEntries(topicIds.flatMap((id) => (topicNotes[id] ? [[id, topicNotes[id]]] : [])));
+  return Object.fromEntries(topicIds.flatMap((id) => (topicNotes[id] ? [[id, withDepth(id)!]] : [])));
 }
 
 /** Problems with the topic notes, given every topic id grouped by level. Empty means valid. */
