@@ -470,7 +470,7 @@ export const TOPIC_DEPTH_L0: TopicDepthSrc[] = [
     "An agent rewrites five files in the wrong direction.",
     "A reviewed plan, then focused changes.",
     "Spec → plan review → implementation, keeping the human in control of design decisions before code changes.",
-    "For anything non-trivial I write a spec, review the agent's plan and only then let it change code.",
+    "On a feature bigger than a one-liner, I hand the agent a short written goal and acceptance criteria first, then approve its plan, because fixing a wrong assumption on paper is far cheaper than in a 30-file diff.",
     "Plan before code."],
   ["m0-6-slash-commands-and-skills",
     "Repeated instructions become one reliable command, so results are consistent.",

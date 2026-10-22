@@ -377,7 +377,7 @@ export const TOPIC_DEPTH_L8: TopicDepthSrc[] = [
     "Ignoring regulation until a problem.",
     "Planning compliance early.",
     "The EU AI Act sets risk-based obligations; India's DPDP Act 2023 governs consent and processing of digital personal data.",
-    "The EU AI Act sets risk-based duties and DPDP governs personal data in India.",
+    "If my app serves EU users I'd check which risk tier it falls in and what that demands, and for Indian users I'd make sure consent and data handling follow DPDP before launch.",
     "Know the rules where you operate."],
   ["m8-8-auditability",
     "You must be able to show what happened and why.",
@@ -387,7 +387,7 @@ export const TOPIC_DEPTH_L8: TopicDepthSrc[] = [
     "No way to explain past behaviour.",
     "Full records for audits.",
     "Maintain audit trails of model and prompt versions, logs, approvals and evals.",
-    "I keep audit trails of versions, logs, approvals and evals.",
+    "If a customer disputes an answer from three months ago, I want to replay it: which model, which prompt version, which documents and who approved the release.",
     "Keep records you can show."],
   // M8.9 capstone
   ["m8-9-attack-an-app-you-already-built",
