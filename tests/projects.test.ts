@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { levels, modules } from "@/lib/data";
-import { PROJECTS, PROJECT_LEVELS, capstoneForLevel, capstoneForModule, projectProgress, projectTotal, projectsForModule, projectsForTopic, validateProjects } from "@/lib/projects";
+import { PROJECTS, PROJECT_LEVELS, capstoneForLevel, capstoneForModule, levelCapstoneHome, projectProgress, projectTotal, projectsForModule, projectsForTopic, validateProjects } from "@/lib/projects";
 import type { ProjectSrc } from "@/lib/projects";
 
 const covered = levels.filter((l) => PROJECT_LEVELS.includes(l.id));
@@ -26,6 +26,9 @@ describe("project ladders", () => {
     expect(list.length).toBe(m.topics.reduce((n, t) => n + projectsForTopic(t.id).length, 0) + 1);
     const cap = modules.find((x) => x.levelId === 0 && x.isCapstone)!;
     expect(projectsForModule(cap)).toEqual([capstoneForLevel(0)]);
+    // A level with no capstone module shows its level capstone on its last module.
+    expect(levelCapstoneHome(0)).toBe(cap.id);
+    expect(levelCapstoneHome(1)).toBe("M1.12");
   });
 
   it("counts progress from saved ticks, steps first then done checks", () => {

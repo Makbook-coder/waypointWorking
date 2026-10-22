@@ -3,6 +3,7 @@
 // where n counts the build steps first and then the "done" checks, so no schema change is needed.
 import { PROJECTS } from "../../content/projects";
 import type { ProjectSize, ProjectSrc } from "../../content/projects/types";
+import { levels } from "./data";
 import type { UserState } from "./store";
 
 export type { ProjectSrc, ProjectSize } from "../../content/projects/types";
@@ -17,13 +18,19 @@ export const projectsForTopic = (topicId: string): ProjectSrc[] => byRef.get(`to
 export const capstoneForModule = (moduleId: string): ProjectSrc | undefined => byRef.get(`module:${moduleId}`)?.[0];
 export const capstoneForLevel = (levelId: number): ProjectSrc | undefined => byRef.get(`level:L${levelId}`)?.[0];
 
+/** The module page that shows a level's capstone: its capstone module, or the last module when it has none. */
+export function levelCapstoneHome(levelId: number): string | undefined {
+  const mods = levels.find((l) => l.id === levelId)?.modules ?? [];
+  return (mods.find((m) => m.isCapstone) ?? mods.at(-1))?.id;
+}
+
 /** Everything a module page shows: its topics' ladders, its capstone, and (for a level's capstone module) the level capstone. */
 export function projectsForModule(mod: { id: string; levelId: number; isCapstone: boolean; topics: { id: string }[] }): ProjectSrc[] {
   const out: ProjectSrc[] = [];
   for (const t of mod.topics) out.push(...projectsForTopic(t.id));
   const cap = capstoneForModule(mod.id);
   if (cap) out.push(cap);
-  if (mod.isCapstone) {
+  if (levelCapstoneHome(mod.levelId) === mod.id) {
     const lvl = capstoneForLevel(mod.levelId);
     if (lvl) out.push(lvl);
   }
