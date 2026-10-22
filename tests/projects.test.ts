@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { levels, modules } from "@/lib/data";
-import { PROJECTS, PROJECT_LEVELS, capstoneForLevel, capstoneForModule, levelCapstoneHome, projectProgress, projectTotal, projectsForModule, projectsForTopic, validateProjects } from "@/lib/projects";
+import { PRACTICE } from "../content/projects/practice";
+import { PRACTICE_LEVELS, PROJECTS, PROJECT_LEVELS, capstoneForLevel, capstoneForModule, levelCapstoneHome, projectProgress, projectTotal, projectsForModule, projectsForTopic, validateProjects } from "@/lib/projects";
 import type { ProjectSrc } from "@/lib/projects";
 
 const covered = levels.filter((l) => PROJECT_LEVELS.includes(l.id));
@@ -14,7 +15,7 @@ describe("project ladders", () => {
     for (const l of covered)
       for (const m of l.modules.filter((x) => !x.isCapstone))
         for (const t of m.topics) {
-          const ps = projectsForTopic(t.id);
+          const ps = projectsForTopic(t.id).filter((p) => p.size !== "practice");
           expect(ps.map((p) => p.minutes), t.id).toEqual([...ps.map((p) => p.minutes)].sort((a, b) => a - b));
         }
   });
@@ -61,5 +62,41 @@ describe("project ladders", () => {
     expect(validateProjects(covered, short).join("\n")).toMatch(/M0.3: capstone does not cover/);
     const swapped = PROJECTS.map((p) => (p.id === "pj:m0-1-core-data-structures:1" ? { ...p, minutes: 999 } : p));
     expect(validateProjects(covered, swapped).join("\n")).toMatch(/small to bigger/);
+  });
+
+  it("gives every topic in a practice level one practice project, and varies the kinds", () => {
+    const kinds = new Set<string>();
+    for (const l of levels.filter((x) => PRACTICE_LEVELS.includes(x.id)))
+      for (const m of l.modules.filter((x) => !x.isCapstone))
+        for (const t of m.topics) {
+          const pr = projectsForTopic(t.id).filter((p) => p.size === "practice");
+          expect(pr.length, t.id).toBe(1);
+          kinds.add(pr[0].kind!);
+        }
+    expect([...kinds].sort()).toEqual(["challenge", "debug", "extend", "optimise", "reimplement", "review"]);
+  });
+
+  it("rejects weak practice projects", () => {
+    const good = PRACTICE.find((p) => p.kind === "debug")!;
+    const chal = PRACTICE.find((p) => p.kind === "challenge")!;
+    const run = (p: ProjectSrc) => validateProjects(covered, PROJECTS.map((x) => (x.id === p.id ? p : x))).join("\n");
+    expect(run({ ...good, starter: "" })).toMatch(/needs starter code/);
+    expect(run({ ...good, kind: "build" })).toMatch(/must not be a plain build/);
+    expect(run({ ...good, steps: good.steps.slice(0, 2) })).toMatch(/at least 3 steps/);
+    expect(run({ ...chal, steps: good.steps })).toMatch(/no steps/);
+    expect(run({ ...chal, hints: ["only one hint here, which is long enough"] })).toMatch(/at least 2 hints/);
+    expect(run({ ...chal, done: chal.done.slice(0, 2) })).toMatch(/at least 4 pass checks/);
+    const ladder = PROJECTS.find((p) => p.scope === "topic" && p.size === "small")!;
+    expect(run({ ...ladder, kind: "debug" })).toMatch(/only practice projects/);
+  });
+
+  it("rejects a repeated practice kind on neighbouring topics and a missing practice project", () => {
+    const m = covered.find((l) => PRACTICE_LEVELS.includes(l.id))!.modules.find((x) => !x.isCapstone)!;
+    const [a, b] = m.topics;
+    const pa = PRACTICE.find((p) => p.refId === a.id)!;
+    const same = PROJECTS.map((p) => (p.refId === b.id && p.size === "practice" ? { ...p, kind: pa.kind } : p));
+    expect(validateProjects(covered, same).join("\n")).toMatch(/repeats the previous topic/);
+    const none = PROJECTS.filter((p) => !(p.refId === a.id && p.size === "practice"));
+    expect(validateProjects(covered, none).join("\n")).toMatch(/needs exactly one practice project/);
   });
 });

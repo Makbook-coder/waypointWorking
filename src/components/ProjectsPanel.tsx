@@ -19,7 +19,7 @@ export function ProjectsPanel({ mod, projects, color }: { mod: Module; projects:
     <div className="max-w-3xl space-y-8">
       <div className="rounded-lg border border-line bg-surface p-4 text-sm">
         <p>
-          Build your way up: each topic has two or three projects from small to bigger, then a capstone that pulls the whole module together. Every project has numbered steps, help if you get stuck, what you should see, and a done check.
+          Build your way up: each topic has two or three guided builds from small to bigger, then one practice project of a different kind (extend, debug, reimplement, optimise, review or a no-steps challenge). A capstone then pulls the whole module together. Guided projects have numbered steps, help if you get stuck, what you should see, and a done check.
         </p>
         <div className="mt-3 flex items-center gap-3">
           <ProgressBar pct={Math.floor((done / projects.length) * 100)} color={color} label={`${mod.id} projects finished`} />

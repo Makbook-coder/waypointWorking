@@ -1,0 +1,67 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M16: ProjectSrc[] = [
+  practice("m1-6-from-probabilities-to-a-chosen-token", "reimplement",
+    pj("Write a sampler", 40, "Write greedy, temperature, top-k and top-p sampling over a list of logits.",
+      [
+        ["Write `softmax(logits, temperature)` that divides by temperature before the exponent and subtracts the maximum for stability.", "Temperature must be above zero."],
+        ["Write `greedy(logits)` returning the highest-scoring index.", "Use `numpy.argmax`; it returns the position of the largest value."],
+        ["Write `top_k(probs, k)` and `top_p(probs, p)` that keep a set of candidates and renormalise.", "For top-p, sort and keep tokens until the running total passes p."],
+        ["Sample 10,000 times from a fixed set of logits for each setting and print the frequency of each token.", "Use `numpy.random.choice`."],
+        ["Confirm that low temperature approaches greedy and high temperature approaches uniform.", "Try temperatures of 0.1 and 5 and compare the frequencies with greedy and uniform."],
+      ],
+      "A table of sampling frequencies showing how each setting reshapes the distribution.",
+      ["Four samplers implemented", "10,000-sample frequencies printed", "Temperature extremes behave as expected"],
+      "Learn what each parameter does in practice next.", ["Python 3.11 or newer", "numpy"]),
+    {}),
+  practice("m1-6-temperature-top-p-top-k-and-penalties", "debug",
+    pj("Off by one nucleus", 35, "Find the bug in a top-p implementation that sometimes returns nothing or too few tokens.",
+      [
+        ["Run the starter with p=0.9 and p=0.0 and note the odd results.", "At least one input should crash or return an empty set."],
+        ["Print the sorted probabilities and the cumulative sum for a small example.", "Work out by hand which tokens should be kept."],
+        ["Find the comparison that cuts one token too early, and fix it so the first token past the threshold is included.", "Compare with `<` versus `<=`."],
+        ["Always keep at least one token, and test p=0, p=1 and a one-token vocabulary.", "Edge cases decide whether it is robust."],
+        ["Write three tests for the fixed function.", "Use `pytest` with one test each for p=0, p=1 and a normal value."],
+      ],
+      "A top-p function that passes three edge-case tests and always keeps at least one token.",
+      ["Bug located by printing the cumulative sum", "Edge cases covered", "Three tests pass"],
+      "Match settings to tasks next.", ["Python 3.11 or newer", "pytest"]),
+    { starter: code(
+      "import numpy as np",
+      "def top_p(probs, p):",
+      "    order = np.argsort(probs)[::-1]",
+      "    cum = np.cumsum(probs[order])",
+      "    keep = order[cum < p]",
+      "    kept = np.zeros_like(probs); kept[keep] = probs[keep]",
+      "    return kept / kept.sum()",
+      "print(top_p(np.array([0.5, 0.3, 0.1, 0.1]), 0.5))") }),
+  practice("m1-6-matching-randomness-to-the-task", "challenge",
+    pj("Pick settings with evidence", 45, "Choose sampling settings for five tasks and prove your choices with repeated runs, with no steps given.",
+      [],
+      "A table of five tasks with chosen temperature and top-p, each backed by repeated-run results.",
+      ["Tasks include data extraction, brainstorming, code, a factual answer and creative writing", "Each task is run at least five times at two different settings", "Consistency is measured (for example how often outputs match) for tasks that need it", "Variety is measured (for example number of distinct ideas) for tasks that need it", "You state the chosen setting and the reason for each"],
+      "Compare parameters across model APIs next.", [LLM]),
+    { hints: ["For extraction, compare outputs for exact equality across runs.", "For brainstorming, count how many ideas are not repeated across runs.", "Remember some APIs fix certain settings; note any you could not change."] }),
+  practice("m1-6-differences-across-model-apis", "review",
+    pj("Review a portable client", 30, "Review a client that sets sampling parameters and find where it would break on other providers.",
+      [
+        ["Read the code above and list each parameter it sets.", "Think about which providers support each."],
+        ["Look up the documentation for two providers and fill in a table of supported parameters, ranges and defaults.", "Link the page for each row."],
+        ["Mark every place the code would error or silently be ignored on a different provider.", "Check ranges, names and combinations."],
+        ["Rewrite the client with a small adapter that maps your settings to each provider's names and drops unsupported ones with a warning.", "Keep it under 40 lines."],
+        ["Write a test that the adapter produces the right arguments for each provider.", "No network needed."],
+      ],
+      "A parameter support table with sources and an adapter with tests.",
+      ["Table filled with sources", "Unsupported settings handled", "Adapter tested without network"],
+      "Move on to reasoning models next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "def ask(client, prompt):",
+      "    return client.chat(",
+      "        model='my-model',",
+      "        messages=[{'role': 'user', 'content': prompt}],",
+      "        temperature=1.5, top_p=0.9, top_k=40,",
+      "        frequency_penalty=0.5, seed=7)") }),
+];

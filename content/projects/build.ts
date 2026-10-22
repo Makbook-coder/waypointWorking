@@ -1,4 +1,4 @@
-import type { ProjectSize, ProjectSrc } from "./types";
+import type { ProjectKind, ProjectSize, ProjectSrc } from "./types";
 
 type Draft = Omit<ProjectSrc, "id" | "scope" | "refId" | "size" | "covers">;
 
@@ -27,3 +27,13 @@ export function levelCapstone(levelId: number, d: Draft): ProjectSrc {
 
 /** The "need" line for projects that call a model, so the free options are named once. */
 export const LLM = "Any LLM you can call: a free Gemini API key, or Ollama running a small model on your computer";
+
+type PracticeExtra = { starter?: string; hints?: string[] };
+
+/**
+ * The one practice project for a topic, of a kind other than a plain build.
+ * Steps are [do, ifStuck] pairs as in `pj`; a challenge passes no steps and gives `hints` instead.
+ */
+export function practice(topicId: string, kind: Exclude<ProjectKind, "build">, d: Draft, extra: PracticeExtra = {}): ProjectSrc {
+  return { ...d, ...extra, id: `pj:${topicId}:p`, scope: "topic", refId: topicId, size: "practice", kind };
+}

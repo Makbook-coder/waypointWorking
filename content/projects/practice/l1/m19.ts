@@ -1,0 +1,67 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M19: ProjectSrc[] = [
+  practice("m1-9-common-strengths", "challenge",
+    pj("Find what it is really good at", 40, "Test a model on six strengths and show evidence for each, with no steps given.",
+      [],
+      "A strengths table with a test, a score and an example for each of six areas.",
+      ["Areas include summarising, rewriting, classification, extraction, translation and code explanation", "Each area has at least five test cases with a reference answer or rubric", "Scores come from an automatic check or a written rubric, not impressions", "One example reply per area is quoted", "You rank the areas from most to least reliable"],
+      "Look at common failure modes next.", [LLM]),
+    { hints: ["For classification and extraction use exact-match checks.", "For summaries, check that required facts are present.", "Keep test cases short so you can run them many times."] }),
+  practice("m1-9-common-failure-modes", "review",
+    pj("Name the failure", 30, "Review ten model outputs and label each failure with a type, then find the pattern.",
+      [
+        ["Read the ten outputs above and write what a correct answer should say.", "Check facts yourself."],
+        ["Label each with a failure type: made-up fact, missed instruction, wrong arithmetic, outdated, overconfident, format break or none.", "Some have more than one."],
+        ["Count labels and see which type is most common.", "Do not worry if the sample is small."],
+        ["For the top two types, write a prompt or pipeline change that would reduce them.", "Name the check you would add."],
+        ["Test one change on a model with three of your own examples.", "Report the result honestly."],
+      ],
+      "Ten labelled failures, counts by type and one tested mitigation.",
+      ["Correct answers written first", "All ten labelled", "Mitigation tested on examples"],
+      "Learn why hallucination happens next.", [LLM]),
+    { starter: code(
+      "1. Q: Who wrote 'Hamlet'?  A: Hamlet was written by Christopher Marlowe in 1599.",
+      "2. Q: What is 48 * 17?  A: 826.",
+      "3. Q: Give three bullet points.  A: Here is a paragraph about the topic...",
+      "4. Q: Who is the current prime minister of the UK?  A: It is Boris Johnson.",
+      "5. Q: Return JSON with keys name, age.  A: Sure! {name: 'Asha', age: 30",
+      "6. Q: Summarise in one sentence.  A: (writes three sentences)",
+      "7. Q: Cite a paper on dropout.  A: Smith et al. (2014), 'Dropping Out of Neural Nets', Nature.",
+      "8. Q: What is the capital of Australia?  A: Sydney, definitely.",
+      "9. Q: Reverse the word 'strawberry'.  A: yrrebwarts.",
+      "10. Q: Is 91 prime?  A: Yes, 91 is prime.") }),
+  practice("m1-9-why-hallucination-happens", "reimplement",
+    pj("A quote checker", 50, "Build a checker that verifies whether claims in an answer are actually supported by the source text.",
+      [
+        ["Take a source paragraph and an answer that contains both supported and invented claims.", "Write one by hand to start."],
+        ["Split the answer into sentences and, for each, find the best-matching source sentence by word overlap or embeddings.", "Start with overlap; it is easy to debug."],
+        ["Mark a sentence supported only if its match scores above a threshold you choose.", "Print the score and the matched source."],
+        ["Add a stricter mode that requires the answer to quote the source exactly in quotation marks.", "Exact quotes are easy to check."],
+        ["Test on five answers and report precision and misses against your own labels.", "Look at where overlap fails, such as paraphrases."],
+      ],
+      "A checker that flags unsupported sentences and a small report of how often it is right and wrong.",
+      ["Sentences matched to the source", "Threshold chosen and printed", "Exact-quote mode added", "Errors reported against your labels"],
+      "Ask how reliably instead of can it next.", ["Python 3.11 or newer"]),
+    {}),
+  practice("m1-9-asking-how-reliably-instead-of-can-it", "extend",
+    pj("A reliability harness", 45, "Extend a one-off test into a harness that reports how reliably a model does a task over many runs.",
+      [
+        ["Start with the single-run check above and run it once.", "One pass tells you very little."],
+        ["Wrap it in a loop that runs each case 10 times at your normal temperature and records pass or fail.", "Save results to a CSV."],
+        ["Report the pass rate per case and overall, with a simple 95 percent interval.", "Use the normal approximation or `statsmodels`."],
+        ["Add three harder cases and see how the pass rate changes.", "Look for cases that are sometimes right."],
+        ["Write what pass rate you would need before using it in a product and what you would do about the rest.", "Mention checks and fallbacks."],
+      ],
+      "A report with a pass rate and interval for each case, and a decision on whether the task is reliable enough.",
+      ["Each case run ten times", "Pass rates and intervals reported", "Harder cases added", "A threshold and fallback decided"],
+      "Next, the model landscape in the following module.", [LLM]),
+    { starter: code(
+      "def check(case):",
+      "    reply = ask(case['prompt'])      # your provider call",
+      "    return case['expected'] in reply",
+      "print(check({'prompt': 'What is the capital of Japan?', 'expected': 'Tokyo'}))") }),
+];
