@@ -8,18 +8,19 @@ import { Segments } from "./GlossaryText";
 
 const LEVEL_LABEL: Record<ExplainLevel, string> = { beginner: "Beginner", developer: "Developer", interview: "Interview" };
 
-/** Rows of [label, text] for one wording level. Beginner is the original "Explain simply" note. */
+/** Rows of [label, text] for one wording level. Beginner is the original "Explain simply" note; no row repeats across levels. */
 export function explainRows(note: TopicNote, level: ExplainLevel): [string, string][] {
   const d = note.depth;
+  const l = note.levels;
   if (level === "developer" && d)
     return [
       ["In technical terms", d.developer],
-      ["Example", note.example],
-      ["Watch out for", note.mistake],
+      l ? ["Watch out for", l.gotchas[0]] : ["How it works", d.steps.join(". ")],
     ];
   if (level === "interview" && d)
     return [
       ["Say it like this", d.interview],
+      ...(l ? ([[`They may ask: ${l.followUps[0][0]}`, l.followUps[0][1]]] as [string, string][]) : []),
       ["Key takeaway", d.takeaway],
     ];
   return (

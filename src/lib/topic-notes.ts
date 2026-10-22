@@ -1,6 +1,7 @@
 // "Explain simply" notes: one beginner-level note per topic, authored in content/topic-notes/.
 import { TOPIC_NOTE_SOURCES } from "../../content/topic-notes";
 import { getTopicDepth, type TopicDepth } from "./topic-depth";
+import { getTopicLevels, type TopicLevels } from "./topic-levels";
 
 export interface TopicNote {
   simple: string;
@@ -9,6 +10,8 @@ export interface TopicNote {
   mistake: string;
   /** Developer and interview wording and the full topic page sections, when written. */
   depth?: TopicDepth;
+  /** Code, gotchas, follow-up questions and the rest of the Developer and Interview material, when written. */
+  levels?: TopicLevels;
 }
 
 export const topicNotes: Record<string, TopicNote> = Object.fromEntries(
@@ -19,7 +22,8 @@ const withDepth = (id: string): TopicNote | undefined => {
   const note = topicNotes[id];
   if (!note) return undefined;
   const depth = getTopicDepth(id);
-  return depth ? { ...note, depth } : note;
+  const levels = getTopicLevels(id);
+  return { ...note, ...(depth && { depth }), ...(levels && { levels }) };
 };
 
 export const getTopicNote = (topicId: string): TopicNote | undefined => withDepth(topicId);
