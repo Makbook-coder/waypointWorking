@@ -6,7 +6,7 @@ import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./revi
 import type { Difficulty, QuizItem, ScenarioItem } from "./types";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 8;
+export const SCHEMA_VERSION = 9;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -124,10 +124,13 @@ export interface UserState {
   lastVisited: LastVisited | null;
   studyMinutes: Record<DayString, number>; // focused minutes per day (tab visible and recently used)
   log: Record<DayString, Note>; // one study-log entry per day
-  settings: { theme: Theme; targetRole: TargetRole; weeklyHours: number };
+  settings: { theme: Theme; targetRole: TargetRole; weeklyHours: number; dailyGoal: number };
 }
 
 export const DEFAULT_WEEKLY_HOURS = 6;
+/** Topics to finish per day; 0 turns the goal off. */
+export const DEFAULT_DAILY_GOAL = 2;
+export const MAX_DAILY_GOAL = 20;
 
 export function emptyState(): UserState {
   return {
@@ -151,7 +154,7 @@ export function emptyState(): UserState {
     lastVisited: null,
     studyMinutes: {},
     log: {},
-    settings: { theme: "system", targetRole: "none", weeklyHours: DEFAULT_WEEKLY_HOURS },
+    settings: { theme: "system", targetRole: "none", weeklyHours: DEFAULT_WEEKLY_HOURS, dailyGoal: DEFAULT_DAILY_GOAL },
   };
 }
 
@@ -199,6 +202,8 @@ const migrateV5 = (v5: Json): Json => ({ ...v5, version: 6 });
 const migrateV6 = (v6: Json): Json => ({ ...v6, version: 7 });
 /** v8 added exams and rubrics; defaults come from sanitize. */
 const migrateV7 = (v7: Json): Json => ({ ...v7, version: 8 });
+/** v9 added settings.dailyGoal; its default comes from sanitize. */
+const migrateV8 = (v8: Json): Json => ({ ...v8, version: 9 });
 
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
@@ -208,6 +213,7 @@ const MIGRATIONS: Record<number, (s: Json) => Json> = {
   5: migrateV5,
   6: migrateV6,
   7: migrateV7,
+  8: migrateV8,
 };
 
 export function migrate(raw: unknown): Json {
@@ -354,6 +360,10 @@ export function sanitize(s: Json): UserState {
       weeklyHours: (() => {
         const h = num(settings.weeklyHours, base.settings.weeklyHours);
         return h >= 1 && h <= 80 ? Math.round(h) : base.settings.weeklyHours;
+      })(),
+      dailyGoal: (() => {
+        const g = num(settings.dailyGoal, base.settings.dailyGoal);
+        return g >= 0 && g <= MAX_DAILY_GOAL ? Math.round(g) : base.settings.dailyGoal;
       })(),
     },
   };
@@ -673,6 +683,10 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
     setWeeklyHours(hours: number) {
       const weeklyHours = Math.max(1, Math.min(80, Math.round(hours)));
       update((s) => ({ ...s, settings: { ...s.settings, weeklyHours } }), { active: false });
+    },
+    setDailyGoal(topics: number) {
+      const dailyGoal = Math.max(0, Math.min(MAX_DAILY_GOAL, Math.round(topics)));
+      update((s) => ({ ...s, settings: { ...s.settings, dailyGoal } }), { active: false });
     },
     /** Add focused study minutes to today. Does not count as an activity on its own. */
     addStudyMinutes(minutes: number) {
