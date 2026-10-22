@@ -6,6 +6,7 @@ import { GlossaryText } from "@/components/GlossaryText";
 import { InlineCode } from "@/components/InlineCode";
 import { PrereqCheck, TopicStatus, WhatItIs } from "@/components/TopicPageParts";
 import { TutorPanel } from "@/components/TutorPanel";
+import { ProjectGuide } from "@/components/ProjectGuide";
 import { VisitTracker } from "@/components/VisitTracker";
 import { Card, PhaseTag } from "@/components/ui";
 import { allTopics, getLevel, getPhase, getTopic, levelHref, moduleHref, topicHref } from "@/lib/data";
@@ -14,6 +15,7 @@ import { PHASE_STYLE } from "@/lib/phase";
 import { prereqsFor } from "@/lib/prereqs";
 import { getTopicNote } from "@/lib/topic-notes";
 import { topicVideo } from "@/lib/youtube";
+import { projectsForTopic } from "@/lib/projects";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -40,6 +42,7 @@ export default async function TopicPage({ params }: Props) {
   const prev = mod.topics[idx - 1];
   const next = mod.topics[idx + 1];
   const video = topicVideo(topic, mod);
+  const projects = projectsForTopic(topic.id);
 
   const allText = note ? [note.simple, note.analogy, note.example, note.mistake, ...(d ? [d.why, ...d.steps, d.usedIn, d.breaks, d.before, d.after, d.developer, d.interview] : [])] : [topic.description];
   const terms = termsMentioned(allText);
@@ -139,6 +142,18 @@ export default async function TopicPage({ params }: Props) {
               <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Key takeaway</p>
               <p className="mt-1 text-lg font-semibold leading-snug"><InlineCode text={d.takeaway} /></p>
             </aside>
+          )}
+
+          {projects.length > 0 && (
+            <section aria-labelledby="proj-h">
+              <h2 id="proj-h" className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted">Build it · small to bigger</h2>
+              <p className="mb-2 text-sm text-muted">Do these in order. Each one has steps, help if you get stuck, and a check that you are done.</p>
+              <div className="space-y-3">
+                {projects.map((p) => (
+                  <ProjectGuide key={p.id} project={p} color={style.var} />
+                ))}
+              </div>
+            </section>
           )}
 
           <div className="rounded-lg border border-line bg-surface p-4">
