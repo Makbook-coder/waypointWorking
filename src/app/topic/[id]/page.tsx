@@ -12,6 +12,7 @@ import { allTopics, getLevel, getPhase, getTopic, levelHref, moduleHref, topicHr
 import { termsMentioned } from "@/lib/glossary";
 import { PHASE_STYLE } from "@/lib/phase";
 import { prereqsFor } from "@/lib/prereqs";
+import { TeachBack } from "@/components/TeachBack";
 import { getTopicNote } from "@/lib/topic-notes";
 import { topicVideo } from "@/lib/youtube";
 
@@ -140,6 +141,8 @@ export default async function TopicPage({ params }: Props) {
               <p className="mt-1 text-lg font-semibold leading-snug"><InlineCode text={d.takeaway} /></p>
             </aside>
           )}
+
+          <TeachBack topicId={topic.id} topic={`${topic.title} (part of "${mod.title}")`} facts={[topic.description, ...allText].filter(Boolean)} />
 
           <div className="rounded-lg border border-line bg-surface p-4">
             <TopicStatus topicId={topic.id} title={topic.title} />
