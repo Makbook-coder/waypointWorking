@@ -18,6 +18,7 @@ export default function RoadmapPage() {
           Prerequisite hints are suggestions; every level is open.
         </p>
         <p className="mt-2 text-sm">
+          <Link href="/map" className="underline underline-offset-2">Concept map of levels and topics →</Link>{" · "}
           <Link href="/cheatsheet" className="underline underline-offset-2">Printable cheat sheets for every level →</Link>
         </p>
         <ol className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs" aria-label="Phase legend">
