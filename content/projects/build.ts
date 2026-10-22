@@ -24,3 +24,6 @@ export function moduleCapstone(moduleId: string, covers: string[], d: Draft): Pr
 export function levelCapstone(levelId: number, d: Draft): ProjectSrc {
   return { ...d, id: `pj:L${levelId}:cap`, scope: "level", refId: `L${levelId}`, size: "capstone" };
 }
+
+/** The "need" line for projects that call a model, so the free options are named once. */
+export const LLM = "Any LLM you can call: a free Gemini API key, or Ollama running a small model on your computer";
