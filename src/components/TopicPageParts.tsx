@@ -5,10 +5,11 @@ import { store, type Confidence } from "@/lib/store";
 import { useHydrated, useUserState } from "@/lib/use-store";
 import type { Prereq } from "@/lib/prereqs";
 import type { TopicNote } from "@/lib/topic-notes";
-import { linkTerms } from "@/lib/glossary";
-import { useExplainLevel } from "@/lib/explain-level";
+import { useExplainLevel, type ExplainLevel } from "@/lib/explain-level";
+import { levelSections, type LevelSection } from "@/lib/level-sections";
 import { LevelSwitch } from "./ExplainPanel";
-import { Segments } from "./GlossaryText";
+import { GlossaryText } from "./GlossaryText";
+import { InlineCode } from "./InlineCode";
 
 const CONF_LABEL: Record<Confidence, string> = { 1: "Shaky", 2: "Okay", 3: "Solid" };
 
@@ -70,22 +71,105 @@ export function PrereqCheck({ prereqs }: { prereqs: Prereq[] }) {
   );
 }
 
-/** "What it is", in the wording the learner picked. */
-export function WhatItIs({ note, id }: { note: TopicNote; id: string }) {
-  const level = useExplainLevel();
-  const d = note.depth;
-  const text = level === "developer" && d ? d.developer : level === "interview" && d ? d.interview : note.simple;
-  const [segments] = linkTerms([text]);
+/** The numbered sections of a topic page, for the explanation level the learner picked. */
+export function TopicSections({ note, id, accent }: { note: TopicNote; id: string; accent: string }) {
+  const chosen = useExplainLevel();
+  const level = note.depth ? chosen : "beginner";
+  const sections = levelSections(note, level);
   return (
     <div>
-      {d && (
-        <div className="mb-2">
+      {note.depth && (
+        <div className="mb-4 flex flex-wrap items-center gap-3">
           <LevelSwitch id={id} />
+          <span className="text-xs text-muted">{LEVEL_HINT[level]}</span>
         </div>
       )}
-      <p className="text-base leading-relaxed" aria-live="polite">
-        <Segments segments={segments} />
-      </p>
+      <ol className="space-y-5" aria-live="polite">
+        {sections.map((sec, i) => (
+          <li key={`${level}-${sec.label}`}>
+            <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
+              <span className="num inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] text-bg" style={{ background: accent }} aria-hidden="true">
+                {i + 1}
+              </span>
+              {sec.label}
+            </h2>
+            <div className={`mt-1.5 leading-relaxed ${i === 0 ? "text-base" : "text-sm"}`}>
+              <SectionBody section={sec} accent={accent} />
+            </div>
+          </li>
+        ))}
+      </ol>
+      {level !== "beginner" && !note.levels && (
+        <p className="mt-5 text-xs text-muted">
+          {level === "developer" ? "Code, gotchas and trade-offs" : "Follow-up questions and deeper points"} for this topic are still being written.
+        </p>
+      )}
     </div>
   );
+}
+
+const LEVEL_HINT: Record<ExplainLevel, string> = {
+  beginner: "Plain words, no jargon.",
+  developer: "How to build it: code, gotchas, trade-offs.",
+  interview: "How to answer it, and what they ask next.",
+};
+
+function SectionBody({ section: s, accent }: { section: LevelSection; accent: string }) {
+  switch (s.kind) {
+    case "text":
+      return <p><GlossaryText text={s.text} /></p>;
+    case "steps":
+    case "list": {
+      const List = s.kind === "steps" ? "ol" : "ul";
+      return (
+        <List className={`${s.kind === "steps" ? "list-decimal" : "list-disc"} space-y-1 pl-5`}>
+          {s.items.map((x) => (
+            <li key={x}><InlineCode text={x} /></li>
+          ))}
+        </List>
+      );
+    }
+    case "code":
+      return (
+        <pre className="overflow-x-auto rounded-md border border-line bg-surface-2 p-3 font-mono text-[13px] leading-snug">
+          <code>{s.code}</code>
+        </pre>
+      );
+    case "qa":
+      return (
+        <dl className="space-y-3">
+          {s.pairs.map(([q, a]) => (
+            <div key={q}>
+              <dt className="font-semibold"><InlineCode text={q} /></dt>
+              <dd className="mt-0.5 text-muted"><InlineCode text={a} /></dd>
+            </div>
+          ))}
+        </dl>
+      );
+    case "beforeAfter":
+      return (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-dashed border-line p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Before</p>
+            <p className="mt-1"><InlineCode text={s.before} /></p>
+          </div>
+          <div className="rounded-md border p-3" style={{ borderColor: accent }}>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">After</p>
+            <p className="mt-1"><InlineCode text={s.after} /></p>
+          </div>
+        </div>
+      );
+    case "analogy":
+      return (
+        <div>
+          <p><InlineCode text={s.text} /></p>
+          {s.breaks && (
+            <p className="mt-1.5 text-muted">
+              <span className="font-medium text-ink">Where it breaks: </span>
+              <InlineCode text={s.breaks} />
+            </p>
+          )}
+        </div>
+      );
+  }
 }

@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookmarkButton } from "@/components/BookmarkButton";
-import { GlossaryText } from "@/components/GlossaryText";
 import { InlineCode } from "@/components/InlineCode";
-import { PrereqCheck, TopicStatus, WhatItIs } from "@/components/TopicPageParts";
+import { PrereqCheck, TopicSections, TopicStatus } from "@/components/TopicPageParts";
 import { TutorPanel } from "@/components/TutorPanel";
 import { VisitTracker } from "@/components/VisitTracker";
 import { Card, PhaseTag } from "@/components/ui";
@@ -41,32 +40,15 @@ export default async function TopicPage({ params }: Props) {
   const next = mod.topics[idx + 1];
   const video = topicVideo(topic, mod);
 
-  const allText = note ? [note.simple, note.analogy, note.example, note.mistake, ...(d ? [d.why, ...d.steps, d.usedIn, d.breaks, d.before, d.after, d.developer, d.interview] : [])] : [topic.description];
-  const terms = termsMentioned(allText);
-
-  const sections: [string, React.ReactNode][] = note
+  const l = note?.levels;
+  const allText = note
     ? [
-        ["What it is", <WhatItIs key="w" note={note} id={`lvl-${topic.id}`} />],
-        ...(d ? ([["Why it matters", <GlossaryText key="y" text={d.why} />]] as [string, React.ReactNode][]) : []),
-        ...(d
-          ? ([
-              [
-                "How it works, step by step",
-                <ol key="s" className="list-decimal space-y-1 pl-5">
-                  {d.steps.map((s) => (
-                    <li key={s}>
-                      <InlineCode text={s} />
-                    </li>
-                  ))}
-                </ol>,
-              ],
-            ] as [string, React.ReactNode][])
-          : []),
-        ["Tiny example", <InlineCode key="e" text={note.example} />],
-        ["Mistake to avoid", <InlineCode key="m" text={note.mistake} />],
-        ...(d ? ([["Where it's used", <InlineCode key="u" text={d.usedIn} />]] as [string, React.ReactNode][]) : []),
+        note.simple, note.analogy, note.example, note.mistake,
+        ...(d ? [d.why, ...d.steps, d.usedIn, d.breaks, d.before, d.after, d.developer, d.interview] : []),
+        ...(l ? [...l.gotchas, l.tradeoff, ...l.followUps.flat(), l.edgeCase, l.weakAnswer] : []),
       ]
-    : [["What it is", <p key="w">{topic.description}</p>]];
+    : [topic.description];
+  const terms = termsMentioned(allText);
 
   return (
     <div>
@@ -92,54 +74,8 @@ export default async function TopicPage({ params }: Props) {
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="min-w-0 space-y-4">
           <Card>
-            <ol className="space-y-5">
-              {sections.map(([label, body], i) => (
-                <li key={label}>
-                  <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
-                    <span className="num inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] text-bg" style={{ background: style.var }} aria-hidden="true">
-                      {i + 1}
-                    </span>
-                    {label}
-                  </h2>
-                  <div className="mt-1.5 text-sm leading-relaxed">{body}</div>
-                </li>
-              ))}
-            </ol>
+            {note ? <TopicSections note={note} id={`lvl-${topic.id}`} accent={style.var} /> : <p>{topic.description}</p>}
           </Card>
-
-          {note?.analogy && (
-            <Card>
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">Think of it like</h2>
-              <p className="mt-1 text-sm leading-relaxed"><InlineCode text={note.analogy} /></p>
-              {d?.breaks && (
-                <>
-                  <h3 className="mt-3 text-xs font-semibold uppercase tracking-wider text-muted">Where the analogy breaks</h3>
-                  <p className="mt-1 text-sm leading-relaxed"><InlineCode text={d.breaks} /></p>
-                </>
-              )}
-            </Card>
-          )}
-
-          {d && (
-            <section aria-labelledby="ba-h" className="grid gap-3 sm:grid-cols-2">
-              <h2 id="ba-h" className="sr-only">Before and after</h2>
-              <div className="rounded-lg border border-dashed border-line bg-surface p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted">Before</p>
-                <p className="mt-1 text-sm leading-relaxed"><InlineCode text={d.before} /></p>
-              </div>
-              <div className="rounded-lg border bg-surface p-4" style={{ borderColor: style.var }}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted">After</p>
-                <p className="mt-1 text-sm leading-relaxed"><InlineCode text={d.after} /></p>
-              </div>
-            </section>
-          )}
-
-          {d && (
-            <aside aria-label="Key takeaway" className="rounded-lg p-4 text-bg" style={{ background: style.var }}>
-              <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Key takeaway</p>
-              <p className="mt-1 text-lg font-semibold leading-snug"><InlineCode text={d.takeaway} /></p>
-            </aside>
-          )}
 
           <div className="rounded-lg border border-line bg-surface p-4">
             <TopicStatus topicId={topic.id} title={topic.title} />
