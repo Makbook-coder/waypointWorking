@@ -32,10 +32,10 @@ export const isPractice = (p: ProjectSrc) => p.size === "practice";
 export const capstoneForModule = (moduleId: string): ProjectSrc | undefined => byRef.get(`module:${moduleId}`)?.[0];
 export const capstoneForLevel = (levelId: number): ProjectSrc | undefined => byRef.get(`level:L${levelId}`)?.[0];
 
-/** The module page that shows a level's capstone: its capstone module, or the last module when it has none. */
+/** The module page that shows a level's capstone: its last capstone module, or the last module when it has none. */
 export function levelCapstoneHome(levelId: number): string | undefined {
   const mods = levels.find((l) => l.id === levelId)?.modules ?? [];
-  return (mods.find((m) => m.isCapstone) ?? mods.at(-1))?.id;
+  return ([...mods].reverse().find((m) => m.isCapstone) ?? mods.at(-1))?.id;
 }
 
 /** Everything a module page shows: its topics' ladders, its capstone, and (for a level's capstone module) the level capstone. */
@@ -122,27 +122,31 @@ export function validateProjects(
   const levelIds = new Set<string>();
   for (const l of levels) {
     levelIds.add(`L${l.id}`);
+    const home = [...l.modules].reverse().find((m) => m.isCapstone)?.id ?? l.modules.at(-1)?.id;
     for (const m of l.modules) {
-      if (m.isCapstone) continue;
+      // An earlier capstone module (such as a mid-level build) gets its own module capstone; the last one hosts the level capstone.
+      if (m.isCapstone && m.id === home) continue;
       moduleIds.add(m.id);
+      if (m.isCapstone) continue;
       for (const t of m.topics) topicIds.add(t.id);
     }
   }
   const scope = (s: ProjectSrc["scope"], ref: string) => entries.filter((p) => p.scope === s && p.refId === ref);
   for (const l of levels) {
+    const home = [...l.modules].reverse().find((m) => m.isCapstone)?.id ?? l.modules.at(-1)?.id;
     for (const m of l.modules) {
       if (m.isCapstone) {
         for (const t of m.topics) if (scope("topic", t.id).length) errors.push(`${t.id}: capstone-module topics get no per-topic projects`);
-        continue;
+        if (m.id === home) continue;
       }
-      for (const t of m.topics) {
+      for (const t of m.isCapstone ? [] : m.topics) {
         const ps = scope("topic", t.id).filter((p) => !isPractice(p));
         if (ps.length < 2 || ps.length > 3) errors.push(`${t.id}: needs 2 or 3 projects, has ${ps.length}`);
         for (let i = 1; i < ps.length; i++) if (ps[i].minutes <= ps[i - 1].minutes) errors.push(`${t.id}: projects must go small to bigger`);
         const want: ProjectSize[] = ps.length === 2 ? ["small", "medium"] : ["small", "medium", "bigger"];
         if (ps.length >= 2 && ps.length <= 3 && ps.some((p, i) => p.size !== want[i])) errors.push(`${t.id}: sizes must be ${want.join(", ")}`);
       }
-      if (practiceLevels.includes(l.id)) {
+      if (practiceLevels.includes(l.id) && !m.isCapstone) {
         let prev: string | undefined;
         const kinds = new Set<string>();
         for (const t of m.topics) {

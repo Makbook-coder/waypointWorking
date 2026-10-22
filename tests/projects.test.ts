@@ -32,6 +32,13 @@ describe("project ladders", () => {
     expect(levelCapstoneHome(1)).toBe("M1.12");
   });
 
+  it("gives an earlier capstone module its own capstone and puts the level capstone on the last one", () => {
+    expect(levelCapstoneHome(4)).toBe("M4.15");
+    expect(capstoneForModule("M4.7")?.size).toBe("capstone");
+    expect(projectsForModule(modules.find((x) => x.id === "M4.7")!)).toEqual([capstoneForModule("M4.7")]);
+    expect(projectsForModule(modules.find((x) => x.id === "M4.15")!)).toEqual([capstoneForLevel(4)]);
+  });
+
   it("counts progress from saved ticks, steps first then done checks", () => {
     const p = PROJECTS[0];
     const none = projectProgress(p, { projectChecks: {} });

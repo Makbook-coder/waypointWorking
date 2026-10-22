@@ -1,0 +1,75 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M49: ProjectSrc[] = [
+  practice("m4-9-building-the-pipeline-by-hand", "reimplement",
+    pj("Pipeline without libraries", 50, "Rebuild a RAG pipeline with only the standard library, an HTTP client and numpy to see every moving part.",
+      [
+        ["Write a chunker, an embedder that calls the API directly and a store that saves to a file.", "No framework imports."],
+        ["Write retrieval as a single function over the stored matrix.", "Return text, source and score."],
+        ["Call the chat API directly with the assembled prompt and parse the reply.", "Handle an error response."],
+        ["Add a test that runs the whole pipeline with a fake embedder and a fake model.", "No network needed."],
+      ],
+      "A framework-free RAG pipeline with an offline test that runs with fakes.",
+      ["No framework used", "Direct API calls with error handling", "Offline test passes"],
+      "Look at retrieve, assemble, generate next.", ["Python 3.11 or newer", LLM]),
+    {}),
+  practice("m4-9-retrieve-assemble-generate", "extend",
+    pj("Add citations and dedupe", 40, "Extend prompt assembly with numbered citations, duplicate removal and a token budget.",
+      [
+        ["Run the starter on three questions and read the prompts it builds.", "Look for repeated text."],
+        ["Remove duplicate and near-duplicate chunks before assembling.", "A text-overlap check is enough."],
+        ["Number the chunks and ask the model to cite them as `[n]`.", "Parse the numbers from the answer."],
+        ["Add a token budget and drop the lowest-ranked chunks first.", "Test with a tiny budget."],
+      ],
+      "A prompt builder that removes duplicates, numbers sources and keeps within a token budget.",
+      ["Duplicates removed", "Citations parsed", "Budget respected in a test"],
+      "Look at prompting for grounded answers next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "def build_prompt(question, chunks):",
+      "    context = '\\n'.join(c.text for c in chunks)",
+      "    return f'Context:\\n{context}\\n\\nQuestion: {question}'") }),
+  practice("m4-9-prompting-for-grounded-answers", "optimise",
+    pj("Shorter grounding prompt", 40, "Shorten a long grounding prompt without increasing invented answers.",
+      [
+        ["Run the starter prompt on the 20 trap questions and record invented answers and tokens.", "That is the baseline."],
+        ["Remove one instruction at a time and rerun.", "Keep a table of what each removal did."],
+        ["Merge repeated instructions and keep the ones that mattered.", "Rerun the whole set."],
+        ["Report tokens saved and any change in invented answers.", "Use the same questions."],
+      ],
+      "A grounding prompt that is shorter with no more invented answers, supported by a removal table.",
+      ["Baseline recorded", "Instructions removed one at a time", "Savings and quality reported"],
+      "Look at handling weak or missing context next.", [LLM]),
+    { starter: code(
+      "You are a very careful assistant. Answer ONLY from the context below. Do not use outside",
+      "knowledge. If the context does not contain the answer, say you do not know. Never guess.",
+      "Remember: only the context. Again, do not use outside knowledge. Cite the context.",
+      "Be polite. Be brief. Be accurate. Do not make things up. Context: {context}") }),
+  practice("m4-9-handling-weak-or-missing-context", "debug",
+    pj("The confident wrong answer", 35, "Find why the bot answers confidently when retrieval is poor and fix the fallback.",
+      [
+        ["Run the starter on the unanswerable questions and print the top retrieval score for each.", "Note the scores so you can pick a sensible threshold."],
+        ["Check how the fallback decides to refuse.", "Find the bug in the comparison or the threshold."],
+        ["Fix it and choose a threshold from the score distribution of answerable and unanswerable questions.", "Plot or print both."],
+        ["Count wrong refusals and wrong answers after the fix.", "Report both numbers."],
+      ],
+      "A working fallback with a threshold chosen from data and counts of both error types.",
+      ["Scores printed", "Bug found and fixed", "Both error types counted"],
+      "Look at the effect of k and ordering next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "THRESHOLD = 0.0",
+      "def answer(q):",
+      "    chunks = retrieve(q, k=3)",
+      "    if chunks[0].score < THRESHOLD:   # distance in some stores, similarity in others",
+      "        return 'I do not know.'",
+      "    return generate(q, chunks)") }),
+  practice("m4-9-the-effect-of-k-and-chunk-ordering", "challenge",
+    pj("Find the best k and order", 45, "Find the best number of chunks and ordering for a question set, with no steps given.",
+      [],
+      "A results table of k values and ordering strategies with correctness and tokens, and a justified choice.",
+      ["At least 25 questions with expected answers", "At least four values of k tested", "Two orderings of the chunks compared", "Tokens recorded for each setting"],
+      "Go on to reranking in M4.10.", ["Python 3.11 or newer", LLM]),
+    { hints: ["Keep every setting the same except the one you vary.", "Try putting the best chunk first and also last to see whether position matters.", "Stop adding chunks at the point where correctness stops improving."] }),
+];
