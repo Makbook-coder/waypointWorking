@@ -10,4 +10,4 @@ export const PROJECT_LEVELS = [0, 1, 2];
 export const PROJECTS: ProjectSrc[] = [...PROJECTS_L0, ...PROJECTS_L1, ...PROJECTS_L2, ...PRACTICE];
 
 /** Levels whose every topic also has a practice project (extend, debug, reimplement, optimise, review or challenge). */
-export const PRACTICE_LEVELS: number[] = [0, 1];
+export const PRACTICE_LEVELS: number[] = [0, 1, 2];
