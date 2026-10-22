@@ -1,0 +1,88 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M411: ProjectSrc[] = [
+  practice("m4-11-why-the-user-question-is-a-poor-query", "challenge",
+    pj("Fix the query", 40, "Turn a set of poor user questions into queries that retrieve the right chunk, by hand and then automatically, with no steps given.",
+      [],
+      "A table of poor questions with their hand rewrites, an automatic rewriter and the rank improvement for each.",
+      ["At least 15 poor questions with known right chunks", "Hand rewrites improve most ranks", "An automatic rewriter is tested on the same questions", "Questions that stay hard are listed with a reason"],
+      "Look at rewriting, expansion and HyDE next.", ["Python 3.11 or newer", LLM]),
+    { hints: ["Use pronouns, vague words and mixed topics in your poor questions.", "Record the rank of the right chunk before and after each rewrite.", "A rewriter may need the conversation history to resolve pronouns."] }),
+  practice("m4-11-rewriting-expansion-multi-query-and-hyde", "extend",
+    pj("Add HyDE to search", 40, "Extend a search function with a hypothetical-answer step and measure when it helps.",
+      [
+        ["Run the starter search on 15 questions and record the rank of the right chunk.", "Save the baseline."],
+        ["Add a step that asks the model for a short hypothetical answer and embeds that instead of the question.", "Keep the original as a fallback."],
+        ["Rerun and compare ranks per question.", "Mark questions that got worse."],
+        ["Write which questions HyDE helped and which it hurt.", "Quote examples of questions that got better or worse."],
+      ],
+      "A search with an optional HyDE step and a per-question comparison with examples.",
+      ["HyDE step added", "Ranks compared per question", "Helped and hurt cases quoted"],
+      "Look at RAG-Fusion next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "def search(question, k=5):",
+      "    return store.search(embed(question), k)") }),
+  practice("m4-11-rag-fusion", "reimplement",
+    pj("Rebuild RAG-Fusion", 50, "Reimplement RAG-Fusion from its description and compare it with a library version.",
+      [
+        ["Write the query generation step that returns several distinct queries as JSON.", "Validate the output."],
+        ["Retrieve for each query and fuse the lists with reciprocal rank fusion.", "Write the fusion yourself."],
+        ["Run 20 questions and compare with single-query retrieval.", "Record recall at 5."],
+        ["Compare your version with a library implementation and explain differences.", "Check the defaults of both versions before comparing them."],
+      ],
+      "A hand-built RAG-Fusion retriever compared with single-query retrieval and a library version.",
+      ["Queries validated as JSON", "Fusion written by hand", "Compared with a library"],
+      "Look at ambiguous questions next.", ["Python 3.11 or newer", LLM]),
+    {}),
+  practice("m4-11-handling-ambiguous-questions", "debug",
+    pj("The wrong reading", 35, "Find why a bot answers the wrong reading of an ambiguous question and fix its handling.",
+      [
+        ["Run the starter on the five ambiguous questions and note which reading it chose.", "Check whether it knew there were several."],
+        ["Print what the ambiguity check returned for each.", "Look for parsing mistakes."],
+        ["Fix the check so ambiguous questions lead to a clarifying question or answers for each reading.", "Keep clear questions unchanged."],
+        ["Test five clear and five ambiguous questions.", "Count false alarms."],
+      ],
+      "A fixed ambiguity check with tests that show correct handling of ambiguous and clear questions.",
+      ["Check output inspected", "Handling fixed", "False alarms counted"],
+      "Look at the extra calls transformation costs next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "verdict = llm('Is this question ambiguous? Answer yes or no: ' + question)",
+      "if verdict == 'yes':        # the model often replies 'Yes, because...'",
+      "    return clarify(question)",
+      "return answer(question)") }),
+  practice("m4-11-the-extra-calls-it-costs", "optimise",
+    pj("Fewer model calls", 40, "Cut the number of model calls a query pipeline makes without losing recall.",
+      [
+        ["Run the starter on 30 questions and record calls, tokens and recall at 5.", "Log every call so the totals are accurate."],
+        ["Merge the rewrite and multi-query steps into one call.", "Parse a JSON list."],
+        ["Cache repeated questions and skip transformation for short exact-term queries.", "Measure cache hits."],
+        ["Report calls, tokens and recall before and after.", "State the saving per 1,000 questions."],
+      ],
+      "A pipeline with fewer model calls, the same recall and a saving per 1,000 questions.",
+      ["Baseline logged", "Calls merged and cached", "Saving computed"],
+      "Look at when to skip transformation next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "def retrieve(q):",
+      "    rewritten = llm('Rewrite: ' + q)",
+      "    variants = [llm('Paraphrase: ' + rewritten) for _ in range(3)]",
+      "    hyde = llm('Write a hypothetical answer: ' + rewritten)",
+      "    return fuse([search(x) for x in [rewritten, *variants, hyde]])") }),
+  practice("m4-11-when-to-skip-transformation", "review",
+    pj("Review a query pipeline", 30, "Review a query pipeline that transforms every question and decide which transformations to drop.",
+      [
+        ["Read the pipeline above and list each transformation and the call it adds.", "Add its cost in calls and tokens next to each step."],
+        ["Mark the transformations that are likely to hurt exact-term or short queries.", "Give a reason for each transformation you mark."],
+        ["Propose a skip rule and a measurement to prove it works.", "Name the metrics that would prove the skip rule works."],
+        ["Test the rule on ten queries of both kinds.", "Report recall and calls."],
+      ],
+      "A review with costs, risks, a skip rule and a small test of the rule.",
+      ["Transformations and costs listed", "Risks named and explained", "Skip rule tested"],
+      "Go on to grounding and citations in M4.12.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "Pipeline for every query: rewrite -> expand with synonyms -> HyDE -> 4 paraphrases ->",
+      "retrieve for each -> fuse -> rerank 100 -> answer.",
+      "Typical queries: 'ERR_4012', 'refund policy', 'what happens if I miss the deadline for returns after the sale?'") }),
+];
