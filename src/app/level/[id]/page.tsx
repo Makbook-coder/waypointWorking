@@ -18,6 +18,8 @@ import { EXAM_LEVELS } from "@/lib/exam";
 import { labsForLevel } from "@/lib/labs";
 import { mistakesForLevel } from "@/lib/mistakes";
 import { LevelMistakes } from "@/components/LevelMistakes";
+import { WatchLink } from "@/components/WatchLink";
+import { levelWatchList } from "@/lib/video-lessons";
 import type { ProjectItem } from "@/lib/types";
 
 type Props = { params: Promise<{ id: string }> };
@@ -162,6 +164,26 @@ export default async function LevelPage({ params }: Props) {
           <Card>
             <SectionTitle>Level outcome</SectionTitle>
             <p className="text-sm leading-relaxed">{level.outcome}</p>
+          </Card>
+          <Card>
+            <SectionTitle>Watch list</SectionTitle>
+            <p className="mb-3 text-xs text-muted">One step per module, in roadmap order. Links were checked when added; searches are marked.</p>
+            <ol className="space-y-3 text-sm">
+              {levelWatchList(level).map((step) => (
+                <li key={step.module.id}>
+                  <Link href={moduleHref(step.module.id)} className="font-mono text-xs text-muted hover:underline">
+                    {step.module.id} {step.module.title}
+                  </Link>
+                  <ul className="mt-1 space-y-1.5">
+                    {step.items.map((v) => (
+                      <li key={v.url}>
+                        <WatchLink item={v} />
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
           </Card>
           {project && (
             <Card>
