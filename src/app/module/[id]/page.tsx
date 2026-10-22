@@ -15,6 +15,7 @@ import { getSourcedForModule } from "@/lib/sourced";
 import { labsForModule } from "@/lib/labs";
 import { getExplainer } from "@/lib/explainers";
 import { moduleTopicIds } from "@/lib/progress";
+import { projectsForModule } from "@/lib/projects";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -86,6 +87,7 @@ export default async function ModulePage({ params }: Props) {
         labs={labsForModule(mod.id)}
         explainer={getExplainer(mod.id)}
         videos={moduleVideos(mod.id)}
+        projects={projectsForModule(mod)}
       />
 
       <nav aria-label="Module navigation" className="mt-8 flex justify-between gap-4 text-sm">

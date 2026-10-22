@@ -14,6 +14,8 @@ import { verifiedVideos } from "@/lib/youtube";
 import { WatchLink } from "./WatchLink";
 import type { WatchItem } from "@/lib/video-lessons";
 import { AppliedPanel } from "./AppliedPanel";
+import { ProjectsPanel } from "./ProjectsPanel";
+import type { ProjectSrc } from "@/lib/projects";
 import { BookmarkButton } from "./BookmarkButton";
 import { CapstoneGuide } from "./CapstoneGuide";
 import { CodingCard } from "./CodingCard";
@@ -32,9 +34,9 @@ import { GeneratedPractice } from "./GeneratedPractice";
 import { TutorPanel } from "./TutorPanel";
 import { Badge, EmptyState, SectionTitle } from "./ui";
 
-const TABS = ["learn", "applied", "resources", "practice", "notes"] as const;
+const TABS = ["learn", "applied", "projects", "resources", "practice", "notes"] as const;
 type Tab = (typeof TABS)[number];
-const LABEL: Record<Tab, string> = { learn: "Learn", applied: "In practice", resources: "Resources", practice: "Practice", notes: "Notes" };
+const LABEL: Record<Tab, string> = { learn: "Learn", applied: "In practice", projects: "Projects", resources: "Resources", practice: "Practice", notes: "Notes" };
 
 export function ModuleTabs({
   module: mod,
@@ -46,6 +48,7 @@ export function ModuleTabs({
   labs = [],
   explainer,
   videos,
+  projects = [],
 }: {
   module: Module;
   resources: Resource[];
@@ -57,9 +60,11 @@ export function ModuleTabs({
   explainer?: Explainer;
   /** Watch-first list; defaults to the module's verified video resources. */
   videos?: WatchItem[];
+  /** Project ladders for this module's topics, plus its capstone(s). */
+  projects?: ProjectSrc[];
 }) {
   const [tab, setTab] = useState<Tab>("learn");
-  const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, applied: null, resources: null, practice: null, notes: null });
+  const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, applied: null, projects: null, resources: null, practice: null, notes: null });
   const hasNote = Boolean(useUserState().notes[`module:${mod.id}`]);
 
   // Deep links like /module/m4-6#practice
@@ -85,7 +90,7 @@ export function ModuleTabs({
   }
 
   const quizzes = practice.filter((p): p is QuizItem => p.type === "quiz");
-  const counts: Record<Tab, number | null> = { learn: mod.topics.length, applied: null, resources: resources.length, practice: practice.length + labs.length, notes: null };
+  const counts: Record<Tab, number | null> = { learn: mod.topics.length, applied: null, projects: projects.length || null, resources: resources.length, practice: practice.length + labs.length, notes: null };
 
   return (
     <div>
@@ -115,6 +120,7 @@ export function ModuleTabs({
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
         {tab === "learn" && <LearnPanel mod={mod} color={color} videos={videos ?? verifiedVideos(resources).map((r) => ({ title: r.title, url: r.url, search: false }))} topicNotes={topicNotes} explainer={explainer} />}
         {tab === "applied" && <AppliedPanel mod={mod} color={color} />}
+        {tab === "projects" && <ProjectsPanel mod={mod} projects={projects} color={color} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} labs={labs} />}
         {tab === "notes" && (
