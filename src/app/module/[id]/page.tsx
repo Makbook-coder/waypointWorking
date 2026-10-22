@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ModuleTabs } from "@/components/ModuleTabs";
+import { moduleVideos } from "@/lib/video-lessons";
 import { topicNotesFor } from "@/lib/topic-notes";
 import { ProgressFor } from "@/components/ProgressFor";
 import { VisitTracker } from "@/components/VisitTracker";
@@ -84,6 +85,7 @@ export default async function ModulePage({ params }: Props) {
         topicNotes={topicNotesFor(mod.topics.map((t) => t.id))}
         labs={labsForModule(mod.id)}
         explainer={getExplainer(mod.id)}
+        videos={moduleVideos(mod.id)}
       />
 
       <nav aria-label="Module navigation" className="mt-8 flex justify-between gap-4 text-sm">

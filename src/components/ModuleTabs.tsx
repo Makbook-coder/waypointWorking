@@ -11,6 +11,8 @@ import type { Explainer } from "@/lib/explainers";
 import type { TopicNote } from "@/lib/topic-notes";
 import { useUserState } from "@/lib/use-store";
 import { verifiedVideos } from "@/lib/youtube";
+import { WatchLink } from "./WatchLink";
+import type { WatchItem } from "@/lib/video-lessons";
 import { AppliedPanel } from "./AppliedPanel";
 import { BookmarkButton } from "./BookmarkButton";
 import { CapstoneGuide } from "./CapstoneGuide";
@@ -43,6 +45,7 @@ export function ModuleTabs({
   topicNotes = {},
   labs = [],
   explainer,
+  videos,
 }: {
   module: Module;
   resources: Resource[];
@@ -52,6 +55,8 @@ export function ModuleTabs({
   topicNotes?: Record<string, TopicNote>;
   labs?: Lab[];
   explainer?: Explainer;
+  /** Watch-first list; defaults to the module's verified video resources. */
+  videos?: WatchItem[];
 }) {
   const [tab, setTab] = useState<Tab>("learn");
   const refs = useRef<Record<Tab, HTMLButtonElement | null>>({ learn: null, applied: null, resources: null, practice: null, notes: null });
@@ -108,7 +113,7 @@ export function ModuleTabs({
       </div>
 
       <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} tabIndex={0} className="pt-6 focus-visible:outline-offset-4">
-        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={verifiedVideos(resources)} topicNotes={topicNotes} explainer={explainer} />}
+        {tab === "learn" && <LearnPanel mod={mod} color={color} videos={videos ?? verifiedVideos(resources).map((r) => ({ title: r.title, url: r.url, search: false }))} topicNotes={topicNotes} explainer={explainer} />}
         {tab === "applied" && <AppliedPanel mod={mod} color={color} />}
         {tab === "resources" && <ResourcesPanel mod={mod} resources={resources} />}
         {tab === "practice" && <PracticePanel mod={mod} practice={practice} sourced={sourced} quizzes={quizzes} color={color} labs={labs} />}
@@ -122,7 +127,7 @@ export function ModuleTabs({
   );
 }
 
-function LearnPanel({ mod, color, videos, topicNotes, explainer }: { mod: Module; color: string; videos: Resource[]; topicNotes: Record<string, TopicNote>; explainer?: Explainer }) {
+function LearnPanel({ mod, color, videos, topicNotes, explainer }: { mod: Module; color: string; videos: WatchItem[]; topicNotes: Record<string, TopicNote>; explainer?: Explainer }) {
   const note = getNote(mod.id);
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -142,14 +147,10 @@ function LearnPanel({ mod, color, videos, topicNotes, explainer }: { mod: Module
         {videos.length > 0 && (
           <div className="rounded-lg border border-line bg-surface p-4" style={{ borderLeft: "4px solid #ff0033" }}>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted">Watch first</p>
-            <ul className="mt-1 space-y-1 text-sm">
+            <ul className="mt-1 space-y-2 text-sm">
               {videos.map((v) => (
                 <li key={v.url}>
-                  <a href={v.url} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">
-                    {v.title}
-                    <span className="sr-only"> (opens in a new tab)</span>
-                    <span aria-hidden="true"> ↗</span>
-                  </a>
+                  <WatchLink item={v} />
                 </li>
               ))}
             </ul>
