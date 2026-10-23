@@ -1,0 +1,95 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M112: ProjectSrc[] = [
+  practice("m11-2-the-shape-all-three-share", "debug",
+    pj("The wrong-shaped request", 40, "Find why a request built for one platform fails on another and fix the adapter.",
+      [
+        ["Run the starter adapter against the second platform's fake and record the error.", "Quote it. Compare with a case you know the answer to."],
+        ["Compare the request body with the second platform's expected shape.", "List the differences."],
+        ["Fix the adapter so the same standard request works on both.", "Keep one input type."],
+        ["Add a test that checks the body shape for each platform.", "Run it. Keep a note of each result."],
+      ],
+      "An adapter that builds the correct body for both platforms with a test for each shape.",
+      ["Error quoted", "Shape differences listed", "Shape test passes"],
+      "Look at reading a model catalog next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "def to_platform_body(req):",
+      "    return {'messages': req.messages, 'max_tokens': req.max_tokens}       # second platform wants 'inputText' and 'textGenerationConfig'") }),
+  practice("m11-2-reading-a-model-catalog", "extend",
+    pj("Add lifecycle to the catalog", 40, "Extend a catalog table with lifecycle and price changes so choices stay safe.",
+      [
+        ["Read the starter catalog file and note which fields it holds.", "Check for lifecycle."],
+        ["Add a status field and a retirement date for each model.", "Fill from the documentation."],
+        ["Add a query that lists models retiring within 6 months.", "Test. If it feels vague, add a number or an example."],
+        ["Add a note field for price changes and use it in the cheapest-model query.", "Test. Check it with someone else or a model if you can."],
+      ],
+      "A catalog file with lifecycle and price fields and queries for retiring models and cheapest suitable model.",
+      ["Status and dates added", "Retiring query works", "Cheapest query uses prices"],
+      "Look at invoking through the platform next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "MODELS = [{'name': 'model-a', 'context': 128000, 'regions': ['us-east-1']},",
+      "          {'name': 'model-b', 'context': 32000, 'regions': ['eu-west-1', 'us-east-1']}]") }),
+  practice("m11-2-invoking-through-the-platform", "review",
+    pj("Review an invocation wrapper", 30, "Review a wrapper that calls a platform and find missing error handling.",
+      [
+        ["Read the wrapper and list every error it could meet.", "Include throttling and access denied."],
+        ["Mark which are handled and which are not.", "Quote lines. Do the easy part first, then return to the hard part."],
+        ["Write what the wrapper should do for each.", "Retry, fail or report."],
+        ["Write five tests for the unhandled cases.", "Describe each. Save your work here so you can compare later."],
+      ],
+      "A review of an invocation wrapper with errors listed, handling rules and five tests.",
+      ["Errors listed", "Unhandled marked", "Five tests described"],
+      "Look at same ideas, different vocabulary next.", ["A text editor"]),
+    { starter: code(
+      "def invoke(model, prompt):",
+      "    resp = client.invoke_model(modelId=model, body=json.dumps({'prompt': prompt}))",
+      "    return json.loads(resp['body'].read())['completion']") }),
+  practice("m11-2-same-ideas-different-vocabulary", "optimise",
+    pj("A shorter translation table", 30, "Cut a long translation table to the terms people actually trip over.",
+      [
+        ["Read the starter table of 30 terms and note which are obvious.", "Mark them. Try it on one small example first."],
+        ["Keep the terms that differ in meaning or cause mistakes.", "Aim for ten. Write down what you see before changing anything."],
+        ["Add a one-line gotcha for each kept term.", "Use real examples."],
+        ["Test the table by asking someone to answer five questions with it.", "Record how long it takes."],
+      ],
+      "A ten-term translation table with gotchas that someone can use to answer five questions quickly.",
+      ["Obvious terms removed", "Gotchas added", "Five-question test run"],
+      "Look at calling a hosted model next.", ["A text editor"]),
+    { starter: code(
+      "guardrail = filter = safety policy = content filter = moderation setting (30 rows, no explanation of differences)") }),
+  practice("m11-2-calling-a-hosted-model", "reimplement",
+    pj("Rebuild a safe client", 40, "Rebuild a hosted model client with timeouts, retries and no secrets in code.",
+      [
+        ["Write the requirements: timeout, retry rules, logging and credentials from the environment.", "Make them a checklist."],
+        ["Write the client from the checklist.", "Do not look at the starter."],
+        ["Test with a fake that is slow, throttles and returns errors.", "Record results. Compare with a case you know the answer to."],
+        ["Compare with the starter and list differences.", "Note anything you missed."],
+      ],
+      "A rebuilt client that meets the checklist and is tested against slow, throttled and failing fakes.",
+      ["Checklist written", "Client tested with fakes", "Comparison listed"],
+      "Look at swapping models inside one catalog next.", ["Python 3.11 or newer"])),
+  practice("m11-2-swapping-models-inside-one-catalog", "challenge",
+    pj("Pick a model by evidence", 45, "Choose a model from a catalog for your task using your own test, with no steps given.",
+      [],
+      "A model chosen from a catalog for your task with a default and a fallback justified by measurements.",
+      ["At least 25 test cases with expected results", "Three or more models tested", "Cost and speed compared as well as quality", "A default and a fallback chosen with reasons"],
+      "Look at what the platform does not give you next.", ["Python 3.11 or newer", LLM]),
+    { hints: ["Choose models of different sizes so the comparison teaches you something.", "Report failures per model, not only averages.", "Make the fallback differ from the default in family or provider if you can."] }),
+  practice("m11-2-what-the-platform-does-not-give-you", "debug",
+    pj("What went wrong in production", 40, "Find which platform gap caused an incident and close it.",
+      [
+        ["Read the incident note below and write the timeline.", "Mark the first sign."],
+        ["Find the missing capability that made it worse.", "Name the category."],
+        ["Design the smallest addition that would have caught or limited it.", "Describe it. Keep a note of each result."],
+        ["Write a test or alert for it.", "Show an example. If it feels vague, add a number or an example."],
+      ],
+      "An incident analysis naming the platform gap, the smallest addition to close it and a test or alert.",
+      ["Timeline written", "Platform gap named", "Alert or test written"],
+      "Look at the module capstone next.", ["A text editor"]),
+    { starter: code(
+      "Incident: a prompt change on Tuesday made answers longer. Tokens doubled, the monthly bill passed the budget in 9 days.",
+      "The platform showed total spend after 24 hours. No one could say which prompt version ran when.") }),
+];
