@@ -1,0 +1,76 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M51: ProjectSrc[] = [
+  practice("m5-1-the-agent-loop", "reimplement",
+    pj("Agent loop from a description", 45, "Reimplement the agent loop from its description alone, then compare it with a framework's loop.",
+      [
+        ["Write the loop in plain Python: send messages, read tool calls, run them and append results.", "Do not copy any framework code."],
+        ["Add a step cap, a repeated-call check and an unknown-tool message.", "Test each with a fake model."],
+        ["Run five tasks and print every step.", "Check that tool call ids are matched to results."],
+        ["Read the loop of a small framework and list three things it does that yours does not.", "Quote the lines you read."],
+      ],
+      "A hand-written agent loop with guards and tests, and a list of three things a framework loop adds.",
+      ["Loop runs tools and returns results", "Guards tested with a fake model", "Three framework features listed"],
+      "Compare calls, chains, workflows and agents next.", ["Python 3.11 or newer", LLM]),
+    {}),
+  practice("m5-1-call-vs-chain-vs-workflow-vs-agent", "challenge",
+    pj("Cheapest design that works", 45, "Find the simplest design that solves a task reliably, with no steps given.",
+      [],
+      "A task solved by the simplest working design with a table showing why the more complex designs were not needed.",
+      ["At least 15 test cases with expected results", "At least three designs tried from simplest to most complex", "Success, calls and cost recorded for each", "The chosen design is the cheapest that meets your success target"],
+      "Look at where agents are useful next.", ["Python 3.11 or newer", LLM]),
+    { hints: ["Start with a single prompt and only add structure when a measured failure demands it.", "Set the success target before you run any design, for example 90 percent.", "Record cost with the usage data from each response."] }),
+  practice("m5-1-where-agents-are-useful", "review",
+    pj("Review an agent idea", 30, "Review a proposal to build an agent and decide whether an agent is the right choice.",
+      [
+        ["Read the proposal above and list the steps the work needs.", "Mark which are fixed and which vary."],
+        ["Find at least three problems, such as no success measure, unbounded actions or no failure plan.", "Quote the text for each."],
+        ["Say whether a workflow or a single call would do and why.", "Give a number for the variable part."],
+        ["Rewrite the proposal in five lines with a success measure and a limit on actions.", "Keep the scope small."],
+      ],
+      "A review of the proposal with problems quoted, a design recommendation and a tighter five-line rewrite.",
+      ["Fixed and variable steps listed", "Three problems quoted", "Proposal rewritten with limits"],
+      "Look at when a workflow is better next.", [LLM]),
+    { starter: code(
+      "Proposal: build an autonomous agent that handles all customer emails. It can read the",
+      "inbox, issue refunds, edit orders and email customers. It will learn from mistakes.",
+      "Success: customers are happy. Budget: whatever it needs.") }),
+  practice("m5-1-when-a-workflow-is-better", "extend",
+    pj("Add routing to a workflow", 40, "Extend a fixed workflow with a code-driven branch instead of turning it into an agent.",
+      [
+        ["Run the starter workflow on the five tickets and note which are handled badly.", "The refund tickets are the problem."],
+        ["Add a classification step that returns a category as JSON.", "Validate the value."],
+        ["Branch on the category in plain code to a different prompt for each.", "Keep the branches small."],
+        ["Rerun the five tickets and compare success, calls and cost with the original.", "Write the three numbers in one table so the comparison is easy to read."],
+      ],
+      "A workflow with a classification branch, with success, calls and cost compared against the original.",
+      ["Category returned as validated JSON", "Branches chosen in code", "Results compared with the original"],
+      "Look at the components of an agent next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "def handle(ticket):",
+      "    summary = llm('Summarise: ' + ticket)",
+      "    return llm('Write a polite reply to this summary: ' + summary)") }),
+  practice("m5-1-the-components-of-an-agent", "debug",
+    pj("The forgetful agent", 40, "Find which component is broken in an agent that forgets its tools' results and repeats itself.",
+      [
+        ["Run the starter and read the printed messages.", "Note what the model sees on each turn."],
+        ["Check which component fails: the model call, the tool call, the memory or the stop rule.", "Print the messages sent each turn."],
+        ["Fix the component and rerun.", "The task should finish in three steps."],
+        ["Add a test that fails on the old code and passes on the new.", "Run the old code first to make sure the test really fails before the fix."],
+      ],
+      "An agent that completes the task in three steps, with a test that catches the original bug.",
+      ["Failing component identified", "Fix verified by a rerun", "Regression test added"],
+      "Go on to ReAct, planning and reflection in M5.2.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "messages = [system, user]",
+      "while True:",
+      "    reply = model(messages)",
+      "    if reply.tool_calls:",
+      "        for call in reply.tool_calls:",
+      "            run_tool(call)                 # result is never appended to messages",
+      "        continue",
+      "    return reply.text") }),
+];
