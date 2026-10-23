@@ -42,6 +42,7 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
   const [result, setResult] = useState<RunResult | null>(null);
   const [unlocked, setUnlocked] = useState<number | null>(null);
   const touched = useRef(false);
+  const stepPanel = useRef<HTMLElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Storage loads after the first render: pick up the saved draft and progress once.
@@ -54,6 +55,14 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
   useEffect(() => () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
   }, []);
+
+  /** Jump to a step the learner can reach, and bring its instructions into view. */
+  function goTo(i: number) {
+    setActive(i);
+    setResult(null);
+    setUnlocked(null);
+    requestAnimationFrame(() => stepPanel.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
+  }
 
   function edit(next: string) {
     touched.current = true;
@@ -69,7 +78,8 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
     if (!passedAll(r)) return;
     store.markCodingPassed(stepKey(lab.id, active));
     const next = lab.steps[active + 1];
-    if (next) {
+    // Re-running a step passed earlier must not move on or paste the next scaffold a second time.
+    if (next && active >= passed) {
       setActive(active + 1);
       setUnlocked(active + 1);
       if (next.scaffold.trim() && !code.includes(next.scaffold.trim())) edit(`${code.replace(/\s+$/, "")}\n\n\n${next.scaffold.trim()}\n`);
@@ -87,10 +97,10 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
         {done && <Badge title="Every checkpoint passed">✓ complete</Badge>}
       </div>
       <h3 className="text-lg font-semibold">{lab.title}</h3>
-      <p className="mt-1 text-sm leading-relaxed text-muted">{lab.goal}</p>
+      <p className="mt-1 text-base leading-7 text-muted">{lab.goal}</p>
       <div className="mt-3 flex items-center gap-3">
         <ProgressBar pct={Math.floor((passed / lab.steps.length) * 100)} color={color} label={`${lab.title}: checkpoints passed`} size="sm" />
-        <span className="num shrink-0 text-xs text-muted">
+        <span className="num shrink-0 text-sm text-muted">
           {passed}/{lab.steps.length} checkpoints
         </span>
       </div>
@@ -100,14 +110,10 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
           <li key={st.title}>
             <button
               type="button"
-              onClick={() => {
-                setActive(i);
-                setResult(null);
-                setUnlocked(null);
-              }}
+              onClick={() => goTo(i)}
               disabled={!reachable(i)}
               aria-current={i === active ? "step" : undefined}
-              className="rounded-md border border-line px-2.5 py-1 text-xs aria-[current=step]:border-strong-line aria-[current=step]:bg-ink aria-[current=step]:text-bg disabled:opacity-40"
+              className="rounded-md border border-line px-3 py-1.5 text-sm aria-[current=step]:border-strong-line aria-[current=step]:bg-ink aria-[current=step]:text-bg disabled:opacity-40"
               title={reachable(i) ? st.title : "Pass the earlier checkpoints first"}
             >
               <span aria-hidden="true">{i < passed ? "✓ " : ""}</span>
@@ -117,24 +123,32 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
         ))}
       </ol>
 
-      <section className="mt-4 rounded-md bg-surface-2 p-3" aria-labelledby={`${uid}-step`}>
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted">
+      <section ref={stepPanel} className="mt-4 scroll-mt-20 rounded-md bg-surface-2 p-4" aria-labelledby={`${uid}-step`}>
+        <p className="text-sm font-semibold uppercase tracking-wider text-muted">
           Step {active + 1} of {lab.steps.length} · {MODE_LABEL[step.mode]}
         </p>
-        <h4 id={`${uid}-step`} className="mt-0.5 font-semibold">
+        <h4 id={`${uid}-step`} className="mt-1 text-lg font-semibold">
           {step.title}
         </h4>
-        <p className="mt-1 text-sm leading-relaxed">
+        <p className="mt-2 text-base leading-7">
           <InlineCode text={step.instructions} />
         </p>
-        {step.mode === "open" && <p className="mt-2 text-xs text-muted">No starter code for this one. Write it below the earlier steps, then run the checkpoint.</p>}
+        {step.mode === "open" && <p className="mt-2 text-sm text-muted">No starter code for this one. Write it below the earlier steps, then run the checkpoint.</p>}
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button type="button" className={ghostButtonClass} onClick={() => goTo(active - 1)} disabled={active === 0}>
+            ← Previous step
+          </button>
+          <button type="button" className={ghostButtonClass} onClick={() => goTo(active + 1)} disabled={!reachable(active + 1) || active + 1 >= lab.steps.length} title={reachable(active + 1) ? undefined : "Pass this checkpoint first"}>
+            Next step →
+          </button>
+        </div>
       </section>
 
-      <label htmlFor={`${uid}-code`} className="mt-3 block text-xs font-semibold uppercase tracking-wider text-muted">
+      <label htmlFor={`${uid}-code`} className="mt-3 block text-sm font-semibold uppercase tracking-wider text-muted">
         Your lab file (Python)
       </label>
       <CodeEditor id={`${uid}-code`} value={code} onChange={edit} describedBy={`${uid}-hint`} minRows={12} maxRows={32} />
-      <p id={`${uid}-hint`} className="mt-1 text-xs text-muted">
+      <p id={`${uid}-hint`} className="mt-1 text-sm text-muted">
         One file for the whole lab. Each checkpoint also re-runs the earlier steps&apos; tests, so nothing you built breaks. Your draft saves in this browser.
       </p>
 
@@ -150,7 +164,7 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
           className={ghostButtonClass}
           onClick={() => {
             edit(starterCode(lab));
-            setResult(null);
+            goTo(0);
           }}
         >
           Start over
@@ -176,7 +190,7 @@ export function LabCard({ lab, color }: { lab: Lab; color?: string }) {
         last={
           <>
             <span className="text-muted">Read it, close it, then type it yourself. Copying teaches far less than retyping.</span>
-            <pre className="mt-1 overflow-auto rounded-md border border-line bg-surface p-3 font-mono text-[13px] leading-relaxed">{step.solution.trim()}</pre>
+            <pre className="mt-1 overflow-auto rounded-md border border-line bg-surface p-3 font-mono text-sm leading-relaxed">{step.solution.trim()}</pre>
             <button type="button" className={`${ghostButtonClass} mt-2`} onClick={() => edit(withSolution(code, step.scaffold, step.solution))}>
               Put this step&apos;s solution in my file
             </button>

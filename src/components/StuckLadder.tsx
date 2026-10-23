@@ -23,7 +23,7 @@ export function StuckLadder({ rungs, last, resetKey, onReveal }: { rungs: Rung[]
   return (
     <div className="mt-3 rounded-md border border-dashed border-line p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted">Stuck? Start here</p>
+        <p className="text-sm font-semibold uppercase tracking-wider text-muted">Stuck? Start here</p>
         <div className="flex gap-2">
           {next && (
             <button type="button" className="text-sm underline underline-offset-2" onClick={reveal}>
@@ -37,10 +37,10 @@ export function StuckLadder({ rungs, last, resetKey, onReveal }: { rungs: Rung[]
           )}
         </div>
       </div>
-      {shown === 0 && <p className="mt-1 text-xs text-muted">Try for a few minutes first. Each click shows a bit more, so you only take the help you need.</p>}
+      {shown === 0 && <p className="mt-1 text-sm text-muted">Try for a few minutes first. Each click shows a bit more, so you only take the help you need.</p>}
       <ol className="mt-1 space-y-2" aria-live="polite">
         {rungs.slice(0, shown).map((r, i) => (
-          <li key={r.label} className="rounded bg-surface-2 p-2.5 text-sm leading-relaxed">
+          <li key={r.label} className="rounded bg-surface-2 p-3 text-base leading-7">
             <span className="font-semibold">{r.label}: </span>
             {i === rungs.length - 1 && last ? (
               last

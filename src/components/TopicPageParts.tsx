@@ -81,26 +81,26 @@ export function TopicSections({ note, id, accent }: { note: TopicNote; id: strin
       {note.depth && (
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <LevelSwitch id={id} />
-          <span className="text-xs text-muted">{LEVEL_HINT[level]}</span>
+          <span className="text-sm text-muted">{LEVEL_HINT[level]}</span>
         </div>
       )}
-      <ol className="space-y-5" aria-live="polite">
+      <ol className="space-y-7" aria-live="polite">
         {sections.map((sec, i) => (
           <li key={`${level}-${sec.label}`}>
-            <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
-              <span className="num inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] text-bg" style={{ background: accent }} aria-hidden="true">
+            <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted">
+              <span className="num inline-flex h-6 w-6 items-center justify-center rounded-full text-xs text-bg" style={{ background: accent }} aria-hidden="true">
                 {i + 1}
               </span>
               {sec.label}
             </h2>
-            <div className={`mt-1.5 leading-relaxed ${i === 0 ? "text-base" : "text-sm"}`}>
+            <div className="mt-2 text-base leading-7 sm:text-[17px] sm:leading-8">
               <SectionBody section={sec} accent={accent} />
             </div>
           </li>
         ))}
       </ol>
       {level !== "beginner" && !note.levels && (
-        <p className="mt-5 text-xs text-muted">
+        <p className="mt-5 text-sm text-muted">
           {level === "developer" ? "Code, gotchas and trade-offs" : "Follow-up questions and deeper points"} for this topic are still being written.
         </p>
       )}
@@ -122,7 +122,7 @@ function SectionBody({ section: s, accent }: { section: LevelSection; accent: st
     case "list": {
       const List = s.kind === "steps" ? "ol" : "ul";
       return (
-        <List className={`${s.kind === "steps" ? "list-decimal" : "list-disc"} space-y-1 pl-5`}>
+        <List className={`${s.kind === "steps" ? "list-decimal" : "list-disc"} space-y-2 pl-5`}>
           {s.items.map((x) => (
             <li key={x}><InlineCode text={x} /></li>
           ))}
@@ -131,7 +131,7 @@ function SectionBody({ section: s, accent }: { section: LevelSection; accent: st
     }
     case "code":
       return (
-        <pre className="overflow-x-auto rounded-md border border-line bg-surface-2 p-3 font-mono text-[13px] leading-snug">
+        <pre className="overflow-x-auto rounded-md border border-line bg-surface-2 p-3 font-mono text-sm leading-relaxed">
           <code>{s.code}</code>
         </pre>
       );
@@ -141,7 +141,7 @@ function SectionBody({ section: s, accent }: { section: LevelSection; accent: st
           {s.pairs.map(([q, a]) => (
             <div key={q}>
               <dt className="font-semibold"><InlineCode text={q} /></dt>
-              <dd className="mt-0.5 text-muted"><InlineCode text={a} /></dd>
+              <dd className="mt-1 text-ink/80"><InlineCode text={a} /></dd>
             </div>
           ))}
         </dl>
@@ -150,11 +150,11 @@ function SectionBody({ section: s, accent }: { section: LevelSection; accent: st
       return (
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-dashed border-line p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Before</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted">Before</p>
             <p className="mt-1"><InlineCode text={s.before} /></p>
           </div>
           <div className="rounded-md border p-3" style={{ borderColor: accent }}>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">After</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted">After</p>
             <p className="mt-1"><InlineCode text={s.after} /></p>
           </div>
         </div>
@@ -164,7 +164,7 @@ function SectionBody({ section: s, accent }: { section: LevelSection; accent: st
         <div>
           <p><InlineCode text={s.text} /></p>
           {s.breaks && (
-            <p className="mt-1.5 text-muted">
+            <p className="mt-2 text-ink/80">
               <span className="font-medium text-ink">Where it breaks: </span>
               <InlineCode text={s.breaks} />
             </p>

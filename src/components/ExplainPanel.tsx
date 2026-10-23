@@ -37,7 +37,7 @@ export function explainRows(note: TopicNote, level: ExplainLevel): [string, stri
 export function LevelSwitch({ id }: { id: string }) {
   const level = useExplainLevel();
   return (
-    <div role="radiogroup" aria-label="Explanation level" className="inline-flex rounded-md border border-line bg-surface p-0.5 text-xs">
+    <div role="radiogroup" aria-label="Explanation level" className="inline-flex rounded-md border border-line bg-surface p-0.5 text-sm">
       {EXPLAIN_LEVELS.map((l) => (
         <button
           key={l}
@@ -46,7 +46,7 @@ export function LevelSwitch({ id }: { id: string }) {
           aria-checked={level === l}
           id={`${id}-${l}`}
           onClick={() => setExplainLevel(l)}
-          className="rounded px-2 py-1 text-muted hover:text-ink aria-checked:bg-ink aria-checked:text-bg"
+          className="rounded px-3 py-1.5 text-muted hover:text-ink aria-checked:bg-ink aria-checked:text-bg"
         >
           {LEVEL_LABEL[l]}
         </button>
@@ -61,21 +61,21 @@ export function ExplainBody({ note, id, topicHref }: { note: TopicNote; id: stri
   const rows = explainRows(note, note.depth ? level : "beginner");
   const linked = linkTerms(rows.map(([, text]) => text));
   return (
-    <div className="mt-2 rounded-md border border-line bg-bg p-3">
+    <div className="mt-2 rounded-md border border-line bg-bg p-4">
       {note.depth && (
         <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
           <LevelSwitch id={id} />
           {topicHref && (
-            <Link href={topicHref} className="text-xs text-muted underline underline-offset-2 hover:text-ink">
+            <Link href={topicHref} className="text-sm text-muted underline underline-offset-2 hover:text-ink">
               Full topic page →
             </Link>
           )}
         </div>
       )}
-      <dl className="space-y-2 text-sm leading-relaxed" aria-live="polite">
+      <dl className="space-y-3 text-base leading-7" aria-live="polite">
         {rows.map(([label], i) => (
           <div key={label}>
-            <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</dt>
+            <dt className="text-xs font-semibold uppercase tracking-wider text-muted">{label}</dt>
             <dd>
               <Segments segments={linked[i]} />
             </dd>
