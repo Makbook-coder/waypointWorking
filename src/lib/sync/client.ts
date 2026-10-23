@@ -58,15 +58,20 @@ async function onSession(user: { id: string; email?: string } | null) {
   engine = null;
   userId = user?.id ?? null;
   if (!user) return set({ ready: true, email: null, status: IDLE });
-  const { supabaseRemote } = await import("./supabase");
-  // A different account on this device: forget the other account's sync position.
-  const owner = localKV.get("aet:sync-user");
-  if (owner && owner !== user.id) localKV.remove(META_KEY);
-  localKV.set("aet:sync-user", user.id);
-  engine = createSync({ store, remote: supabaseRemote(await client(), user.id), kv: localKV });
-  engine.onStatus((status) => set({ status }));
+  // Show who is signed in first, so the header never depends on the sync engine starting cleanly.
   set({ ready: true, email: user.email ?? null });
-  void engine.start();
+  try {
+    const { supabaseRemote } = await import("./supabase");
+    // A different account on this device: forget the other account's sync position.
+    const owner = localKV.get("aet:sync-user");
+    if (owner && owner !== user.id) localKV.remove(META_KEY);
+    localKV.set("aet:sync-user", user.id);
+    engine = createSync({ store, remote: supabaseRemote(await client(), user.id), kv: localKV });
+    engine.onStatus((status) => set({ status }));
+    void engine.start();
+  } catch (err) {
+    set({ status: { ...IDLE, phase: "error", error: err instanceof Error ? err.message : String(err) } });
+  }
 }
 
 export const syncClient = {
