@@ -64,6 +64,9 @@ export default async function LevelPage({ params }: Props) {
             <Link href={`/cheatsheet/${level.id}`} className="rounded-md border border-line px-2.5 py-1 text-sm hover:bg-surface-2">
               Cheat sheet
             </Link>
+            <Link href={`/pack/${level.id}`} className="rounded-md border border-line px-2.5 py-1 text-sm hover:bg-surface-2">
+              Print pack
+            </Link>
             <BookmarkButton itemKey={`level:${level.id}`} label={`Level ${level.id} ${level.title}`} />
           </div>
         </div>
