@@ -18,6 +18,8 @@ import { TeachBack } from "@/components/TeachBack";
 import { getTopicNote } from "@/lib/topic-notes";
 import { topicVideo } from "@/lib/youtube";
 import { projectsForTopic } from "@/lib/projects";
+import { TrySnippets } from "@/components/RunnableSnippet";
+import { snippetsForTopic } from "@/lib/snippets";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -47,6 +49,7 @@ export default async function TopicPage({ params }: Props) {
   const next = mod.topics[idx + 1];
   const video = topicVideo(topic, mod);
   const projects = projectsForTopic(topic.id);
+  const tryIt = snippetsForTopic(topic.id);
 
   const l = note?.levels;
   const allText = note
@@ -87,6 +90,8 @@ export default async function TopicPage({ params }: Props) {
           <Card>
             {note ? <TopicSections note={note} id={`lvl-${topic.id}`} accent={style.var} /> : <p>{topic.description}</p>}
           </Card>
+
+          {tryIt.length > 0 && <TrySnippets snippets={tryIt} />}
 
           {projects.length > 0 && (
             <section aria-labelledby="proj-h">
