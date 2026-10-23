@@ -1,4 +1,4 @@
-import { LLM, practice, pj } from "../../build";
+import { practice, pj } from "../../build";
 import type { ProjectSrc } from "../../types";
 
 const code = (...lines: string[]) => lines.join("\n");
