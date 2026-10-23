@@ -9,10 +9,11 @@ import { PHASE_STYLE } from "@/lib/phase";
 
 type Props = { params: Promise<{ id: string }> };
 
-export const dynamicParams = false;
+// Rendered on first visit and then cached, instead of at build time, so it adds nothing to every deployment (Vercel keeps them all).
+export const dynamicParams = true;
 
 export function generateStaticParams() {
-  return levels.map((l) => ({ id: String(l.id) }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

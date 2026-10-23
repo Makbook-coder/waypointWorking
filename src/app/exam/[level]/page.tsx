@@ -8,10 +8,11 @@ import { EXAM_LEVELS } from "@/lib/exam";
 
 type Props = { params: Promise<{ level: string }> };
 
-export const dynamicParams = false;
+// Rendered on first visit and then cached, instead of at build time, so it adds nothing to every deployment (Vercel keeps them all).
+export const dynamicParams = true;
 
 export function generateStaticParams() {
-  return EXAM_LEVELS.map((l) => ({ level: String(l) }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -5,3 +5,9 @@ supabase
 *.md
 !README.md
 vitest.config.mts
+# Scraper/build-data tooling and snapshots; the app reads the generated data/*.json, not these.
+data/raw
+scripts/scrape.ts
+scripts/build-resources.ts
+scripts/build-practice.ts
+.github
