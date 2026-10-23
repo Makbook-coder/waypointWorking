@@ -1,4 +1,4 @@
-import { LLM, moduleCapstone, pj, topicProjects } from "../build";
+import { moduleCapstone, pj, topicProjects } from "../build";
 import type { ProjectSrc } from "../types";
 
 const PY = ["Python 3.11 or newer"];
