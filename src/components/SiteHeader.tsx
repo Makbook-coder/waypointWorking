@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FocusPill } from "./FocusPill";
+import { ProfileMenu } from "./ProfileMenu";
 
 const LINKS = [
   { href: "/", label: "Dashboard" },
@@ -50,6 +51,7 @@ export function SiteHeader() {
         <div className="ml-auto lg:ml-0">
           <FocusPill />
         </div>
+        <ProfileMenu />
         <button
           type="button"
           className="rounded-md border border-line px-3 py-1.5 text-sm lg:hidden"
