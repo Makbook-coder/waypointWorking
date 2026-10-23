@@ -1,0 +1,7 @@
+# Not needed to build or run the app; keeps the uploaded source small.
+tests
+docs
+supabase
+*.md
+!README.md
+vitest.config.mts

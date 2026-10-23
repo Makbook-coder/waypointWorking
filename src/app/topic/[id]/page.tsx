@@ -19,10 +19,12 @@ import { projectsForTopic } from "@/lib/projects";
 
 type Props = { params: Promise<{ id: string }> };
 
-export const dynamicParams = false;
+// Rendered on first visit and then cached, instead of at build time. Prerendering them all put ~120 MB of HTML
+// into every deployment, and Vercel keeps every deployment, so the Hobby 10 GB storage cap was hit.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
-  return allTopics.map((t) => ({ id: t.id }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { store } from "@/lib/store";
-import { KIND_BLURB, KIND_LABEL, SIZE_LABEL, projectProgress, type ProjectSrc } from "@/lib/projects";
+import { KIND_BLURB, KIND_LABEL, SIZE_LABEL, projectProgress, type ProjectSrc } from "@/lib/projects-ui";
 import { useUserState } from "@/lib/use-store";
 import { InlineCode } from "./InlineCode";
 import { Badge, ProgressBar } from "./ui";

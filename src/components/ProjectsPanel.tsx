@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { projectProgress, type ProjectSrc } from "@/lib/projects";
+import { projectProgress, type ProjectSrc } from "@/lib/projects-ui";
 import { topicHref } from "@/lib/data";
 import type { Module } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";

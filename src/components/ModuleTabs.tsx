@@ -15,7 +15,7 @@ import { WatchLink } from "./WatchLink";
 import type { WatchItem } from "@/lib/video-lessons";
 import { AppliedPanel } from "./AppliedPanel";
 import { ProjectsPanel } from "./ProjectsPanel";
-import type { ProjectSrc } from "@/lib/projects";
+import type { ProjectSrc } from "@/lib/projects-ui";
 import { BookmarkButton } from "./BookmarkButton";
 import { CapstoneGuide } from "./CapstoneGuide";
 import { CodingCard } from "./CodingCard";
