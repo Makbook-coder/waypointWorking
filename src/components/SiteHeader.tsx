@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/glossary", label: "Glossary" },
   { href: "/plan", label: "Plan" },
   { href: "/progress", label: "Progress" },
+  { href: "/mistakes", label: "Mistakes" },
   { href: "/bookmarks", label: "Bookmarks" },
   { href: "/search", label: "Search" },
   { href: "/settings", label: "Settings" },
