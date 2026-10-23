@@ -7,5 +7,6 @@ import { PRACTICE_L4 } from "./l4";
 import { PRACTICE_L5 } from "./l5";
 import { PRACTICE_L6 } from "./l6";
 import { PRACTICE_L7 } from "./l7";
+import { PRACTICE_L8 } from "./l8";
 
-export const PRACTICE: ProjectSrc[] = [...PRACTICE_L0, ...PRACTICE_L1, ...PRACTICE_L2, ...PRACTICE_L3, ...PRACTICE_L4, ...PRACTICE_L5, ...PRACTICE_L6, ...PRACTICE_L7];
+export const PRACTICE: ProjectSrc[] = [...PRACTICE_L0, ...PRACTICE_L1, ...PRACTICE_L2, ...PRACTICE_L3, ...PRACTICE_L4, ...PRACTICE_L5, ...PRACTICE_L6, ...PRACTICE_L7, ...PRACTICE_L8];

@@ -1,0 +1,87 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M84: ProjectSrc[] = [
+  practice("m8-4-least-privilege-for-agents", "review",
+    pj("Review an agent's permissions", 30, "Review the permissions of an agent and cut them to what its job needs.",
+      [
+        ["Read the agent description below and list every permission it holds.", "Include files, network and accounts."],
+        ["For each permission, write which task needs it, or mark it unused.", "Be strict. Try it on one small example first."],
+        ["Write the smallest set of permissions that still does the job.", "Explain each one you kept."],
+        ["Describe the worst thing an attacker could do before and after your cuts.", "Compare the two. Write down what you see before changing anything."],
+      ],
+      "A permission review that cuts the agent to the smallest set and compares the worst case before and after.",
+      ["Every permission listed", "Unused permissions marked", "Worst case compared"],
+      "Look at read-only versus consequential actions next.", ["A text editor"]),
+    { starter: code(
+      "Agent: answers questions about order status for customers.",
+      "Holds: admin database login, read and write to all tables, email send, shell access,",
+      "the company payment API key, and access to the whole shared drive.") }),
+  practice("m8-4-read-only-vs-consequential-actions", "debug",
+    pj("The read that was not read-only", 40, "Find a tool that looks harmless but changes something and fix its labelling.",
+      [
+        ["Run the starter agent with its tool list and note which tools it can call freely.", "Write the list. Compare with a case you know the answer to."],
+        ["Read each tool's code and mark whether it only reads or also changes something.", "Look for hidden writes such as logging, marking as read or sending."],
+        ["Fix the labels and move consequential tools behind an approval step.", "Keep read-only tools free."],
+        ["Rerun an attack that used the hidden write and show it now needs approval.", "Report the result."],
+      ],
+      "An agent whose tools are labelled by what they really do, with the hidden write now needing approval.",
+      ["Every tool classified", "Hidden write found", "Attack now needs approval"],
+      "Look at validating tool use outside the model next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "TOOLS = {'get_ticket': {'readonly': True}, 'search_inbox': {'readonly': True}}",
+      "def search_inbox(q):",
+      "    results = db.find(q)",
+      "    db.mark_as_read(results)        # a quiet write inside a read tool",
+      "    return results") }),
+  practice("m8-4-validating-tool-use-outside-the-llm", "extend",
+    pj("Check arguments in code", 40, "Extend an agent so tool arguments are checked by code before any tool runs.",
+      [
+        ["Run the starter agent with a request that makes it call a tool with a bad argument.", "Note what happened."],
+        ["Write a schema for each tool with types, ranges and allowed values.", "Reject anything else."],
+        ["Add a check that the tool is allowed for this user and this step.", "Return a clear reason when refused."],
+        ["Test with five good and five bad calls and report the results.", "Include one that tries to name another user."],
+      ],
+      "An agent whose tool calls are checked against schemas and permissions in code, with ten test calls reported.",
+      ["Bad call reproduced", "Schemas and permission check added", "Ten test calls reported"],
+      "Look at human approval next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "def run_tool(name, args):",
+      "    return TOOLS[name](**args)      # args come straight from the model") }),
+  practice("m8-4-human-approval-for-irreversible-actions", "challenge",
+    pj("Design the approval screen", 45, "Design and build an approval step people can judge quickly and honestly, with no steps given.",
+      [],
+      "An approval step that shows exactly what will happen and cannot be skipped by the model.",
+      ["The approval shows the real action and its arguments", "The model cannot approve its own action", "A timeout that denies by default", "A log of who approved what and when"],
+      "Look at step, runtime and cost limits next.", ["Python 3.11 or newer", LLM]),
+    { hints: ["Show the real values the tool will receive, not a summary written by the model.", "Keep the approval path outside the model's reach, for example a separate process or flag.", "Test a case where the model tries to describe a risky action as harmless."] }),
+  practice("m8-4-step-runtime-and-cost-limits", "optimise",
+    pj("Stop the runaway loop", 40, "Reduce the damage of a looping agent by adding sensible limits.",
+      [
+        ["Run the starter agent on a task that makes it loop and record the steps, time and tokens used.", "Save the numbers. Keep a note of each result."],
+        ["Add limits for steps, seconds and tokens, each with a clear stop message.", "Choose values from a normal run."],
+        ["Add a detector for repeated identical calls that stops early.", "Count repeats within a window."],
+        ["Rerun the looping task and report how much was saved.", "Check that a normal task still finishes."],
+      ],
+      "An agent that stops a looping task early with several limits and still finishes a normal task.",
+      ["Loop measured", "Limits and repeat detector added", "Normal task still finishes"],
+      "Look at sandboxing generated code next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "while True:",
+      "    action = llm(history)",
+      "    if action == 'done': break",
+      "    history.append(run_tool(action))") }),
+  practice("m8-4-sandboxing-generated-code", "reimplement",
+    pj("Rebuild a code runner safely", 50, "Rebuild a runner for model-written code so it runs with strict limits.",
+      [
+        ["Write down what the generated code must not do, such as reading secrets or using the network.", "Make a list of at least five things."],
+        ["Run code in a separate process with a time limit, memory limit and an empty environment.", "Use a temporary folder."],
+        ["Block network access and restrict file access to the temporary folder.", "Use the tools your system offers."],
+        ["Test with code that tries each forbidden thing and report what happened.", "Every attempt should fail safely."],
+      ],
+      "A code runner that applies time, memory, network and file limits and fails safely on five forbidden actions.",
+      ["Forbidden list written", "Limits applied", "Five attempts fail safely"],
+      "Look at retrieved documents as data next.", ["Python 3.11 or newer"])),
+];
