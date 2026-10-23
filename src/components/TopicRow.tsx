@@ -7,6 +7,8 @@ import type { TopicNote } from "@/lib/topic-notes";
 import { topicHref } from "@/lib/data";
 import type { Topic } from "@/lib/types";
 import { topicVideo } from "@/lib/youtube";
+import { topicDifficulty } from "@/lib/difficulty";
+import { DifficultyBadge } from "./Difficulty";
 import { BookmarkButton } from "./BookmarkButton";
 import { ExplainBody } from "./ExplainPanel";
 import { NoteEditor } from "./NoteEditor";
@@ -53,6 +55,7 @@ export function TopicRow({
           )}
           {simple && <ExplainSimply note={simple} topicId={topic.id} />}
           <div className="mt-2 flex flex-wrap items-center gap-2">
+            <DifficultyBadge level={topicDifficulty(topic.id)} />
             <fieldset className="flex items-center gap-1">
               <legend className="sr-only">Confidence for {topic.title}</legend>
               {([1, 2, 3] as Confidence[]).map((c) => {

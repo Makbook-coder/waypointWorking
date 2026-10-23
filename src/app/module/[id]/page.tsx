@@ -1,3 +1,5 @@
+import { DifficultyBadge } from "@/components/Difficulty";
+import { moduleDifficulty } from "@/lib/difficulty";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -72,7 +74,8 @@ export default async function ModulePage({ params }: Props) {
           {mod.title}
         </h1>
         <p className="num mt-1 text-sm text-muted">
-          {mod.sessionCount} session{mod.sessionCount === 1 ? "" : "s"} · {mod.topics.length} topics
+          {mod.sessionCount} session{mod.sessionCount === 1 ? "" : "s"} · {mod.topics.length} topics{" "}
+          <DifficultyBadge level={moduleDifficulty(mod.id)} />
         </p>
         <div className="mt-4 max-w-xl">
           <ProgressFor topicIds={moduleTopicIds(mod)} label={`${mod.id} progress`} color={style.var} />

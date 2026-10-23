@@ -4,6 +4,8 @@ import { useId, useState } from "react";
 import { store } from "@/lib/store";
 import { KIND_BLURB, KIND_LABEL, SIZE_LABEL, projectProgress, type ProjectSrc } from "@/lib/projects-ui";
 import { useUserState } from "@/lib/use-store";
+import { projectDifficulty } from "@/lib/difficulty";
+import { DifficultyBadge } from "./Difficulty";
 import { InlineCode } from "./InlineCode";
 import { Badge, ProgressBar } from "./ui";
 
@@ -22,6 +24,7 @@ export function ProjectGuide({ project: p, color, defaultOpen = false }: { proje
       <summary className="cursor-pointer list-none p-4">
         <div className="flex flex-wrap items-center gap-2">
           <Badge>{p.size === "practice" ? `Practice · ${KIND_LABEL[kind]}` : SIZE_LABEL[p.size]}</Badge>
+          <DifficultyBadge level={projectDifficulty(p)} />
           <Badge title="Rough focused time">~{hours}</Badge>
           {prog.finished && <Badge title="Every step and check ticked">✓ done</Badge>}
         </div>

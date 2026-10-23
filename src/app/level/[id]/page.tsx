@@ -18,6 +18,8 @@ import { EXAM_LEVELS } from "@/lib/exam";
 import { labsForLevel } from "@/lib/labs";
 import { mistakesForLevel } from "@/lib/mistakes";
 import { LevelMistakes } from "@/components/LevelMistakes";
+import { DifficultyBadge, DifficultyScope } from "@/components/Difficulty";
+import { moduleDifficulty } from "@/lib/difficulty";
 import { WatchLink } from "@/components/WatchLink";
 import { levelWatchList } from "@/lib/video-lessons";
 import type { ProjectItem } from "@/lib/types";
@@ -108,13 +110,17 @@ export default async function LevelPage({ params }: Props) {
         <div className="space-y-4">
           <LevelMistakes levelId={level.id} mistakes={mistakesForLevel(level.id)} color={style.var} />
           <SectionTitle>Modules</SectionTitle>
+          <DifficultyScope>
+          <div className="space-y-4">
           {level.modules.map((m) => (
-            <Card key={m.id} as="article">
+            <div key={m.id} data-difficulty={moduleDifficulty(m.id)}>
+            <Card as="article">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="font-mono text-xs text-muted">
                     {m.id} · {m.sessionCount} session{m.sessionCount === 1 ? "" : "s"}
-                    {m.isCapstone ? " · capstone" : ""}
+                    {m.isCapstone ? " · capstone" : ""}{" "}
+                    <DifficultyBadge level={moduleDifficulty(m.id)} />
                   </p>
                   <h2 className="text-lg font-semibold">
                     <Link href={moduleHref(m.id)} className="hover:underline hover:underline-offset-2">
@@ -135,7 +141,10 @@ export default async function LevelPage({ params }: Props) {
                 ))}
               </ul>
             </Card>
+            </div>
           ))}
+          </div>
+          </DifficultyScope>
         </div>
 
         <aside className="space-y-4">
