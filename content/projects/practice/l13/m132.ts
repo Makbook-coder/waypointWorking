@@ -1,0 +1,131 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+const PY = ["Python 3.11 or newer"];
+const AI = ["Python 3.11 or newer", LLM];
+
+export const P_M132: ProjectSrc[] = [
+  practice("m13-2-specify-the-behavior-first", "extend",
+    pj("Close the gaps in a spec", 30, "Extend a vague behaviour spec until two people would label examples the same way.",
+      [
+        ["Read the starter spec and note vague words.", "Underline. Check one example by hand to be sure."],
+        ["Replace each with a measurable rule.", "Numbers or examples."],
+        ["Add three edge cases and the expected behaviour.", "Cases. Save your work so you can compare later."],
+        ["Label five outputs with the new spec and with a friend, then compare.", "Agreement. Ask what changed since the last run."],
+      ],
+      "A tightened spec with measurable rules, edge cases and an agreement check on five outputs.",
+      ["Vague words replaced", "Edge cases added", "Agreement checked"],
+      "Look at where examples come from next.", PY),
+    { starter: code(
+      "Spec: The assistant should be helpful, concise and professional. It should not say anything inappropriate.") }),
+  practice("m13-2-where-examples-come-from", "review",
+    pj("Review a data plan", 30, "Review a plan to collect training data and find risks in each source.",
+      [
+        ["Read the starter plan and list the sources.", "Four. Print the intermediate values to see them."],
+        ["Mark the quality and legal risk of each.", "Ratings. Start with a single input before using many."],
+        ["Find where the data could leak the test set.", "Risk. Take it one small step at a time."],
+        ["Write the changes you would make.", "Three. Write down what you see before changing anything."],
+      ],
+      "A review of a data collection plan with source risks and three changes.",
+      ["Sources listed", "Risks marked", "Changes written"],
+      "Look at matching the chat template next.", ["A text editor"]),
+    { starter: code(
+      "Sources: 1 customer chat logs including names; 2 answers copied from a competitor's help pages; 3 outputs from a stronger model with no filtering; 4 our evaluation questions, reused as training data to save time.") }),
+  practice("m13-2-match-the-chat-template", "debug",
+    pj("Outputs full of stray tokens", 35, "Find why a tuned model emits stray role markers and fix the data formatting.",
+      [
+        ["Read the starter sample and the model output.", "Compare. Re-read the step and try the smallest version first."],
+        ["Find where the training text differs from the serving template.", "Diff. Check one example by hand to be sure."],
+        ["Write the corrected formatting step.", "Code. Save your work so you can compare later."],
+        ["Show a formatted example that matches the serving format.", "Print. Ask what changed since the last run."],
+      ],
+      "A fixed formatting step that matches the serving template with a printed example.",
+      ["Difference found", "Formatting fixed", "Example printed"],
+      "Look at loss on responses not prompts next.", ["Python 3.11 or newer", "transformers"]),
+    { starter: code(
+      "Training text: 'User: hi\\nAssistant: hello there'",
+      "Serving template: '<|im_start|>user\\nhi<|im_end|>\\n<|im_start|>assistant\\n'",
+      "Model output: 'hello there\\nUser: how are you'") }),
+  practice("m13-2-loss-on-responses-not-prompts", "reimplement",
+    pj("Build the loss mask yourself", 35, "Write the response-only loss mask from scratch for multi-turn chats.",
+      [
+        ["Tokenise a two-turn chat and find the token spans for each role.", "Offsets. Print the intermediate values to see them."],
+        ["Build labels that keep only assistant tokens.", "-100 elsewhere. Start with a single input before using many."],
+        ["Test with a system prompt and three turns.", "Cases. Take it one small step at a time."],
+        ["Write an assertion that catches a prompt token with a label.", "Test. Write down what you see before changing anything."],
+      ],
+      "A hand-written response-only mask handling multi-turn chats with a test.",
+      ["Spans found and confirmed", "Labels built", "Assertion passes"],
+      "Look at few clean against many noisy next.", ["Python 3.11 or newer", "transformers"])),
+  practice("m13-2-few-clean-beats-many-noisy", "challenge",
+    pj("Prove quality beats quantity", 55, "Show on your own task whether a small clean set beats a large noisy one, with no steps given.",
+      [],
+      "A controlled comparison of small clean and large noisy training sets with scores and spread.",
+      ["Two datasets of different size and quality built from the same source", "Same training settings for both", "Scores on one held-out set with repeated runs for spread", "A conclusion that says what the result does and does not show"],
+      "Look at cleaning bad examples next.", AI),
+    { hints: ["Keep the amount of training steps comparable or the size difference confuses the result.", "Define noise concretely, such as wrong labels in 20 percent of examples.", "Repeat runs; small datasets give noisy scores."] }),
+  practice("m13-2-cleaning-bad-examples", "optimise",
+    pj("Remove the junk with fewer false removals", 35, "Tune a cleaning filter that removes too many good examples.",
+      [
+        ["Read the starter filter and the removal counts.", "Numbers. Re-read the step and try the smallest version first."],
+        ["Sample 20 removed examples and mark the false removals.", "Rate. Check one example by hand to be sure."],
+        ["Loosen the rules that cause them.", "Edit. Save your work so you can compare later."],
+        ["Re-measure false removals and remaining junk on a labelled sample.", "Both. Ask what changed since the last run."],
+      ],
+      "A cleaning filter with a lower false removal rate and measured remaining junk.",
+      ["Removals sampled", "Rules loosened", "Both rates measured"],
+      "Look at balancing edge cases next.", PY),
+    { starter: code(
+      "filter: drop if len(output) < 80 or 'sorry' in output.lower() or output.count('\\n') > 5. Result: 4,100 of 5,000 removed.") }),
+  practice("m13-2-balancing-edge-cases", "extend",
+    pj("Add the missing hard cases", 35, "Extend a dataset with the hard cases it lacks.",
+      [
+        ["Read the starter case counts.", "Table. Print the intermediate values to see them."],
+        ["Pick the thinnest important case.", "Choose. Start with a single input before using many."],
+        ["Write ten new examples for it.", "Realistic. Take it one small step at a time."],
+        ["Re-count and check you did not copy existing ones.", "Duplicates. Write down what you see before changing anything."],
+      ],
+      "A dataset extended with ten hard-case examples and updated counts.",
+      ["Thin case chosen", "Ten examples written", "Duplicates checked"],
+      "Look at leak-free splits next.", AI),
+    { starter: code(
+      "Case counts: simple refund 620 | simple shipping 540 | refund after 90 days 4 | angry customer 7 | request in Spanish 2 | out of scope question 3") }),
+  practice("m13-2-leak-free-splits", "debug",
+    pj("Test scores too good to be true", 30, "Find the leak that makes a test score near perfect and fix the split.",
+      [
+        ["Read the starter split description and the score.", "Notice. Re-read the step and try the smallest version first."],
+        ["Look for related examples on both sides.", "Groups. Check one example by hand to be sure."],
+        ["Rebuild the split by group.", "Code. Save your work so you can compare later."],
+        ["Show the leak is gone and the score is lower.", "Numbers. Ask what changed since the last run."],
+      ],
+      "A rebuilt grouped split with the leak shown and removed and the score compared.",
+      ["Leak found and confirmed", "Grouped split built", "Score compared"],
+      "Look at PII and licensed content next.", PY),
+    { starter: code(
+      "5,000 chats from 300 customers, split randomly 80/20. Test accuracy 98%. On a new customer's chats accuracy is 71%. Each customer has about 17 near-identical chats.") }),
+  practice("m13-2-pii-and-licensed-content", "review",
+    pj("Review a redaction", 30, "Review a redaction step and find personal data it misses.",
+      [
+        ["Read the starter redaction rules and sample output.", "Both. Print the intermediate values to see them."],
+        ["Find five kinds of personal data it misses.", "Examples. Start with a single input before using many."],
+        ["Find one place it over-redacts.", "Example. Take it one small step at a time."],
+        ["Write better rules or a check.", "Plan. Write down what you see before changing anything."],
+      ],
+      "A review of a redaction step with missed kinds, an over-redaction case and a better plan.",
+      ["Misses found", "Over-redaction found", "Plan written"],
+      "Look at versioning the dataset next.", ["A text editor"]),
+    { starter: code(
+      "Rules: replace emails with [EMAIL]; replace 10 digit numbers with [PHONE]. Sample: 'Hi, I'm Priya Nair, call +91 98765-43210 or write priya.n at gmail dot com. My order 1234567890 is late.'") }),
+  practice("m13-2-versioning-the-dataset", "reimplement",
+    pj("A tiny dataset registry", 35, "Build a minimal dataset registry with hashes, versions and rebuild checks.",
+      [
+        ["Write a function that hashes a dataset folder deterministically.", "Order independent."],
+        ["Write a registry file with version, hash, counts and recipe.", "JSON. Re-read the step and try the smallest version first."],
+        ["Add a command that rebuilds a version and checks the hash.", "Verify. Check one example by hand to be sure."],
+        ["Show it detects a changed example.", "Test. Save your work so you can compare later."],
+      ],
+      "A small dataset registry that rebuilds versions and detects changed examples.",
+      ["Hash is stable", "Registry written", "Change detected"],
+      "Return to the capstone: a training-ready dataset.", PY)),
+];
