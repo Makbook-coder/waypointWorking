@@ -1,0 +1,67 @@
+import { LLM, levelCapstone, moduleCapstone, pj, topicProjects } from "../build";
+import type { ProjectSrc } from "../types";
+
+const DOC = ["A text editor", "Your finished projects"];
+
+export const M147: ProjectSrc[] = [
+  ...topicProjects("m14-7-write-up-publish-and-present", [
+    pj("Write one project up", 45, "Write a one-page write-up of one finished project that a stranger can follow.",
+      [
+        ["Pick the project you are proudest of.", "One. Start with a single input before using many."],
+        ["Write the problem, the approach and the result in plain words.", "Three paragraphs. Take it one small step at a time."],
+        ["Add one table or chart with a real number.", "Evidence. Write down what you see before changing anything."],
+        ["Ask someone unfamiliar to read it and note where they got lost.", "Feedback. Re-read the step and try the smallest version first."],
+      ],
+      "A one-page project write-up with one result and a note of where a reader got lost.",
+      ["Three parts written", "Evidence included", "Reader feedback noted"],
+      "Next, publish and present it.", DOC),
+    pj("Publish and present", 90, "Publish the write-up, clean the repository and give a short talk.",
+      [
+        ["Clean the repository: README, setup, license and no secrets.", "Fresh clone test. Check one example by hand to be sure."],
+        ["Publish the write-up on a site or a repository page.", "Public link. Save your work so you can compare later."],
+        ["Prepare a five-minute talk with a demo.", "Rehearse. Ask what changed since the last run."],
+        ["Give the talk to one person and record their questions.", "Feedback. Print the intermediate values to see them."],
+        ["Answer the questions in an FAQ section.", "Add it. Start with a single input before using many."],
+        ["Fix the three biggest gaps they found.", "Update. Take it one small step at a time."],
+      ],
+      "A published write-up and clean repository with a five-minute talk, an FAQ and fixes from feedback.",
+      ["Repository runs from a fresh clone", "Write-up is public", "Talk given and feedback applied"],
+      "Next, the module capstone builds your portfolio.", DOC),
+  ]),
+  moduleCapstone("M14.7", ["m14-7-write-up-publish-and-present"], pj("Portfolio and positioning", 480,
+    "Assemble a portfolio of your best work with write-ups, a clear positioning statement and an interview-ready walkthrough.",
+    [
+      ["List your projects and pick the best three for the roles you want.", "Reasons. Write down what you see before changing anything."],
+      ["Write a positioning statement: who you help and with what evidence.", "Short. Re-read the step and try the smallest version first."],
+      ["Write up each of the three projects with problem, approach, results and limits.", "One page each. Check one example by hand to be sure."],
+      ["Clean each repository so it runs from a fresh clone.", "Test. Save your work so you can compare later."],
+      ["Build a simple portfolio page that links write-ups, demos and code.", "Published. Ask what changed since the last run."],
+      ["Prepare a five-minute walkthrough of each project including a failure and what you learned.", "Practise. Print the intermediate values to see them."],
+      ["Do a mock interview with a friend and record the questions you could not answer.", "Notes. Start with a single input before using many."],
+      ["Fix the gaps and update the portfolio.", "Version two. Take it one small step at a time."],
+      ["Ask two people for feedback on the portfolio and apply the best advice.", "Final. Write down what you see before changing anything."],
+    ],
+    "A published portfolio with a positioning statement, three clean projects with write-ups and a practised walkthrough improved after a mock interview.",
+    ["Three projects run from a fresh clone", "Portfolio page is public", "Mock interview gaps fixed"],
+    "Next, the level capstone ties the whole path together.", DOC)),
+  levelCapstone(14,
+    pj("Ship a Capstone Portfolio Project", 1200, "Ship one production-style AI project from idea to a public demo, with evaluation, monitoring, a clean repository, a write-up and a recorded walkthrough, and present it to someone who will ask hard questions.",
+      [
+        ["Choose one project that combines at least three skills from the roadmap and write what done looks like.", "Keep it narrow. Re-read the step and try the smallest version first."],
+        ["Design the architecture and write down the main decisions with the alternatives you rejected.", "Decision log. Check one example by hand to be sure."],
+        ["Build the core with tests and an evaluation set of at least 30 cases.", "Numbers. Save your work so you can compare later."],
+        ["Add operations: logging, cost tracking, rate limits and a fallback.", "Dashboards. Ask what changed since the last run."],
+        ["Add safety: input checks, injection tests and a documented risk note.", "Tested. Print the intermediate values to see them."],
+        ["Deploy it so that a stranger can use it.", "Public link. Start with a single input before using many."],
+        ["Measure quality, latency and cost on realistic usage and write them down.", "Table. Take it one small step at a time."],
+        ["Write a README and a write-up covering results, failures and what you would change.", "Honest. Write down what you see before changing anything."],
+        ["Record a short walkthrough that shows the system working and one failure.", "Video. Re-read the step and try the smallest version first."],
+        ["Present it to someone experienced and write down the hard questions.", "Notes. Check one example by hand to be sure."],
+        ["Fix the top issues from the review and publish the final version.", "Final. Save your work so you can compare later."],
+      ],
+      "A deployed AI project with tests, an evaluation set, monitoring, safety checks, a public demo, a write-up and a recorded walkthrough improved after expert questions.",
+      ["Evaluation numbers and cost recorded", "Public demo works for a stranger", "Failure and hard questions documented", "Final version shipped after review"],
+      "You have finished the roadmap; keep building and keep measuring.",
+      ["Everything from Level 14", LLM]),
+  ),
+];
