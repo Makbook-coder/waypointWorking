@@ -4,24 +4,11 @@
 import { PROJECTS, PRACTICE_LEVELS } from "../../content/projects";
 import type { ProjectKind, ProjectSize, ProjectSrc } from "../../content/projects/types";
 import { levels } from "./data";
-import type { UserState } from "./store";
+export { SIZE_LABEL, KIND_LABEL, KIND_BLURB, projectTotal, projectProgress } from "./projects-ui";
 
 export type { ProjectSrc, ProjectSize, ProjectKind } from "../../content/projects/types";
 export { PROJECTS, PROJECT_LEVELS, PRACTICE_LEVELS } from "../../content/projects";
 
-export const SIZE_LABEL: Record<ProjectSize, string> = { small: "Small", medium: "Medium", bigger: "Bigger", capstone: "Capstone", practice: "Practice" };
-
-export const KIND_LABEL: Record<ProjectKind, string> = { build: "Build", extend: "Extend", debug: "Debug", reimplement: "Reimplement", optimise: "Optimise", review: "Review", challenge: "Challenge" };
-/** What each kind asks of the learner, shown above its steps. */
-export const KIND_BLURB: Record<ProjectKind, string> = {
-  build: "Build it from nothing, step by step.",
-  extend: "Start from the code above and add to it without breaking what works.",
-  debug: "The code above is broken. Find out why and fix it.",
-  reimplement: "Rebuild a small version of a real tool to see how it works inside.",
-  optimise: "The code above works but is slow or wasteful. Measure it, then make it better.",
-  review: "Review the code above like a teammate would, then harden it.",
-  challenge: "No steps. Meet the rules and pass every check on your own.",
-};
 const NEEDS_STARTER: ProjectKind[] = ["extend", "debug", "optimise", "review"];
 
 const byRef = new Map<string, ProjectSrc[]>();
@@ -49,16 +36,6 @@ export function projectsForModule(mod: { id: string; levelId: number; isCapstone
     if (lvl) out.push(lvl);
   }
   return out;
-}
-
-/** Total checkable items: build steps plus "done" checks. */
-export const projectTotal = (p: ProjectSrc) => p.steps.length + p.done.length;
-
-export function projectProgress(p: ProjectSrc, s: Pick<UserState, "projectChecks">): { done: number; total: number; started: boolean; finished: boolean } {
-  const total = projectTotal(p);
-  let done = 0;
-  for (let i = 0; i < total; i++) if (s.projectChecks[`${p.id}#${i}`]) done++;
-  return { done, total, started: done > 0, finished: done === total };
 }
 
 const MIN = { goal: 30, step: 25, stuck: 18, expected: 30, done: 2, next: 20, topicSteps: 4, practiceSteps: 3, starter: 40, capstoneSteps: 7, capstoneDone: 3 } as const;
