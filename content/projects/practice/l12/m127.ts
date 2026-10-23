@@ -1,0 +1,136 @@
+import { practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+const STT = ["Python 3.11 or newer", "A few short audio clips", "A speech-to-text model or API"];
+const TTS = ["Python 3.11 or newer", "A text-to-speech model or API"];
+
+export const P_M127: ProjectSrc[] = [
+  practice("m12-7-what-whisper-actually-returns", "debug",
+    pj("Subtitles that drift", 35, "Find why generated subtitles drift out of sync and fix the timing.",
+      [
+        ["Read the starter segment times and compare them with the audio length.", "Spot the drift. Take it one small step at a time."],
+        ["Find where the offset starts such as after a silence or a cut.", "Log it. Write down what you see before changing anything."],
+        ["Fix the timing step and write down the result.", "Smallest change. Re-read the step and try the smallest version first."],
+        ["Re-check five lines against the audio and report the error.", "Seconds. Check one example by hand to be sure."],
+      ],
+      "A fixed subtitle timing step with the start of the drift found and the error checked on five lines.",
+      ["Drift spotted", "Cause found and confirmed", "Error rechecked"],
+      "Look at batch versus streaming transcription next.", STT),
+    { starter: code(
+      "segments: [0.0-4.2 'Welcome'], [4.2-9.0 'Today we cover'], [9.0-14.5 'pricing'], ... total audio 60.0s but last segment ends 71.3s",
+      "code: t += seg.duration for each segment, ignoring seg.start") }),
+  practice("m12-7-batch-vs-streaming-transcription", "review",
+    pj("Review a mode choice", 30, "Review a choice of batch transcription for a live captioning feature.",
+      [
+        ["Read the starter plan and the requirement.", "Compare them. Save your work so you can compare later."],
+        ["Mark where batch fails the requirement.", "Latency. Ask what changed since the last run."],
+        ["List what streaming gives up and how you would check it.", "Accuracy. Print the intermediate values to see them."],
+        ["Write your recommendation with a test.", "Short. Start with a single input before using many."],
+      ],
+      "A review of the batch choice with where it fails, what streaming costs and a test.",
+      ["Plan compared", "Failures marked", "Recommendation written"],
+      "Look at accents, code-mixing and noise next.", ["A text editor"]),
+    { starter: code(
+      "Requirement: show captions during a webinar within 2 seconds of speech. Plan: record 30 second chunks and send each as a batch job.") }),
+  practice("m12-7-accents-code-mixing-and-noise", "extend",
+    pj("Add a vocabulary hint", 35, "Extend a transcription call with a vocabulary hint and measure whether names improve.",
+      [
+        ["Read the starter call and its errors on names.", "List the names. Take it one small step at a time."],
+        ["Add a prompt or hint listing the names and terms.", "Short. Write down what you see before changing anything."],
+        ["Re-run five clips with and without the hint.", "Compare. Re-read the step and try the smallest version first."],
+        ["Report name accuracy and check other words did not get worse.", "Two numbers. Check one example by hand to be sure."],
+      ],
+      "A transcription call with a vocabulary hint and name accuracy compared with and without it.",
+      ["Names listed", "Hint added and confirmed", "Both numbers reported"],
+      "Look at speaker diarization next.", STT),
+    { starter: code(
+      "text = transcribe('call.wav')   # errors: 'Sathya' -> 'Satya', 'Hyderabad' -> 'hide your bad', 'Kubernetes' -> 'cuber nets'") }),
+  practice("m12-7-speaker-diarization", "optimise",
+    pj("Fewer speaker swaps", 40, "Reduce wrongly swapped speaker labels in a diarized transcript.",
+      [
+        ["Read the starter transcript and count the swaps.", "Against your notes."],
+        ["Find the pattern such as short turns and back-channel words.", "Look. Save your work so you can compare later."],
+        ["Add a smoothing rule for very short turns.", "A rule. Ask what changed since the last run."],
+        ["Recount the swaps and check real turn changes survived.", "Both. Print the intermediate values to see them."],
+      ],
+      "A smoothing rule that cuts speaker swaps without removing real turn changes.",
+      ["Swaps counted", "Pattern found", "Real changes preserved"],
+      "Look at word error rate in practice next.", STT),
+    { starter: code(
+      "S1: so we ship Friday | S2: yeah | S1: and the docs | S2: ok | S1: are ready | S2: mm | S1: but the demo is not",
+      "True speakers: S1 spoke all long phrases; S2 only said 'yeah', 'ok', 'mm'. Output shows 7 turns.") }),
+  practice("m12-7-word-error-rate-in-practice", "challenge",
+    pj("A WER you can trust", 55, "Build an error measure for your own use case that is fair, repeatable and explains where errors fall, with no steps given.",
+      [],
+      "A repeatable evaluation with normalisation rules and a breakdown of which words go wrong.",
+      ["At least 20 reference transcripts typed by hand", "Documented normalisation for case, numbers and filler words", "Word error rate with substitutions, deletions and insertions separated", "A list of the most common error words and the effect of changing normalisation"],
+      "Look at what a text to speech model turns text into next.", STT),
+    { hints: ["Two correct transcripts of the same speech can score differently if you do not normalise numbers and spellings.", "Report the breakdown, since a deletion and a substitution mean different things for a product.", "Check a few high-error clips by ear to be sure the reference is right."] }),
+  practice("m12-7-what-kokoro-turns-text-into", "reimplement",
+    pj("A text normaliser for speech", 40, "Write your own text normaliser that turns numbers, dates and symbols into speakable words.",
+      [
+        ["Write rules for integers, currency and percentages.", "Tests first. Start with a single input before using many."],
+        ["Add dates and times in one format each.", "More tests. Take it one small step at a time."],
+        ["Handle three abbreviations and a URL.", "Choose how to say them."],
+        ["Run 15 test sentences through speech and listen to the result.", "Mark misses. Write down what you see before changing anything."],
+      ],
+      "A text normaliser with tests for numbers, dates and abbreviations and a listening check on fifteen sentences.",
+      ["Number rules tested", "Dates handled", "Listening check done"],
+      "Look at voice choice and prosody next.", TTS)),
+  practice("m12-7-voice-choice-and-prosody", "debug",
+    pj("A voice that sounds annoyed", 30, "Find why an assistant voice sounds curt or annoyed and fix it with settings and text.",
+      [
+        ["Listen to the starter lines and describe what feels wrong.", "Words. Re-read the step and try the smallest version first."],
+        ["Check speed, voice and punctuation in the text.", "Table. Check one example by hand to be sure."],
+        ["Change one thing at a time and re-listen.", "Three tries. Save your work so you can compare later."],
+        ["Pick the best version and note what made the difference.", "One line. Ask what changed since the last run."],
+      ],
+      "A fixed voice setup with the cause of the curt sound identified and one change that helped.",
+      ["Problem described", "Variables changed one at a time", "Best version chosen"],
+      "Look at pronunciation control next.", TTS),
+    { starter: code(
+      "voice=A, speed=1.35, text='No. That is not possible. You must try again. Do it now.'",
+      "Product goal: calm, helpful support assistant.") }),
+  practice("m12-7-pronunciation-control", "review",
+    pj("Review a pronunciation fix", 30, "Review a pronunciation map and find entries that will backfire.",
+      [
+        ["Read the starter map and say each entry aloud as the model would.", "Think. Print the intermediate values to see them."],
+        ["Mark entries that change other words or contexts.", "Collisions. Start with a single input before using many."],
+        ["Suggest a safer way to handle the worst two.", "Context rule. Take it one small step at a time."],
+        ["Write a regression test list of 10 sentences.", "Include trap sentences."],
+      ],
+      "A review of a pronunciation map with risky entries marked and a regression test list.",
+      ["Entries checked", "Risky ones marked", "Ten test sentences written"],
+      "Look at streaming synthesis next.", ["A text editor"]),
+    { starter: code(
+      "map: 'read' -> 'reed' | 'SQL' -> 'sequel' | 'Dr' -> 'doctor' | 'St' -> 'saint' | 'lead' -> 'leed' | 'IT' -> 'it'") }),
+  practice("m12-7-streaming-synthesis", "extend",
+    pj("Stream the reply by sentence", 40, "Extend a one-shot speaker to stream sentence by sentence and stop on demand.",
+      [
+        ["Read the starter code and time its time to first audio.", "Baseline. Write down what you see before changing anything."],
+        ["Split text into sentences and synthesise each as it is ready.", "Queue. Re-read the step and try the smallest version first."],
+        ["Add a stop function that clears the queue.", "Cancel. Check one example by hand to be sure."],
+        ["Measure the new time to first audio and test the stop.", "Numbers. Save your work so you can compare later."],
+      ],
+      "A streaming speaker with a stop function and time to first audio compared with one-shot.",
+      ["Baseline timed", "Sentences streamed", "Stop tested and confirmed"],
+      "Look at hosted versus local speech models next.", TTS),
+    { starter: code(
+      "def speak(text):",
+      "    audio = tts(text)",
+      "    play(audio)") }),
+  practice("m12-7-hosted-vs-local-speech-models", "optimise",
+    pj("Cut the speech bill", 40, "Cut the monthly cost of a speech feature by moving the right part to a local model.",
+      [
+        ["Read the starter usage and cost.", "Compute per minute."],
+        ["Mark which calls could run locally such as short and low-risk.", "Criteria. Ask what changed since the last run."],
+        ["Estimate the cost of local for those.", "GPU time. Print the intermediate values to see them."],
+        ["Compute the new bill and check quality on a sample of the moved calls.", "Both. Start with a single input before using many."],
+      ],
+      "A split between hosted and local speech with the new monthly cost and a quality check.",
+      ["Per minute cost computed", "Calls marked", "New bill and quality checked"],
+      "Return to the capstone: a speech round trip with measurements.", STT),
+    { starter: code(
+      "Monthly usage: 300,000 minutes hosted at 0.006 per minute. 70% are short voice commands under 10 seconds; 30% are long meetings.") }),
+];

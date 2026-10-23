@@ -1,0 +1,123 @@
+import { practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+const IMG = ["Python 3.11 or newer", "An image generation API or a local diffusion setup"];
+
+export const P_M125: ProjectSrc[] = [
+  practice("m12-5-denoising-not-next-token-prediction", "review",
+    pj("Review an explanation of diffusion", 30, "Review a short explanation of image generation and correct what is misleading.",
+      [
+        ["Read the starter explanation and list each claim.", "One per line. Re-read the step and try the smallest version first."],
+        ["Mark each claim as correct, misleading or wrong.", "Give a reason. Check one example by hand to be sure."],
+        ["Rewrite the two worst claims in plain accurate words.", "Short. Save your work so you can compare later."],
+        ["Add one test someone could run to see the claim for themselves.", "A small experiment."],
+      ],
+      "A claim-by-claim review of an explanation of diffusion with corrections and a test.",
+      ["Claims listed", "Claims judged", "Rewrites and test written"],
+      "Look at what a prompt controls next.", ["A text editor"]),
+    { starter: code(
+      "The model draws the image one pixel at a time from the top left, choosing each pixel like the next word in a sentence.",
+      "More steps always give a better picture. The prompt is the only thing that changes the result.") }),
+  practice("m12-5-what-a-prompt-controls", "debug",
+    pj("A prompt that ignores the count", 30, "Find why generated images ignore the number of objects and find a prompt or setting that helps.",
+      [
+        ["Read the starter prompts and results table.", "Count the hit rate."],
+        ["Spot the pattern in when the count is wrong.", "Higher numbers? Ask what changed since the last run."],
+        ["Try two changes such as simpler wording or a layout hint.", "Four images each. Print the intermediate values to see them."],
+        ["Report the hit rate before and after and what you would tell a user.", "Numbers. Start with a single input before using many."],
+      ],
+      "A diagnosis of why counts fail with two prompt changes tested and a hit rate before and after.",
+      ["Hit rate computed", "Two changes tried", "Advice written"],
+      "Look at seeds and reproducibility next.", IMG),
+    { starter: code(
+      "'three red apples on a table' -> counts: 3,4,2,5 | 'seven candles' -> 9,5,12,6 | 'two cats' -> 2,2,3,2") }),
+  practice("m12-5-seeds-and-reproducibility", "extend",
+    pj("Make a run replayable", 35, "Extend a generation script so any image can be reproduced later.",
+      [
+        ["Read the starter script and list what it does not save.", "Missing items. Take it one small step at a time."],
+        ["Save prompt, seed, model, steps and size beside every image.", "A sidecar. Write down what you see before changing anything."],
+        ["Write a replay function that reads the sidecar and regenerates.", "Compare. Re-read the step and try the smallest version first."],
+        ["Test on three images and report whether they match.", "Yes or no. Check one example by hand to be sure."],
+      ],
+      "A generation script that saves sidecars and a replay function tested on three images.",
+      ["Missing items listed", "Sidecars saved", "Replay tested"],
+      "Look at resolution, steps and cost next.", IMG),
+    { starter: code(
+      "def make(prompt):",
+      "    img = pipe(prompt, num_inference_steps=30).images[0]",
+      "    img.save(f'out/{time.time()}.png')") }),
+  practice("m12-5-resolution-steps-and-cost", "optimise",
+    pj("Cut the bill without losing the look", 40, "Lower the cost of a generation job while keeping the images acceptable.",
+      [
+        ["Read the starter settings and compute the cost per image.", "Arithmetic. Save your work so you can compare later."],
+        ["Try lower steps and resolutions on six prompts.", "Grid. Ask what changed since the last run."],
+        ["Judge which images are still acceptable.", "Your criteria. Print the intermediate values to see them."],
+        ["Choose the cheapest acceptable setting and compute the saving.", "Percent. Start with a single input before using many."],
+      ],
+      "A cheaper generation setting with images judged acceptable and the saving computed.",
+      ["Starter cost computed", "Grid judged and confirmed", "Saving reported"],
+      "Look at img2img, inpainting and outpainting next.", IMG),
+    { starter: code(
+      "settings: 1536x1536, 60 steps, price 0.08 per image, 5,000 images per month. Used for: blog thumbnails shown at 300 pixels wide.") }),
+  practice("m12-5-img2img-inpainting-and-outpainting", "challenge",
+    pj("Fix one thing only", 55, "Change one object in a photo without damaging anything else, with no steps given.",
+      [],
+      "An edited photo where only the target changed, with a measured change outside the edit region.",
+      ["At least three photos and three different edits", "Pixel difference measured outside the edit region", "Seam quality judged at the edit boundary", "The best settings and the failures documented"],
+      "Look at style and structural control next.", IMG),
+    { hints: ["Start with a tight mask plus a small feather so the edge blends.", "Measure the difference outside the mask to prove nothing else changed.", "Lower strength keeps more of the original but may not complete the edit."] }),
+  practice("m12-5-style-and-structural-control", "reimplement",
+    pj("Edge map from scratch", 35, "Write your own edge map step and use it to control structure in generation.",
+      [
+        ["Write an edge detector with a convolution and a threshold.", "No library detector."],
+        ["Compare your edges with a library version on one photo.", "Overlay. Take it one small step at a time."],
+        ["Use your edge map as the control input for generation.", "Three prompts. Write down what you see before changing anything."],
+        ["Judge whether structure holds and what thin edges lose.", "Short note. Re-read the step and try the smallest version first."],
+      ],
+      "A hand-written edge detector compared with a library and used to control structure in three generations.",
+      ["Detector written", "Compared with library", "Structure judged"],
+      "Look at cost per accepted image next.", ["Python 3.11 or newer", "numpy", "Pillow"])),
+  practice("m12-5-cost-per-accepted-image", "debug",
+    pj("A cost report that hides the waste", 30, "Find why a cost report understates the real price of usable images and correct it.",
+      [
+        ["Read the starter report and its definitions.", "Note what it counts."],
+        ["Recompute cost per accepted image including rejected generations.", "Arithmetic. Check one example by hand to be sure."],
+        ["Add the review time of the humans picking images.", "Estimate. Save your work so you can compare later."],
+        ["Write the corrected figure and say how it changes the decision.", "Short. Ask what changed since the last run."],
+      ],
+      "A corrected cost per accepted image including rejects and review time.",
+      ["Definitions noted", "Cost recomputed", "Decision impact stated"],
+      "Look at what video adds next.", IMG),
+    { starter: code(
+      "Report: 2,000 images generated at 0.04 = 80 dollars. We shipped 200 images. 'Cost per image is 4 cents.'",
+      "Reviewers spend 20 seconds per generated image at 30 dollars per hour.") }),
+  practice("m12-5-what-video-adds-time-and-motion", "extend",
+    pj("Add a consistency score", 40, "Extend a clip checker with a frame-to-frame consistency score.",
+      [
+        ["Read the starter checker and note it reports only duration.", "List its outputs. Print the intermediate values to see them."],
+        ["Sample frames and compare consecutive ones with a simple measure.", "Pixel or embedding."],
+        ["Flag sudden jumps above a threshold.", "Pick one. Start with a single input before using many."],
+        ["Test on two clips, one smooth and one with a jump, and print the flags.", "Output. Take it one small step at a time."],
+      ],
+      "A clip checker that scores consistency and flags jumps tested on a smooth and a jumpy clip.",
+      ["Frames compared", "Threshold set", "Two clips tested"],
+      "Look at provenance, watermarks and rights next.", ["Python 3.11 or newer", "ffmpeg", "numpy"]),
+    { starter: code(
+      "def check(path):",
+      "    meta = probe(path)",
+      "    return {'seconds': meta.duration, 'fps': meta.fps}") }),
+  practice("m12-5-provenance-watermarks-and-rights", "optimise",
+    pj("A lighter provenance record", 30, "Shorten a provenance record to the fields that matter while keeping reproducibility and rights.",
+      [
+        ["Read the starter record and count its fields.", "List them. Write down what you see before changing anything."],
+        ["Mark each field as needed for reproducing, rights or neither.", "Three groups. Re-read the step and try the smallest version first."],
+        ["Remove or merge the fields that serve neither.", "A shorter record. Check one example by hand to be sure."],
+        ["Check that you can still reproduce an image and answer a rights question.", "Test both. Save your work so you can compare later."],
+      ],
+      "A shorter provenance record that still reproduces an image and answers a rights question.",
+      ["Fields grouped", "Record shortened", "Both tests pass"],
+      "Return to the capstone: an image cost and quality planner.", IMG),
+    { starter: code(
+      "record: prompt, negative_prompt, seed, steps, guidance, model_name, model_hash, gpu_name, os_version, user_name, date, time_zone, licence, client, notes, ui_theme") }),
+];
