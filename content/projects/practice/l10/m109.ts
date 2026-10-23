@@ -1,0 +1,97 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M109: ProjectSrc[] = [
+  practice("m10-9-prometheus-and-node-exporter", "extend",
+    pj("Add a memory alert", 40, "Extend a Prometheus setup with an alert for low memory and a test that proves it fires.",
+      [
+        ["Run the starter setup and write the query for available memory as a percentage.", "Check it in the page."],
+        ["Write an alert rule with a threshold and a duration.", "Add a summary. Try it on one small example first."],
+        ["Use a small tool to use memory and cross the threshold.", "Watch the alert fire."],
+        ["Release the memory and see it resolve.", "Record times. Write down what you see before changing anything."],
+      ],
+      "A memory alert rule that fires and resolves under test with times recorded.",
+      ["Memory query works", "Alert rule loaded", "Fires and resolves"],
+      "Look at application metrics next.", ["Docker"]),
+    { starter: code(
+      "scrape_configs:",
+      "  - job_name: node",
+      "    static_configs: [{targets: ['node-exporter:9100']}]       # no rules file yet") }),
+  practice("m10-9-application-metrics", "debug",
+    pj("A metric that is always zero", 40, "Find why an application metric never changes and fix it.",
+      [
+        ["Send traffic to the starter app and read the metrics route.", "Note which counters stay at zero."],
+        ["Find why, such as incrementing in a different process or a wrong label.", "Quote the line. Compare with a case you know the answer to."],
+        ["Fix the metric and check with traffic.", "Show the numbers. Keep a note of each result."],
+        ["Add a test that fails if the counter does not move.", "Run it. If it feels vague, add a number or an example."],
+      ],
+      "A fixed application metric with a test that fails if the counter does not move.",
+      ["Zero counter found", "Cause of the fault fixed", "Regression test added"],
+      "Look at Grafana dashboards next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "REQS = Counter('requests_total', 'requests', ['route'])",
+      "@app.post('/ask')",
+      "async def ask(): REQS.labels(route='ask ').inc()        # label has a trailing space, dashboards query 'ask'") }),
+  practice("m10-9-grafana-dashboards", "review",
+    pj("Review a dashboard", 30, "Review a dashboard and say whether an on-call person could use it at 3am.",
+      [
+        ["Read the dashboard description and list each panel.", "Note unclear titles."],
+        ["Find misleading panels, such as averages that hide slow requests.", "Quote them. Check it with someone else or a model if you can."],
+        ["List the questions the dashboard cannot answer.", "At least three. Do the easy part first, then return to the hard part."],
+        ["Redesign the top row so it answers is it healthy.", "Sketch it. Save your work here so you can compare later."],
+      ],
+      "A review of a dashboard with misleading panels, unanswered questions and a redesigned top row.",
+      ["Panels listed", "Misleading panels quoted", "Top row sketched"],
+      "Look at alerts that need a human next.", ["A text editor"]),
+    { starter: code(
+      "Panels: Average latency (last 30 days), CPU of all machines, total requests ever, a table of 40 metrics,",
+      "a gauge named 'Q' with no unit, error count (not a rate).") }),
+  practice("m10-9-alerts-that-need-a-human", "optimise",
+    pj("Cut the alert noise", 40, "Reduce a noisy alert set so every page needs action.",
+      [
+        ["Read the starter log of 30 alerts from a week and classify each as needed action or noise.", "Count. Try it on one small example first."],
+        ["Group the noisy alerts by cause.", "List three groups."],
+        ["Change rules by adding durations, raising thresholds or moving to a report.", "Edit at least three."],
+        ["Replay the week against the new rules.", "Count pages and check real problems still fire."],
+      ],
+      "A reduced alert set where every page needs action and real problems from the week still fire.",
+      ["Alerts classified", "Rules changed", "Replay counted"],
+      "Look at tracing in Langfuse next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "alert: HighLatency      expr: latency_p95 > 2     for: 0m       # fires 14 times a week for 10 seconds",
+      "alert: CostSpike        expr: cost_rate > 0.5     for: 0m       # fires at every traffic burst") }),
+  practice("m10-9-tracing-in-langfuse", "reimplement",
+    pj("Rebuild a trace wrapper", 45, "Rebuild a decorator that traces any function as a span with inputs, outputs and timing.",
+      [
+        ["Write what a span needs: name, start, end, inputs, outputs and parent.", "Use a small class."],
+        ["Write a decorator that creates a span and records the result or an exception.", "Test it with a function that fails."],
+        ["Support nested spans using a context variable.", "Test with three levels."],
+        ["Add a redaction hook for inputs and test it with a fake email.", "Show the output. Write down what you see before changing anything."],
+      ],
+      "A tracing decorator with nested spans, error capture and input redaction tested on three levels.",
+      ["Spans recorded", "Nesting works", "Redaction tested"],
+      "Look at online evals and user feedback next.", ["Python 3.11 or newer"])),
+  practice("m10-9-online-evals-and-user-feedback", "challenge",
+    pj("Is the evaluator right?", 50, "Check that an automatic online evaluator agrees with humans before trusting it, with no steps given.",
+      [],
+      "A calibration of an online evaluator against human labels with a trusted threshold and known limits.",
+      ["At least 40 traces labelled by a human first", "Agreement between evaluator and human reported", "A threshold chosen for alerts from the data", "A note on cases where the evaluator is wrong"],
+      "Look at failures back into the suite next.", ["Python 3.11 or newer", "Langfuse", LLM]),
+    { hints: ["Label first, then run the evaluator, so your labels are not influenced.", "Report agreement for good and bad answers separately.", "If agreement is weak, improve the evaluator prompt and measure again."] }),
+  practice("m10-9-failures-back-into-the-suite", "extend",
+    pj("Auto-propose cases from low scores", 45, "Extend a script so low-scoring traces become proposed test cases for review.",
+      [
+        ["Run the starter and see it only lists low-scoring trace ids.", "Count them. Compare with a case you know the answer to."],
+        ["Add fields to each proposal: input, output, score and a blank expected behaviour.", "Redact personal data."],
+        ["Group near-duplicates so a reviewer sees each problem once.", "Test with fake duplicates."],
+        ["Write the proposals to a review file.", "Check a reviewer could fill it quickly."],
+      ],
+      "A script that turns low-scoring traces into redacted, deduplicated test case proposals in a review file.",
+      ["Fields added", "Duplicates grouped", "Review file written"],
+      "Look at the module capstone next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "for t in traces:",
+      "    if t.score < 0.5: print(t.id)") }),
+];
