@@ -16,6 +16,7 @@ export default function PracticePage() {
           <Link href="/start" className="rounded-md border border-line bg-surface px-3 py-1.5 hover:bg-surface-2">New here? Start here</Link>
           <Link href="/labs" className="rounded-md border border-line bg-surface px-3 py-1.5 hover:bg-surface-2">Guided labs</Link>
           <Link href="/exam" className="rounded-md border border-line bg-surface px-3 py-1.5 hover:bg-surface-2">Level exams</Link>
+          <Link href="/mistakes" className="rounded-md border border-line bg-surface px-3 py-1.5 hover:bg-surface-2">Mistakes</Link>
           <Link href="/readiness" className="rounded-md border border-line bg-surface px-3 py-1.5 hover:bg-surface-2">Readiness</Link>
         </nav>
       </header>

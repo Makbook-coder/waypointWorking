@@ -83,7 +83,7 @@ export function ExamRunner({ levelId, levelTitle, items }: { levelId: number; le
     const passedTests = run && !run.fatal ? run.results.filter((t) => t.ok).length : 0;
     const r = scoreExam(paper, { quiz, codingPassed: passedTests, codingTotal: paper.coding.tests.length, scenarioScore: selfScore });
     saved.current = true;
-    for (const q of paper.quizzes) if (quiz[q.id] !== undefined && quiz[q.id] !== null) store.recordQuiz(q.id, quiz[q.id] === q.answer, getModule(q.moduleId)?.topics.map((t) => t.id));
+    for (const q of paper.quizzes) if (quiz[q.id] !== undefined && quiz[q.id] !== null) store.recordQuiz(q.id, quiz[q.id] === q.answer, getModule(q.moduleId)?.topics.map((t) => t.id), { picked: quiz[q.id] as number });
     const weakTopics = r.weakModules.flatMap((m) => getModule(m)?.topics.map((t) => t.id) ?? []);
     store.recordExam(
       {

@@ -3,10 +3,21 @@
 // replacing the StorageAdapter below and nothing else. See README "Optional Supabase sync".
 import { toDay, isDay, type DayString } from "./dates";
 import { applyLapse, applyReview, scheduleFirst, type ReviewEntry } from "./review";
+import {
+  MAX_WHY_CHARS,
+  MISS_REASONS,
+  addCalibration,
+  applyAnswer,
+  emptyCalibration,
+  type Calibration,
+  type MissReason,
+  type MistakeRecord,
+  type Sureness,
+} from "./mistake-log";
 import type { Difficulty, QuizItem, ScenarioItem } from "./types";
 
 export const STORAGE_KEY = "aet:state";
-export const SCHEMA_VERSION = 9;
+export const SCHEMA_VERSION = 10;
 
 export type Confidence = 1 | 2 | 3;
 export type Theme = "system" | "light" | "dark";
@@ -107,6 +118,8 @@ export interface UserState {
   version: typeof SCHEMA_VERSION;
   topics: Record<string, TopicProgress>;
   quiz: Record<string, QuizRecord>;
+  mistakes: Record<string, MistakeRecord>; // quiz id -> latest miss, retry streak and AI explanations
+  calibration: Calibration; // how often each sureness level was right
   exercises: Record<string, string>; // id -> completedAt
   projectChecks: Record<string, string>; // "<projectId>#<index>" -> checkedAt (level projects, mini-project steps, coding checklists)
   coding: Record<string, CodingRecord>; // coding task id -> draft and first pass
@@ -137,6 +150,8 @@ export function emptyState(): UserState {
     version: SCHEMA_VERSION,
     topics: {},
     quiz: {},
+    mistakes: {},
+    calibration: emptyCalibration(),
     exercises: {},
     projectChecks: {},
     coding: {},
@@ -205,6 +220,9 @@ const migrateV7 = (v7: Json): Json => ({ ...v7, version: 8 });
 /** v9 added settings.dailyGoal; its default comes from sanitize. */
 const migrateV8 = (v8: Json): Json => ({ ...v8, version: 9 });
 
+/** v10 added mistakes and calibration; both default to empty in sanitize. */
+const migrateV9 = (v9: Json): Json => ({ ...v9, version: 10 });
+
 const MIGRATIONS: Record<number, (s: Json) => Json> = {
   1: migrateV1,
   2: migrateV2,
@@ -214,6 +232,7 @@ const MIGRATIONS: Record<number, (s: Json) => Json> = {
   6: migrateV6,
   7: migrateV7,
   8: migrateV8,
+  9: migrateV9,
 };
 
 export function migrate(raw: unknown): Json {
@@ -261,6 +280,8 @@ export function sanitize(s: Json): UserState {
         ? { attempts: num(x.attempts, 1), correct: num(x.correct), lastCorrect: x.lastCorrect, lastAt: str(x.lastAt) }
         : undefined,
     ),
+    mistakes: mapValues(s.mistakes, sanitizeMistake),
+    calibration: sanitizeCalibration(s.calibration),
     exercises: mapValues(s.exercises, (x) => (typeof x === "string" ? x : undefined)),
     projectChecks: mapValues(s.projectChecks, (x) => (typeof x === "string" ? x : undefined)),
     coding: mapValues(s.coding, (x) => {
@@ -386,6 +407,38 @@ function sanitizeGenerated(x: unknown): GeneratedItem | undefined {
     return { ...base, type: "scenario", title: x.title, prompt: x.prompt, hints: strs(x.hints) };
   }
   return undefined;
+}
+
+const sureness = (v: unknown): Sureness | undefined => (v === 1 || v === 2 || v === 3 ? v : undefined);
+
+function sanitizeMistake(x: unknown): MistakeRecord | undefined {
+  if (!isObj(x) || num(x.misses) < 1) return undefined;
+  const picked = Math.round(num(x.picked, -1));
+  if (picked < 0 || picked > 3) return undefined;
+  const reason = MISS_REASONS.find((r) => r.id === x.reason)?.id;
+  const why = Array.isArray(x.why) && x.why.length === 4 ? x.why.map((w) => str(w).slice(0, MAX_WHY_CHARS)) : undefined;
+  const s = sureness(x.sureness);
+  return {
+    misses: Math.round(num(x.misses)),
+    firstAt: str(x.firstAt),
+    lastAt: str(x.lastAt),
+    picked,
+    ...(s ? { sureness: s } : {}),
+    ...(reason ? { reason } : {}),
+    streak: Math.max(0, Math.round(num(x.streak))),
+    ...(typeof x.fixedAt === "string" && x.fixedAt ? { fixedAt: x.fixedAt } : {}),
+    ...(why && why.some((w) => w) ? { why } : {}),
+  };
+}
+
+function sanitizeCalibration(v: unknown): Calibration {
+  const c = emptyCalibration();
+  if (!isObj(v)) return c;
+  for (const k of ["1", "2", "3"] as const) {
+    const cell = v[k];
+    if (isObj(cell)) c[Number(k) as Sureness] = { right: Math.max(0, Math.round(num(cell.right))), wrong: Math.max(0, Math.round(num(cell.wrong))) };
+  }
+  return c;
 }
 
 /** Parse whatever is in storage into a valid, current-version state. Never throws. */
@@ -524,7 +577,7 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
       });
     },
     /** Record a quiz answer. Wrong answers pull the module's completed topics back into review sooner. */
-    recordQuiz(itemId: string, correct: boolean, moduleTopicIds: string[] = []) {
+    recordQuiz(itemId: string, correct: boolean, moduleTopicIds: string[] = [], meta?: { picked: number; sureness?: Sureness }) {
       update((s) => {
         const prev = s.quiz[itemId];
         const quiz = {
@@ -536,11 +589,45 @@ export function createStore({ storage = browserStorage, now = () => new Date() }
             lastAt: stamp(),
           },
         };
-        if (correct) return { ...s, quiz };
+        const at = stamp();
+        const mistakes = { ...s.mistakes };
+        const m = applyAnswer(s.mistakes[itemId], { correct, picked: meta?.picked ?? -1, sureness: meta?.sureness }, at);
+        // an answer with no pick (exam papers) can't say what was chosen, so it only tracks retries
+        if (m && (correct || meta)) mistakes[itemId] = m;
+        const calibration = addCalibration(s.calibration, meta?.sureness, correct);
+        if (correct) return { ...s, quiz, mistakes, calibration };
         const reviews = { ...s.reviews };
         for (const t of moduleTopicIds) if (s.topics[t]?.done) reviews[t] = applyLapse(reviews[t], today());
-        return { ...s, quiz, reviews };
+        return { ...s, quiz, mistakes, calibration, reviews };
       });
+    },
+    /** Note why a question was missed. Ignored for questions that aren't in the mistake log. */
+    setMistakeReason(itemId: string, reason: MissReason | null) {
+      update((s) => {
+        const m = s.mistakes[itemId];
+        if (!m) return s;
+        const next: MistakeRecord = { ...m };
+        if (reason) next.reason = reason;
+        else delete next.reason;
+        return { ...s, mistakes: { ...s.mistakes, [itemId]: next } };
+      }, { active: false });
+    },
+    /** Keep the AI's explanation of each wrong option so it doesn't need another request. */
+    setMistakeWhy(itemId: string, why: string[]) {
+      update((s) => {
+        const m = s.mistakes[itemId];
+        if (!m || why.length !== 4) return s;
+        return { ...s, mistakes: { ...s.mistakes, [itemId]: { ...m, why: why.map((w) => w.slice(0, MAX_WHY_CHARS)) } } };
+      }, { active: false });
+    },
+    /** Drop a question from the mistake log (it can come back if it's missed again). */
+    clearMistake(itemId: string) {
+      update((s) => {
+        if (!s.mistakes[itemId]) return s;
+        const mistakes = { ...s.mistakes };
+        delete mistakes[itemId];
+        return { ...s, mistakes };
+      }, { active: false });
     },
     setExerciseDone(id: string, done: boolean) {
       update((s) => {

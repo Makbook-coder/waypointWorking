@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { levels, moduleHref } from "@/lib/data";
 import { dailyGoal, nextBestStep, topicsDoneOn } from "@/lib/daily";
 import { toDay } from "@/lib/dates";
-import { DEFAULT_DAILY_GOAL, createStore, emptyState, loadState, memoryStorage, type UserState } from "@/lib/store";
+import { DEFAULT_DAILY_GOAL, SCHEMA_VERSION, createStore, emptyState, loadState, memoryStorage, type UserState } from "@/lib/store";
 
 const TODAY = "2026-10-21";
 const at = (day: string, hour = 12) => new Date(`${day}T${String(hour).padStart(2, "0")}:00:00`).toISOString();
@@ -15,7 +15,7 @@ describe("daily goal", () => {
   it("defaults to 2 topics and migrates v8 data to it", () => {
     expect(emptyState().settings.dailyGoal).toBe(DEFAULT_DAILY_GOAL);
     const s = loadState(JSON.stringify({ version: 8, settings: { theme: "dark", weeklyHours: 4 } }));
-    expect(s.version).toBe(9);
+    expect(s.version).toBe(SCHEMA_VERSION);
     expect(s.settings).toEqual({ theme: "dark", targetRole: "none", weeklyHours: 4, dailyGoal: 2 });
   });
 

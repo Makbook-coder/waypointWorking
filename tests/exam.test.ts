@@ -74,7 +74,7 @@ describe("level exams", () => {
   });
 
   it("migrates v7 data and drops bad exam entries", () => {
-    expect(SCHEMA_VERSION).toBe(9);
+    expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(9);
     const s = loadState(
       JSON.stringify({
         version: 7,
@@ -82,7 +82,7 @@ describe("level exams", () => {
         rubrics: { "a#0": 3, "a#1": 7, "a#2": "4" },
       }),
     );
-    expect(s.version).toBe(9);
+    expect(s.version).toBe(SCHEMA_VERSION);
     expect(s.exams).toHaveLength(1);
     expect(s.exams[0]).toMatchObject({ levelId: 2, score: 100, passed: true, quiz: { correct: 9, total: 10 }, weakModules: [] });
     expect(s.rubrics).toEqual({ "a#0": 3 });
