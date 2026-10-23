@@ -5,16 +5,21 @@ import { projectProgress, type ProjectSrc } from "@/lib/projects-ui";
 import { topicHref } from "@/lib/data";
 import type { Module } from "@/lib/types";
 import { useUserState } from "@/lib/use-store";
+import { DifficultyFilterBar } from "./Difficulty";
+import { projectDifficulty } from "@/lib/difficulty";
+import { useDifficultyFilter } from "@/lib/difficulty-filter";
 import { ProjectGuide } from "./ProjectGuide";
 import { EmptyState, ProgressBar, SectionTitle } from "./ui";
 
 /** A module's project ladders by topic, small to bigger, then its capstone (and the level capstone on a level's capstone module). */
 export function ProjectsPanel({ mod, projects, color }: { mod: Module; projects: ProjectSrc[]; color: string }) {
   const s = useUserState();
+  const filter = useDifficultyFilter();
   if (projects.length === 0) return <EmptyState>Project guides for {mod.id} are on the way. Earlier levels already have them.</EmptyState>;
   const done = projects.filter((p) => projectProgress(p, s).finished).length;
-  const byTopic = mod.topics.map((t) => ({ t, list: projects.filter((p) => p.scope === "topic" && p.refId === t.id) })).filter((x) => x.list.length > 0);
-  const caps = projects.filter((p) => p.scope !== "topic");
+  const shown = (p: ProjectSrc) => !filter || projectDifficulty(p) === filter;
+  const byTopic = mod.topics.map((t) => ({ t, list: projects.filter((p) => p.scope === "topic" && p.refId === t.id && shown(p)) })).filter((x) => x.list.length > 0);
+  const caps = projects.filter((p) => p.scope !== "topic" && shown(p));
   return (
     <div className="max-w-3xl space-y-8">
       <div className="rounded-lg border border-line bg-surface p-4 text-sm">
@@ -26,6 +31,8 @@ export function ProjectsPanel({ mod, projects, color }: { mod: Module; projects:
           <span className="num shrink-0 text-xs text-muted">{done}/{projects.length} finished</span>
         </div>
       </div>
+      <DifficultyFilterBar />
+      {byTopic.length + caps.length === 0 && <EmptyState>No projects at this difficulty. Pick another above.</EmptyState>}
       {byTopic.map(({ t, list }) => (
         <section key={t.id} aria-labelledby={`pt-${t.id}`}>
           <h2 id={`pt-${t.id}`} className="mb-2 text-base font-semibold">

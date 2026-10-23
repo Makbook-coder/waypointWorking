@@ -1,3 +1,5 @@
+import { DifficultyBadge } from "@/components/Difficulty";
+import { topicDifficulty } from "@/lib/difficulty";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -67,7 +69,10 @@ export default async function TopicPage({ params }: Props) {
 
       <header className="mb-6 rounded-lg border border-line bg-surface p-5" style={{ borderTop: `6px solid ${style.var}` }}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <PhaseTag phase={level.phase} title={getPhase(level.phase).title} />
+          <span className="flex flex-wrap items-center gap-2">
+            <PhaseTag phase={level.phase} title={getPhase(level.phase).title} />
+            <DifficultyBadge level={topicDifficulty(topic.id)} />
+          </span>
           <BookmarkButton itemKey={`topic:${topic.id}`} label={topic.title} />
         </div>
         <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{topic.title}</h1>

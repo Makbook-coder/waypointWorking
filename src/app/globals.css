@@ -148,3 +148,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Difficulty filter: hide server-rendered items that don't match the chosen difficulty */
+[data-difficulty-filter="1"] [data-difficulty]:not([data-difficulty="1"]),
+[data-difficulty-filter="2"] [data-difficulty]:not([data-difficulty="2"]),
+[data-difficulty-filter="3"] [data-difficulty]:not([data-difficulty="3"]) { display: none; }
