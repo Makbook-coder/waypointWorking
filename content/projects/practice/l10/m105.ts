@@ -1,0 +1,97 @@
+import { LLM, practice, pj } from "../../build";
+import type { ProjectSrc } from "../../types";
+
+const code = (...lines: string[]) => lines.join("\n");
+
+export const P_M105: ProjectSrc[] = [
+  practice("m10-5-level-8-threats-as-runtime-checks", "review",
+    pj("Review a guardrail set", 30, "Review a set of runtime checks against the threats it should cover.",
+      [
+        ["Read the checks below and list the threat each one addresses.", "Mark any with none."],
+        ["List threats that no check covers.", "Include tool misuse and data leaks."],
+        ["Write the check you would add for the most dangerous gap.", "Say where it sits."],
+        ["Write how you would test that the new check works.", "Give a sample attack."],
+      ],
+      "A review of a guardrail set with covered and uncovered threats, a new check and a test.",
+      ["Threats mapped", "Uncovered threats listed", "New check has a test"],
+      "Look at schema validation and re-asking next.", ["A text editor"]),
+    { starter: code(
+      "Checks in place: reject messages over 2000 characters; strip HTML from user text;",
+      "block replies containing the word 'password'. Agent tools: send_email, read_file, run_sql.") }),
+  practice("m10-5-schema-validation-and-re-asking", "debug",
+    pj("The retry that never ends", 40, "Find why a re-ask loop runs too long and costs too much, then fix it.",
+      [
+        ["Run the starter with a model that always returns bad JSON and count calls.", "Note the cost. Compare with a case you know the answer to."],
+        ["Find the line that allows endless retries.", "Quote it. Keep a note of each result."],
+        ["Add a limit and a safe fallback response.", "Log each attempt. If it feels vague, add a number or an example."],
+        ["Rerun and compare calls and cost.", "Show the fallback reply."],
+      ],
+      "A re-ask loop with a retry limit and a safe fallback that makes far fewer calls.",
+      ["Endless loop reproduced", "Retry limit added", "Fallback shown"],
+      "Look at topical rails with NeMo Guardrails next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "while True:",
+      "    reply = llm(prompt)",
+      "    try: return Reply.model_validate_json(reply)",
+      "    except ValidationError: prompt += ' Please return valid JSON.'") }),
+  practice("m10-5-topical-rails-with-nemo-guardrails", "extend",
+    pj("Add an output rail", 45, "Extend a bot that has only topical input rails with a rail on what it says.",
+      [
+        ["Run the starter bot with a request that slips past the input rail and note the reply.", "Save it. Check it with someone else or a model if you can."],
+        ["Add an output rail that checks replies against the allowed topics and tone.", "Write it in the config."],
+        ["Test with ten requests including five that slip past the input rail.", "Count the blocks. Do the easy part first, then return to the hard part."],
+        ["Check three good replies are not blocked.", "Report false blocks."],
+      ],
+      "A bot with an output rail that blocks off-topic replies that slipped past the input rail and few false blocks.",
+      ["Slip-through reproduced", "Output rail written", "False blocks counted"],
+      "Look at input and output checks next.", ["Python 3.11 or newer", "nemoguardrails", LLM]),
+    { starter: code(
+      "define flow user asks off topic -> bot refuse         # only the input side is covered") }),
+  practice("m10-5-input-and-output-checks", "reimplement",
+    pj("Rebuild a PII check", 40, "Rebuild an output check that finds and masks personal data in replies.",
+      [
+        ["Write the data types to find: emails, phone numbers and card-like numbers.", "Give a pattern for each."],
+        ["Write a function that finds and masks them and returns the count.", "Keep the mask readable."],
+        ["Test with 15 sentences including near misses such as order numbers.", "Count right and wrong."],
+        ["Wire it into a reply path and log counts without values.", "Check the log. Save your work here so you can compare later."],
+      ],
+      "An output check that masks emails, phone numbers and card-like numbers, tested on 15 sentences and logging counts only.",
+      ["Patterns written", "Fifteen sentences tested", "Log holds counts only"],
+      "Look at agent tool, step and spend limits next.", ["Python 3.11 or newer"])),
+  practice("m10-5-agent-tool-step-and-spend-limits", "optimise",
+    pj("Right-size the limits", 40, "Set limits from real usage so they stop loops but not normal work.",
+      [
+        ["Run the starter agent on 20 normal tasks and record steps, tokens and cost.", "Save the data. Try it on one small example first."],
+        ["Look at the distribution and find the 95th and 99th percentiles.", "Write them. Write down what you see before changing anything."],
+        ["Set limits above the 99th percentile with a margin.", "Justify the margin."],
+        ["Test with a looping task and a normal task.", "Report stopped or finished."],
+      ],
+      "Agent limits set from measured usage that stop a loop and let normal tasks finish.",
+      ["Usage recorded", "Percentiles used", "Loop stopped normal tasks finish"],
+      "Look at guardrail latency and false positives next.", ["Python 3.11 or newer", LLM]),
+    { starter: code(
+      "MAX_STEPS = 3          # most normal tasks need 5 to 7 steps, so users keep seeing 'stopped'",
+      "MAX_COST = 0.01") }),
+  practice("m10-5-guardrail-latency-and-false-positives", "challenge",
+    pj("Cheap first, expensive second", 50, "Reduce guardrail latency by ordering checks, with no steps given.",
+      [],
+      "A guardrail pipeline ordered so cheap checks run first and the expensive check runs rarely, with the same protection.",
+      ["Latency measured before and after", "Check order justified with data", "Attack catch rate unchanged", "False block rate reported"],
+      "Look at logging every block next.", ["Python 3.11 or newer"]),
+    { hints: ["Time each check on its own before you reorder anything.", "Skip the slow check when a cheap check already blocked or clearly passed the input.", "Use the same attack set before and after so the catch rates are comparable."] }),
+  practice("m10-5-logging-every-block", "debug",
+    pj("The block that was never logged", 40, "Find why some blocked requests leave no log and fix the logging.",
+      [
+        ["Send ten attacks and count the block log lines.", "Compare with the number blocked."],
+        ["Find the code paths that block without logging.", "List them. Compare with a case you know the answer to."],
+        ["Route every block through one function that logs the rule and stage.", "Never log the full text."],
+        ["Rerun and show counts match.", "Add a test that fails if a block is unlogged."],
+      ],
+      "A single logging path for all blocks with counts that match and a test that fails if a block is unlogged.",
+      ["Missing logs found", "One path logs all", "Test catches an unlogged block"],
+      "Look at the module capstone next.", ["Python 3.11 or newer"]),
+    { starter: code(
+      "if too_long(msg): return 'Message too long'                     # not logged",
+      "if injection(msg): log.warning('blocked'); return 'Sorry'        # no rule name",
+      "if bad_output(out): return 'Sorry'                               # not logged") }),
+];
